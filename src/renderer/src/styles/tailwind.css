@@ -1,5 +1,57 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-mint-500: oklch(0.72 0.11 178);
+  /* Colors */
+  --color-background: #121614;
+  --color-foreground: #ffffff;
+  --color-primary: #47a3ff;
+  --color-primary-foreground: #001a0c;
+  --color-secondary: #242926;
+  --color-secondary-foreground: #d1fae4;
+  --color-destructive: #f14158;
+  --color-destructive-foreground: #f14158;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-accent: #313532;
+  --color-accent-foreground: #18181b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #09090b;
+  --color-card: #ffffff;
+  --color-card-foreground: #09090b;
+  --color-positive: #50cd89;
+  --color-warning: #cdb150;
+  --color-blend-primary: #d1fae4;
+
+  /* Radius */
+  --radius-10: 0.625rem;
+  --radius-16: 1rem;
+  --radius-20: 1.25rem;
+  --radius-24: 1.5rem;
+  --radius-32: 2rem;
+
+  /* Font Family */
+  --font-sans: 'Manrope', sans-serif;
+
+  /* Font Size */
+  --text-10: 0.625rem;
+  --text-12: 0.75rem;
+  --text-14: 0.875rem;
+  --text-16: 1rem;
+  --text-18: 1.125rem;
+  --text-20: 1.25rem;
+  --text-22: 1.375rem;
+  --text-24: 1.5rem;
+  --text-28: 1.75rem;
+  --text-30: 1.875rem;
+  --text-32: 2rem;
+  --text-36: 2.25rem;
+  --text-40: 2.5rem;
+  --text-48: 3rem;
+  --text-56: 3.5rem;
+  --text-60: 3.75rem;
+  --text-64: 4rem;
+  --text-68: 4.25rem;
+  --text-72: 4.5rem;
+  --text-75: 4.6875rem;
+  --text-96: 6rem;
 }
