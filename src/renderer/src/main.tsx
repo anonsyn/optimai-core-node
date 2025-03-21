@@ -1,4 +1,4 @@
-import AppRouters from '@renderer/routers'
+import AppRouters from '@/routers'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './styles/index.css'

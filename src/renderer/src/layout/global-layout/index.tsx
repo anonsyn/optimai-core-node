@@ -4,10 +4,10 @@ import Sidebar from './sidebar'
 
 const GlobalLayout = () => {
   return (
-    <div className="w-screen h-screen grid grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)]">
+    <div className="bg-global grid h-screen w-screen grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)] bg-white">
       <Header />
       <Sidebar />
-      <div className="bg-red-500 size-full">
+      <div className="rounded-tl-24 size-full overflow-hidden bg-red-300">
         <Outlet />
       </div>
     </div>

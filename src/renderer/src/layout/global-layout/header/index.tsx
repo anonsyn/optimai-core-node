@@ -1,5 +1,5 @@
 const Header = () => {
-  return <header className="h-20 size-full col-span-2 bg-yellow-50" />
+  return <header className="col-span-2 size-full h-20" />
 }
 
 export default Header

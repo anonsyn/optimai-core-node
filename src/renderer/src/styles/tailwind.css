@@ -54,4 +54,9 @@
   --text-72: 4.5rem;
   --text-75: 4.6875rem;
   --text-96: 6rem;
+
+  /* Background Images */
+  --background-image-global:
+    linear-gradient(0deg, rgba(36, 41, 38, 0.5) 0%, rgba(36, 41, 38, 0.5) 100%),
+    linear-gradient(0deg, #121614 0%, #121614 100%);
 }
