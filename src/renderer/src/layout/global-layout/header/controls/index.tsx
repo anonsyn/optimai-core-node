@@ -1,22 +1,30 @@
+import { Icon, Icons } from '@/components/ui/icon'
 import ControlButton from './control-button'
 
 const Controls = () => {
   const controls = [
     {
-      label: 'Minimize'
+      label: 'Minimize',
+      icon: Icons.Minus
     },
     {
-      label: 'Maximize'
+      label: 'Maximize',
+      icon: Icons.Copy
     },
     {
-      label: 'Close'
+      label: 'Close',
+      icon: Icons.X
     }
   ]
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-8">
       {controls.map((control, index) => {
-        return <ControlButton key={index} label={control.label} />
+        return (
+          <ControlButton key={index} aria-label={control.label}>
+            <Icon className="size-6" icon={control.icon} />
+          </ControlButton>
+        )
       })}
     </div>
   )

@@ -7,7 +7,7 @@ const GlobalLayout = () => {
     <div className="bg-global grid h-screen w-screen grid-cols-[auto_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)] bg-white">
       <Header />
       <Sidebar />
-      <div className="rounded-tl-24 size-full overflow-hidden bg-red-300">
+      <div className="rounded-tl-24 flex size-full items-center justify-center overflow-hidden">
         <Outlet />
       </div>
     </div>

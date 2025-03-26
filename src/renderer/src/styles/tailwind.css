@@ -22,6 +22,9 @@
   --color-warning: #cdb150;
   --color-blend-primary: #d1fae4;
 
+  --color-yellow: #f6f655;
+  --color-green: #5eed87;
+
   /* Radius */
   --radius-10: 0.625rem;
   --radius-16: 1rem;
@@ -59,4 +62,21 @@
   --background-image-global:
     linear-gradient(0deg, rgba(36, 41, 38, 0.5) 0%, rgba(36, 41, 38, 0.5) 100%),
     linear-gradient(0deg, #121614 0%, #121614 100%);
+  --background-image-main: linear-gradient(90deg, #f6f655 0%, #5eed87 100%);
+  --background-image-secondary-button: linear-gradient(
+    90deg,
+    rgba(246, 246, 85, 0.1) 0%,
+    rgba(94, 237, 135, 0.1) 100%
+  );
+  --background-image-raydial-10: radial-gradient(
+    119.09% 136.65% at 2.81% 0%,
+    rgba(228, 228, 231, 0.1) 0%,
+    rgba(115, 115, 115, 0.1) 100%
+  );
+}
+
+@layer base {
+  body {
+    @apply font-light text-white antialiased;
+  }
 }
