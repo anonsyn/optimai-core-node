@@ -18,6 +18,9 @@ export default defineConfig({
         '@assets': resolve('src/renderer/src/assets')
       }
     },
+    define: {
+      APP_VERSION: JSON.stringify(process.env.npm_package_version)
+    },
     plugins: [
       react(),
       tailwindcss(),
