@@ -60,8 +60,14 @@
 
   /* Background Images */
   --background-image-global:
-    linear-gradient(0deg, rgba(36, 41, 38, 0.5) 0%, rgba(36, 41, 38, 0.5) 100%),
-    linear-gradient(0deg, #121614 0%, #121614 100%);
+    linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.4) 100%),
+    linear-gradient(
+      141deg,
+      rgba(113, 115, 13, 0.01) 0%,
+      rgba(113, 115, 13, 0.15) 5.62%,
+      rgba(94, 138, 133, 0.2) 77.18%,
+      rgba(94, 138, 133, 0.2) 100%
+    );
   --background-image-main: linear-gradient(90deg, #f6f655 0%, #5eed87 100%);
   --background-image-secondary-button: linear-gradient(
     90deg,
@@ -78,5 +84,11 @@
 @layer base {
   body {
     @apply font-light text-white antialiased;
+  }
+}
+
+@layer utilities {
+  .drag-region {
+    -webkit-app-region: drag;
   }
 }

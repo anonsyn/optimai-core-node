@@ -4,16 +4,26 @@ import Lottie from 'lottie-react'
 
 const StartUpPage = () => {
   return (
-    <div className="absolute inset-0 size-full overflow-hidden">
+    <div className="relative size-full overflow-hidden">
       <div className="absolute inset-0">
-        <div className="bg-main-linear backdrop-blur-50 absolute inset-0" />
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-0 size-20 rounded-full bg-[#DBF075] opacity-30 blur-3xl" />
-          <div className="absolute bottom-0 left-0 size-20 rounded-full bg-[#3EFBAF] opacity-30 blur-3xl" />
-          <div className="absolute top-full left-1/2 size-40 -translate-x-1/2 rounded-full bg-[#D9D9D9] opacity-30 blur-3xl" />
-        </div>
+        <div className="bg-global absolute inset-0 blur-2xl" />
+        <div
+          className="absolute top-1/2 right-full size-150 translate-x-30 -translate-y-1/2 rounded-full"
+          style={{
+            background:
+              'radial-gradient(47.02% 47.02% at 50% 50%, rgba(62, 251, 175, 0.05) 0%, rgba(62, 251, 175, 0.05) 10%, rgba(62, 251, 175, 0.00) 100%)'
+          }}
+        />
+        <div
+          className="absolute top-1/2 left-full size-150 -translate-x-30 -translate-y-1/2 rounded-full"
+          style={{
+            background:
+              'radial-gradient(47.02% 47.02% at 50% 50%, rgba(255, 231, 92, 0.05) 0%, rgba(255, 231, 92, 0.05) 10%, rgba(255, 231, 92, 0.00) 100%)'
+          }}
+        />
       </div>
       <div className="absolute inset-0 flex size-full flex-col items-center justify-between px-4 pt-8">
+        <div className="drag-region absolute top-0 h-12 w-full" />
         <Logo className="h-10" />
         <div className="flex flex-col items-center pb-8">
           <p className="text-10 leading-relaxed text-white/50">Version {APP_VERSION}</p>
@@ -36,8 +46,7 @@ const HomeNode = () => {
         <div
           className="absolute top-1/2 left-1/2 size-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
-            border: '1px solid rgba(209, 209, 209, 0.02)',
-            background: 'rgba(36, 41, 38, 0.05)'
+            border: '1px solid rgba(209, 209, 209, 0.02)'
           }}
         />
         <div
