@@ -28,7 +28,8 @@ export default tseslint.config(
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
-      'react-refresh/only-export-components': 'off'
+      'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/no-empty-interface': 'off'
     }
   },
   eslintConfigPrettier

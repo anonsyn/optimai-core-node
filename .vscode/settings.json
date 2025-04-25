@@ -8,5 +8,25 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "tailwindCSS.experimental.configFile": "src/renderer/src/styles/index.css"
+  "tailwindCSS.experimental.configFile": "src/renderer/src/styles/index.css",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#b35756",
+    "activityBar.background": "#b35756",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#7bc47c",
+    "activityBarBadge.foreground": "#15202b",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#b35756",
+    "statusBar.background": "#944342",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#b35756",
+    "statusBarItem.remoteBackground": "#944342",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#944342",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#94434299",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#944342"
 }
