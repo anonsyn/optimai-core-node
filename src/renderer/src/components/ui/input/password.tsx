@@ -23,7 +23,7 @@ const Password = React.forwardRef<HTMLInputElement, PasswordProps>(({ ...props }
           type="button"
           onClick={togglePassword}
         >
-          <Icon icon={showPassword ? 'Eye' : 'EyeOff'} />
+          <Icon className="size-6" icon={showPassword ? 'Eye' : 'EyeOff'} />
         </button>
       }
     />
