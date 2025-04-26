@@ -1,4 +1,5 @@
 import GlobalLayout from '@/layout/global-layout'
+import HomePage from '@/pages/home'
 import LoginPage from '@/pages/login'
 import StartUpPage from '@/pages/start-up'
 import { Route, HashRouter as Router, Routes } from 'react-router'
@@ -10,6 +11,7 @@ const AppRouters = () => {
         <Route path="/" element={<GlobalLayout />}>
           <Route index element={<StartUpPage />} />
           <Route path="login" element={<LoginPage />} />
+          <Route path="home" element={<HomePage />} />
         </Route>
       </Routes>
     </Router>
