@@ -8,6 +8,7 @@ import Funnel from '@assets/icons/funnel.svg?react'
 import Globe from '@assets/icons/globe.svg?react'
 import GPU from '@assets/icons/gpu.svg?react'
 import List from '@assets/icons/list.svg?react'
+import LoaderCircle from '@assets/icons/loader-circle.svg?react'
 import Lock from '@assets/icons/lock.svg?react'
 import Mail from '@assets/icons/mail.svg?react'
 import MemoryStick from '@assets/icons/memory-stick.svg?react'
@@ -41,7 +42,8 @@ export const Icons = {
   Eye,
   EyeOff,
   Mail,
-  Lock
+  Lock,
+  LoaderCircle
 } as const
 
 export type IconName = keyof typeof Icons
