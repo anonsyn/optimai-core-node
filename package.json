@@ -51,6 +51,7 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "framer-motion": "^12.9.2",
     "lottie-react": "^2.4.1",
     "p-retry": "^6.2.1",
     "prettier": "^3.5.1",
