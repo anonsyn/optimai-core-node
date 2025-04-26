@@ -1,3 +1,4 @@
+import ArrowLeft from '@assets/icons/arrow-left.svg?react'
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
 import Check from '@assets/icons/check.svg?react'
 import CircleCheck from '@assets/icons/circle-check.svg?react'
@@ -47,7 +48,8 @@ export const Icons = {
   Lock,
   LoaderCircle,
   Check,
-  Info
+  Info,
+  ArrowLeft
 } as const
 
 export type IconName = keyof typeof Icons
