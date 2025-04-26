@@ -1,4 +1,5 @@
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
+import Check from '@assets/icons/check.svg?react'
 import CircleCheck from '@assets/icons/circle-check.svg?react'
 import Copy from '@assets/icons/copy.svg?react'
 import CPU from '@assets/icons/cpu.svg?react'
@@ -43,7 +44,8 @@ export const Icons = {
   EyeOff,
   Mail,
   Lock,
-  LoaderCircle
+  LoaderCircle,
+  Check
 } as const
 
 export type IconName = keyof typeof Icons
