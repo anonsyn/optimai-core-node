@@ -1,7 +1,8 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, ipcMain, screen, shell } from 'electron'
+import { app, BrowserWindow, screen, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import windowIpcHandler from './ipc/window'
 
 function createWindow(): void {
   const primaryDisplay = screen.getPrimaryDisplay()
@@ -59,8 +60,7 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  windowIpcHandler.initialize()
 
   createWindow()
 
