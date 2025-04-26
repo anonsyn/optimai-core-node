@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { ExternalToast, toast } from 'sonner'
 
 const alertVariants = cva(
-  'w-[var(--width,100%)] [will-change:backdrop-filter] cursor-pointer grid grid-cols-[auto_minmax(0,1fr)_auto] rounded-lg p-3 xl:px-4 gap-3 items-center text-white backdrop-blur-md',
+  'w-[var(--width,100%)] mx-auto [will-change:backdrop-filter] cursor-pointer grid grid-cols-[auto_minmax(0,1fr)_auto] rounded-lg p-3 xl:px-4 gap-3 items-center text-white backdrop-blur-md',
   {
     variants: {
       variant: {
