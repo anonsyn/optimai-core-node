@@ -1,10 +1,25 @@
 import { loadingLottieData } from '@/assets/lotties/loading'
 import Logo from '@/components/branding/logo'
+import { PATHS } from '@/routers/paths'
 import Lottie from 'lottie-react'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 
 const StartUpPage = () => {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      navigate(PATHS.LOGIN)
+    }, 3000)
+
+    return () => {
+      clearTimeout(id)
+    }
+  }, [navigate])
+
   return (
-    <div className="relative size-full overflow-hidden">
+    <div className="relative size-full overflow-hidden bg-[#1E1E1E]">
       <div className="absolute inset-0">
         <div className="bg-global absolute inset-0 blur-2xl" />
         <div
@@ -22,7 +37,7 @@ const StartUpPage = () => {
           }}
         />
       </div>
-      <div className="absolute inset-0 flex size-full flex-col items-center justify-between px-4 pt-8">
+      <div className="absolute inset-0 flex size-full flex-col items-center justify-between px-4 py-8 pt-5">
         <div className="drag-region absolute top-0 h-12 w-full" />
         <Logo className="h-10" />
         <div className="flex flex-col items-center pb-8">
