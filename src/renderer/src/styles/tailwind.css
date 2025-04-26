@@ -93,15 +93,17 @@
   }
 }
 
-@layer utilities {
-  .drag-region {
-    -webkit-app-region: drag;
-  }
+@utility drag-region {
+  -webkit-app-region: drag;
+}
 
-  .webkit-text-clip {
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-  }
+@utility webkit-text-clip {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+@utility container {
+  @apply mx-auto px-4;
 }
