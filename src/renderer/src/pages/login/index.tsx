@@ -4,8 +4,19 @@ import { Button, SecondaryText } from '@/components/ui/button/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icon } from '@/components/ui/icon'
 import { InputCustomize, Password } from '@/components/ui/input'
+import { toastError, toastSuccess } from '@/components/ui/toast'
+import { useAppDispatch } from '@/hooks/redux'
+import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
+import { PATHS } from '@/routers/paths'
+import { authService } from '@/services/auth'
+import { authActions } from '@/store/slices/auth'
+import { generateCodeChallenge, generateCodeVerifier } from '@/utils/auth'
+import { getErrorMessage } from '@/utils/get-error-message'
+import { sessionManager } from '@/utils/session-manager'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 import { z } from 'zod'
 
 const LoginPage = () => {
@@ -35,13 +46,67 @@ const LoginForm = () => {
     resolver: zodResolver(signInSchema)
   })
 
-  const handleSubmit = (data: FormValue) => {
-    console.log(data)
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const getCurrentUserQuery = useGetCurrentUserQuery({
+    enabled: false
+  })
+
+  const { mutateAsync: signIn, isPending } = useMutation({
+    mutationFn: async (formValue: FormValue) => {
+      const codeVerifier = await generateCodeVerifier()
+      const codeChallenge = await generateCodeChallenge(codeVerifier)
+
+      return authService
+        .signInV2({
+          email: formValue.email,
+          password: formValue.password,
+          code_challenge_method: 'S256',
+          code_challenge: codeChallenge
+        })
+        .then((res) => {
+          const { authorization_code } = res.data
+
+          return authService.exchangeToken({
+            code: authorization_code,
+            code_verifier: codeVerifier,
+            grant_type: 'authorization_code'
+          })
+        })
+        .then((res) => {
+          const { access_token, refresh_token } = res.data
+          sessionManager.accessToken = access_token
+          sessionManager.refreshToken = refresh_token
+
+          return getCurrentUserQuery.refetch({
+            throwOnError: true
+          })
+        })
+        .then((res) => {
+          const user = res.data?.user
+          if (!user) {
+            throw new Error('No user found')
+          }
+          return user
+        })
+    }
+  })
+
+  const handleSubmit = async (formValue: FormValue) => {
+    return signIn(formValue)
+      .then((user) => {
+        dispatch(authActions.setUser(user))
+        toastSuccess('Login successful')
+        navigate(PATHS.HOME)
+      })
+      .catch((err) => {
+        const message = getErrorMessage(err)
+        toastError(message)
+      })
   }
 
-  const handleNavigateForgotPassword = () => {
-    console.log('forgot password')
-  }
+  const handleNavigateForgotPassword = () => {}
 
   return (
     <div className="mt-8 flex w-full flex-1">
@@ -94,7 +159,9 @@ const LoginForm = () => {
           >
             Forgot password
           </Button>
-          <SubmitButton className="mt-auto">Log In</SubmitButton>
+          <SubmitButton className="mt-auto" loading={isPending}>
+            Log In
+          </SubmitButton>
           <Button variant="secondary">
             <SecondaryText>Register Now</SecondaryText>
           </Button>
