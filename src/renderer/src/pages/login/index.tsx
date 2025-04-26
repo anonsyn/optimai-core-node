@@ -7,7 +7,7 @@ import { InputCustomize, Password } from '@/components/ui/input'
 import { toastError, toastSuccess } from '@/components/ui/toast'
 import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
-import { PATHS } from '@/routers/paths'
+import { EXTERNAL_LINKS, PATHS } from '@/routers/paths'
 import { authService } from '@/services/auth'
 import { authActions } from '@/store/slices/auth'
 import { generateCodeChallenge, generateCodeVerifier } from '@/utils/auth'
@@ -106,7 +106,13 @@ const LoginForm = () => {
       })
   }
 
-  const handleNavigateForgotPassword = () => {}
+  const handleNavigateForgotPassword = () => {
+    window.windowIPC.openExternalLink(EXTERNAL_LINKS.DASHBOARD.FORGOT_PASSWORD)
+  }
+
+  const handleNavigateRegister = () => {
+    window.windowIPC.openExternalLink(EXTERNAL_LINKS.DASHBOARD.REGISTER)
+  }
 
   return (
     <div className="mt-8 flex w-full flex-1">
@@ -162,7 +168,7 @@ const LoginForm = () => {
           <SubmitButton className="mt-auto" loading={isPending}>
             Log In
           </SubmitButton>
-          <Button variant="secondary">
+          <Button variant="secondary" onClick={handleNavigateRegister}>
             <SecondaryText>Register Now</SecondaryText>
           </Button>
         </form>
