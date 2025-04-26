@@ -1,9 +1,8 @@
-import * as React from 'react'
-import { Drawer as DrawerPrimitive } from 'vaul'
-
-import IconButton from '@/components/ui/button/icon-button'
+import { IconButton } from '@/components/ui/button/icon-button'
 import { Icon } from '@/components/ui/icon'
 import { cn } from '@/utils/tw'
+import * as React from 'react'
+import { Drawer as DrawerPrimitive } from 'vaul'
 
 const Drawer = ({ ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
   <DrawerPrimitive.Root {...props} />
