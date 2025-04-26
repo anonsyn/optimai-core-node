@@ -2,10 +2,14 @@ import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
 import CircleCheck from '@assets/icons/circle-check.svg?react'
 import Copy from '@assets/icons/copy.svg?react'
 import CPU from '@assets/icons/cpu.svg?react'
+import EyeOff from '@assets/icons/eye-off.svg?react'
+import Eye from '@assets/icons/eye.svg?react'
 import Funnel from '@assets/icons/funnel.svg?react'
 import Globe from '@assets/icons/globe.svg?react'
 import GPU from '@assets/icons/gpu.svg?react'
 import List from '@assets/icons/list.svg?react'
+import Lock from '@assets/icons/lock.svg?react'
+import Mail from '@assets/icons/mail.svg?react'
 import MemoryStick from '@assets/icons/memory-stick.svg?react'
 import Minus from '@assets/icons/minus.svg?react'
 import Monitor from '@assets/icons/monitor.svg?react'
@@ -14,6 +18,7 @@ import Pickaxe from '@assets/icons/pickaxe.svg?react'
 import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
 import X from '@assets/icons/x.svg?react'
+
 import { SVGProps } from 'react'
 
 export const Icons = {
@@ -32,7 +37,11 @@ export const Icons = {
   Pickaxe,
   SSD,
   Tag,
-  X
+  X,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock
 } as const
 
 export type IconName = keyof typeof Icons
