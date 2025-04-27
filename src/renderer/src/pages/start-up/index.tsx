@@ -1,22 +1,89 @@
 import { loadingLottieData } from '@/assets/lotties/loading'
 import Logo from '@/components/branding/logo'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { PATHS } from '@/routers/paths'
+import { authActions, authSelectors } from '@/store/slices/auth'
+import { sessionManager } from '@/utils/session-manager'
 import Lottie from 'lottie-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 const StartUpPage = () => {
+  const [lottieRunning, setLottieRunning] = useState(true)
+
+  const isCheckingAuth = useAppSelector(authSelectors.isCheckingAuth)
+  const isSignedIn = useAppSelector(authSelectors.isSignedIn)
+
+  const getCurrentUserQuery = useGetCurrentUserQuery({
+    enabled: false
+  })
+
+  const dispatch = useAppDispatch()
+
   const navigate = useNavigate()
 
-  useEffect(() => {
-    const id = setTimeout(() => {
-      navigate(PATHS.LOGIN)
-    }, 3000)
+  const isLoading = isCheckingAuth || lottieRunning
 
-    return () => {
-      clearTimeout(id)
+  useEffect(() => {
+    const checkAuth = async () => {
+      console.log('Check auth called')
+      try {
+        const accessToken = sessionManager.accessToken
+
+        if (!accessToken) {
+          throw new Error('No access token found')
+        }
+        console.log('Fetching user...')
+        const res = await getCurrentUserQuery.refetch({
+          throwOnError: true
+        })
+        const user = res.data?.user
+
+        if (!user) {
+          throw new Error('No user found')
+        }
+
+        console.log('Fetched user successfully')
+        dispatch(
+          authActions.setState({
+            isChecked: true,
+            isChecking: false,
+            user: user
+          })
+        )
+      } catch {
+        dispatch(
+          authActions.setState({
+            isChecked: true,
+            isChecking: false,
+            user: undefined
+          })
+        )
+      }
     }
-  }, [navigate])
+    if (isCheckingAuth) {
+      checkAuth()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCheckingAuth])
+
+  useEffect(() => {
+    const isDEV = import.meta.env.DEV
+    const duration = isDEV ? 1000 : 6000
+    const id = setTimeout(() => {
+      setLottieRunning(false)
+    }, duration)
+    return () => clearTimeout(id)
+  }, [])
+
+  useEffect(() => {
+    if (!isLoading) {
+      const path = isSignedIn ? PATHS.HOME : PATHS.LOGIN
+      navigate(path, { replace: true })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, isSignedIn])
 
   return (
     <div className="relative size-full overflow-hidden bg-[#1E1E1E]">
@@ -46,7 +113,7 @@ const StartUpPage = () => {
         </div>
         <div className="absolute inset-0 flex items-center justify-center pt-44 pb-51">
           <div className="pointer-events-none relative mt-3 size-[18.75rem]">
-            <HomeNode />
+            <HomeNode setLottieRunning={setLottieRunning} />
           </div>
         </div>
       </div>
@@ -54,7 +121,7 @@ const StartUpPage = () => {
   )
 }
 
-const HomeNode = () => {
+const HomeNode = ({ setLottieRunning }: { setLottieRunning: (running: boolean) => void }) => {
   return (
     <div className="pointer-events-none absolute top-1/2 left-1/2 z-1 size-[300px] origin-center -translate-x-1/2 -translate-y-1/2 scale-[0.8]">
       <div>
@@ -110,6 +177,12 @@ const HomeNode = () => {
           className="absolute top-1/2 left-1/2 size-[360px] -translate-x-1/2 -translate-y-1/2"
           animationData={loadingLottieData}
           loop
+          onLoopComplete={() => {
+            setLottieRunning(false)
+          }}
+          onComplete={() => {
+            setLottieRunning(false)
+          }}
         />
       </div>
     </div>
