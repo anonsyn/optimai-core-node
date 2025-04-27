@@ -5,7 +5,9 @@ export const PATHS = {
 
   LOGIN: '/login',
 
-  HOME: '/home'
+  HOME: '/home',
+
+  PROFILE: '/profile'
 }
 
 const createHref = (url: string) => {
