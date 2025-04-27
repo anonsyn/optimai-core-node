@@ -1,5 +1,3 @@
-import axiosClient from '@/libs/axios'
-
 export const ACCESS_TOKEN_KEY = 'opai_access_token'
 export const REFRESH_TOKEN_KEY = 'opai_refresh_token'
 
@@ -15,10 +13,8 @@ export class SessionManager {
 
   set accessToken(token: string | undefined) {
     if (token) {
-      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`
       localStorage.setItem(ACCESS_TOKEN_KEY, token)
     } else {
-      delete axiosClient.defaults.headers.common['Authorization']
       localStorage.removeItem(ACCESS_TOKEN_KEY)
     }
   }
