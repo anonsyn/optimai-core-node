@@ -2,6 +2,7 @@ import GlobalLayout from '@/layout/global-layout'
 import MainLayout from '@/layout/main-layout'
 import HomePage from '@/pages/home'
 import LoginPage from '@/pages/login'
+import ProfilePage from '@/pages/profile'
 import StartUpPage from '@/pages/start-up'
 import { Route, HashRouter as Router, Routes } from 'react-router'
 
@@ -21,6 +22,7 @@ const AppRouters = () => {
             <Route path="data-operator" element={<HomePage />} />
             <Route path="ref" element={<HomePage />} />
           </Route>
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </Router>

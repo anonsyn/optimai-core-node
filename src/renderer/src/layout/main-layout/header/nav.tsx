@@ -5,7 +5,7 @@ import { Icon } from '@/components/ui/icon'
 import { useAppSelector } from '@/hooks/redux'
 import { PATHS } from '@/routers/paths'
 import { headerSelectors } from '@/store/slices/header'
-import { useLocation, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 
 const Nav = () => {
   return (
@@ -93,20 +93,15 @@ const TutorialTrigger = () => {
 }
 
 const Avatar = () => {
-  const location = useLocation()
   const navigate = useNavigate()
 
   const handleViewProfile = () => {
-    navigate(PATHS.PROFILE, {
-      state: {
-        from: location.pathname
-      },
-      replace: true
-    })
+    console.log('Click')
+    navigate(PATHS.PROFILE)
   }
 
   return (
-    <button onClick={handleViewProfile}>
+    <button className="no-drag" onClick={handleViewProfile}>
       <UserAvatar />
     </button>
   )

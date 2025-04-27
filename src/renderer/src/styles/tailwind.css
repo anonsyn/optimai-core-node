@@ -105,6 +105,10 @@
   -webkit-app-region: drag;
 }
 
+@utility no-drag {
+  -webkit-app-region: no-drag;
+}
+
 @utility webkit-text-clip {
   -webkit-background-clip: text;
   background-clip: text;
