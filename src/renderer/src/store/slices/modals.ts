@@ -2,7 +2,7 @@ import { RootState } from '@/store'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 export enum Modals {
-  EXAMPLE = 'EXAMPLE'
+  LOGOUT_CONFIRMATION = 'LOGOUT_CONFIRMATION'
 }
 
 export type ModalState<T = undefined> = {
@@ -21,7 +21,7 @@ export type ReconnectToUnlinkModalState = {
 }
 
 export interface ModalSliceState {
-  [Modals.EXAMPLE]?: ModalState
+  [Modals.LOGOUT_CONFIRMATION]?: ModalState
 }
 
 export type ModalType = keyof ModalSliceState

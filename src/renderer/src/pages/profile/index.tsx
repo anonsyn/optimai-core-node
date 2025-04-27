@@ -3,9 +3,11 @@ import CircleUnion from '@/components/svgs/circle-union'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { BASE_LP_URL } from '@/configs/env'
+import { useOpenModal } from '@/hooks/modal'
 import { useAppSelector } from '@/hooks/redux'
 import { EXTERNAL_LINKS } from '@/routers/paths'
 import { authSelectors } from '@/store/slices/auth'
+import { Modals } from '@/store/slices/modals'
 import { formatDate } from 'date-fns'
 import { useNavigate } from 'react-router'
 
@@ -39,6 +41,12 @@ const ProfilePage = () => {
   }
 
   const handleViewWalkthrough = () => {}
+
+  const openModal = useOpenModal(Modals.LOGOUT_CONFIRMATION)
+
+  const handleLogout = () => {
+    openModal()
+  }
 
   return (
     <div className="relative container flex h-full flex-col pb-3" data-global-glow="true">
@@ -119,6 +127,9 @@ const ProfilePage = () => {
         }}
       >
         About OptimAI Network
+      </Button>
+      <Button className="mt-2 w-full" variant="outline" onClick={handleLogout}>
+        Logout
       </Button>
       <div className="mt-1 flex h-10 items-center justify-between">
         <p className="text-14 leading-relaxed font-normal text-white/50">© OptimAI Network</p>
