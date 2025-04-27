@@ -22,6 +22,7 @@
   --color-positive: #50cd89;
   --color-warning: #cdb150;
   --color-blend-primary: #d1fae4;
+  --color-border: #2b2e34;
 
   --color-yellow: #f6f655;
   --color-green: #5eed87;
@@ -35,6 +36,7 @@
 
   /* Font Family */
   --font-sans: 'Manrope', sans-serif;
+  --font-manrope: 'Manrope', sans-serif;
   --font-actual: 'Actual', sans-serif;
 
   /* Font Size */
@@ -84,8 +86,13 @@
 }
 
 @layer base {
+  * {
+    @apply border-border;
+  }
+
   body {
     @apply font-light text-white antialiased;
+    @apply font-manrope text-foreground leading-normal;
   }
 
   button,
