@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
 import Header from './header'
+import NavigationBar from './navigation-bar'
 
 const MainLayout = () => {
   return (
@@ -8,6 +9,7 @@ const MainLayout = () => {
       <div className="w-full flex-1">
         <Outlet />
       </div>
+      <NavigationBar />
     </div>
   )
 }

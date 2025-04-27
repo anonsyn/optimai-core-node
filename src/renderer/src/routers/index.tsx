@@ -16,6 +16,10 @@ const AppRouters = () => {
 
           <Route element={<MainLayout />}>
             <Route path="home" element={<HomePage />} />
+            <Route path="missions-rewards" element={<HomePage />} />
+            <Route path="node-operator" element={<HomePage />} />
+            <Route path="data-operator" element={<HomePage />} />
+            <Route path="ref" element={<HomePage />} />
           </Route>
         </Route>
       </Routes>

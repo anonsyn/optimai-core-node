@@ -7,7 +7,14 @@ export const PATHS = {
 
   HOME: '/home',
 
-  PROFILE: '/profile'
+  PROFILE: '/profile',
+
+  NODE_OPERATOR: '/node-operator',
+  DATA_OPERATOR: '/data-operator',
+  DATA_SCRAPPING: '/data-operator/data-scrapping',
+  NODE_AVAILABILITY: '/node-operator/node-availability',
+  MISSIONS_REWARDS: '/missions-rewards',
+  REF: '/ref'
 }
 
 const createHref = (url: string) => {
