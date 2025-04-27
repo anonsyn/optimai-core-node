@@ -4,9 +4,9 @@ import NavigationBar from './navigation-bar'
 
 const MainLayout = () => {
   return (
-    <div className="flex size-full flex-col">
+    <div className="grid size-full grid-rows-[auto_minmax(0,1fr)_auto]">
       <Header />
-      <div className="w-full flex-1">
+      <div className="size-full">
         <Outlet />
       </div>
       <NavigationBar />

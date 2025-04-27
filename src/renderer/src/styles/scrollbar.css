@@ -1,0 +1,7 @@
+::-webkit-scrollbar {
+  @apply w-[4px];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-lg bg-white/10;
+}
