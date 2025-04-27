@@ -29,9 +29,7 @@ const Title = () => {
   const navigate = useNavigate()
 
   const handleBackClick = () => {
-    if (backPath) {
-      navigate(backPath)
-    }
+    navigate(-1)
   }
 
   return (
