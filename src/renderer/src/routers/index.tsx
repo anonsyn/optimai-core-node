@@ -1,5 +1,6 @@
 import GlobalLayout from '@/layout/global-layout'
 import MainLayout from '@/layout/main-layout'
+import ProtectedLayout from '@/layout/protected-layout'
 import HomePage from '@/pages/home'
 import LoginPage from '@/pages/login'
 import ProfilePage from '@/pages/profile'
@@ -15,14 +16,16 @@ const AppRouters = () => {
 
           <Route path="login" element={<LoginPage />} />
 
-          <Route element={<MainLayout />}>
-            <Route path="home" element={<HomePage />} />
-            <Route path="missions-rewards" element={<HomePage />} />
-            <Route path="node-operator" element={<HomePage />} />
-            <Route path="data-operator" element={<HomePage />} />
-            <Route path="ref" element={<HomePage />} />
+          <Route element={<ProtectedLayout />}>
+            <Route element={<MainLayout />}>
+              <Route path="home" element={<HomePage />} />
+              <Route path="missions-rewards" element={<HomePage />} />
+              <Route path="node-operator" element={<HomePage />} />
+              <Route path="data-operator" element={<HomePage />} />
+              <Route path="ref" element={<HomePage />} />
+            </Route>
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
-          <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Routes>
     </Router>
