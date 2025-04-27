@@ -50,7 +50,7 @@ const ProfilePage = () => {
 
   return (
     <div className="relative container flex h-full flex-col pb-3" data-global-glow="true">
-      <div className="mt-3 flex h-11 w-full items-center">
+      <div className="drag-region mt-3 flex h-11 w-full items-center">
         <button
           className="no-drag text-white transition-opacity hover:opacity-60"
           onClick={handleBack}
