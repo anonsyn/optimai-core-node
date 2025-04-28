@@ -2,6 +2,7 @@ import TaskIconBackground from '@/components/svgs/task-icon-background'
 import { Icon } from '@/components/ui/icon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useCheckIn } from '@/hooks/use-check-in'
 import { useGetDailyTasksQuery } from '@/queries/daily-tasks'
 import { checkInActions, checkInSelectors } from '@/store/slices/checkin'
 
@@ -12,7 +13,10 @@ const DailyTasks = () => {
 
   const dispatch = useAppDispatch()
 
+  const performCheckIn = useCheckIn()
+
   const handleOpenDailyCheckIn = () => {
+    performCheckIn()
     dispatch(checkInActions.openModal())
   }
 

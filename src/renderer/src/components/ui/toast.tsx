@@ -51,9 +51,9 @@ const Toast = ({ className, variant, toastId, message, ...props }: ToastProps) =
     >
       <Icon className="size-4.5 xl:size-6" icon={variant === 'success' ? 'Check' : 'X'} />
       <p className="text-16 w-full leading-normal font-normal">{message}</p>
-      <p className="text-16 leading-normal opacity-50">
+      {/* <p className="text-16 leading-normal opacity-50">
         close in <span className="tabular-nums">{countdown}</span>s
-      </p>
+      </p> */}
     </div>
   )
 }

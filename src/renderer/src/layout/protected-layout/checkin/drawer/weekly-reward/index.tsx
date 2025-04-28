@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 
 import { Icon } from '@/components/ui/icon'
+import { toastError } from '@/components/ui/toast'
 import {
   useGetCheckInHistoryQuery,
   useGetDailyTasksQuery,
@@ -63,13 +64,13 @@ const WeeklyReward = () => {
 
     if (checkedDays.length === 7) {
       return {
-        status: 'completed',
+        status: 'inProgress',
         count
       }
     }
 
     return {
-      status: 'inProgress',
+      status: 'completed',
       count
     }
   }, [currentDayIndex, history])
@@ -80,11 +81,17 @@ const WeeklyReward = () => {
 
   const handleClaimWeeklyReward = async () => {
     setClaimingWeeklyReward(true)
-    await mutateAsync().then(({ reward }) => {
-      setClaimedWeeklyReward(Number(reward))
-      setHasClaimedWeeklyReward(true)
-      refetchHasClaimedWeeklyReward()
-    })
+    await mutateAsync()
+      .then(({ reward }) => {
+        setClaimedWeeklyReward(Number(reward))
+        setHasClaimedWeeklyReward(true)
+        refetchHasClaimedWeeklyReward()
+      })
+      .catch(() => {
+        setHasClaimedWeeklyReward(false)
+        setClaimingWeeklyReward(false)
+        toastError('Failed to claim weekly reward, please try again later.')
+      })
   }
 
   const dispatch = useAppDispatch()
@@ -101,13 +108,15 @@ const WeeklyReward = () => {
     }
   }, [hasClaimedData])
 
+  console.log({ shouldRunAnimation })
+
   useEffect(() => {
-    if (dailyCheckinCanvasRef.current && shouldRunAnimation) {
+    if (dailyCheckinCanvasRef.current) {
       const canvas = dailyCheckinCanvasRef.current
       const canvasAny = canvas as any
-      if (canvasAny.confetti) {
-        return
-      }
+      console.log(dailyCheckinCanvasRef)
+
+      console.log('RUN 1')
 
       // Set canvas size to match parent
       const parent = canvas.parentElement
@@ -116,10 +125,14 @@ const WeeklyReward = () => {
         canvas.height = parent.clientHeight
       }
 
-      const confettiInstance = confetti.create(canvas, {
-        resize: true
-      })
-      canvasAny.confetti = confettiInstance
+      let confettiInstance = canvasAny.confetti
+
+      if (!confettiInstance) {
+        confettiInstance = confetti.create(canvas, {
+          resize: true
+        })
+        canvasAny.confetti = confettiInstance
+      }
 
       const count = 400
       const defaults = {
@@ -143,6 +156,7 @@ const WeeklyReward = () => {
       }
 
       let timeout = window.setTimeout(() => {
+        console.log('RUN 2')
         Promise.all([
           fire(0.25, {
             spread: 26,
@@ -166,17 +180,26 @@ const WeeklyReward = () => {
             spread: 120,
             startVelocity: 40
           })
-        ]).then(() => {
-          timeout = window.setTimeout(() => {
-            dispatch(checkInActions.setShouldRunAnimation(false))
-            dispatch(checkInActions.setAlreadyCheckIn(true))
-          }, 6000)
-        })
+        ])
+          .then(() => {
+            console.log('SUCCESS')
+            timeout = window.setTimeout(() => {
+              dispatch(checkInActions.setShouldRunAnimation(false))
+              dispatch(checkInActions.setAlreadyCheckIn(true))
+            }, 6000)
+          })
+          .catch(() => {
+            console.log('ERROR')
+          })
       }, 450)
 
       return () => {
+        console.log('Clear')
         clearTimeout(timeout)
       }
+    }
+    return () => {
+      console.log('Clear')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shouldRunAnimation])
@@ -260,22 +283,17 @@ const WeeklyReward = () => {
                   You&apos;ve earned your daily reward—come <br /> back tomorrow for more bonuses!
                 </Description>
               </Header>
-
               <div className="relative w-full flex-1">
                 <motion.div
                   className="absolute top-1/2 left-1/2 flex origin-center -translate-x-1/2 -translate-y-1/2 items-center gap-3"
                   initial={{
                     opacity: 0,
                     top: '100%',
-                    x: '-50%',
-                    y: '-50%',
                     scale: 0
                   }}
                   animate={{
                     opacity: 1,
                     top: '50%',
-                    x: '-50%',
-                    y: '-50%',
                     scale: 1
                   }}
                   transition={{ duration: 0.4, delay: 0.3 }}
