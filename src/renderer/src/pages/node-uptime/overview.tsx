@@ -1,7 +1,7 @@
 import Token from '@/components/branding/token'
-import { Card, CardTitle } from '@/components/ui/ card'
 import AnimatedNumber from '@/components/ui/animated-number'
 import { Badge } from '@/components/ui/badge'
+import { Card, CardTitle } from '@/components/ui/card'
 import NodeUptimeCounter from '@/pages/node-uptime/node-uptime-counter'
 import { useGetNodeAvailabilityStatsQuery } from '@/queries/node-avail/use-get-node-avail-stats-query'
 import { formatNumber } from '@/utils/format-number'

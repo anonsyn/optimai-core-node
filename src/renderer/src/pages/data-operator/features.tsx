@@ -6,7 +6,7 @@ import {
   FeatureContent,
   FeatureDescription,
   FeatureTitle
-} from '@/components/ui/ card'
+} from '@/components/ui/card'
 import { PATHS } from '@/routers/paths'
 import { cn } from '@/utils/tw'
 import Lottie from 'lottie-react'

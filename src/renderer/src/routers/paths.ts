@@ -12,7 +12,7 @@ export const PATHS = {
   NODE_OPERATOR: '/node-operator',
   NODE_UPTIME: '/node-uptime',
   DATA_OPERATOR: '/data-operator',
-  DATA_SCRAPPING: '/data-operator/data-scrapping',
+  DATA_SCRAPPING: '/data-scrapping',
   MISSIONS_REWARDS: '/missions-rewards',
   REF: '/ref'
 }

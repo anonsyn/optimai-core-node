@@ -2,6 +2,7 @@ import GlobalLayout from '@/layout/global-layout'
 import MainLayout from '@/layout/main-layout'
 import ProtectedLayout from '@/layout/protected-layout'
 import DataOperatorPage from '@/pages/data-operator'
+import DataScrappingPage from '@/pages/data-scrapping'
 import HomePage from '@/pages/home'
 import LoginPage from '@/pages/login'
 import NodeOperatorPage from '@/pages/node-operator'
@@ -26,6 +27,7 @@ const AppRouters = () => {
               <Route path="node-operator" element={<NodeOperatorPage />} />
               <Route path="node-uptime" element={<NodeUptimePage />} />
               <Route path="data-operator" element={<DataOperatorPage />} />
+              <Route path="data-scrapping" element={<DataScrappingPage />} />
               <Route path="ref" element={<HomePage />} />
             </Route>
             <Route path="profile" element={<ProfilePage />} />
