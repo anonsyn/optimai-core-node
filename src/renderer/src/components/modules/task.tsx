@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Pi } from '@/components/branding/pi'
 import Token from '@/components/branding/token'
+import { definedGradient, getSvgDefs } from '@/components/svgs/defined-gradient'
 import TaskIconBackground from '@/components/svgs/task-icon-background'
 import { SubmitButton } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
@@ -502,7 +503,11 @@ const TaskReward = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement
       <span className="text-16 font-normal text-white/50">+{reward}</span>
       <Token className="mr-3 ml-1 size-4.5" />
       {task.status === TaskStatus.COMPLETED ? (
-        <Icon className="size-4.5" icon="Check" />
+        <Icon
+          className="size-4.5"
+          icon="Check"
+          stroke={getSvgDefs(definedGradient.mainLinearGradient)}
+        />
       ) : (
         <Icon className="size-4.5" icon="Lock" />
       )}

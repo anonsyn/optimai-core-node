@@ -1,3 +1,4 @@
+import { DefinedGradient } from '@/components/svgs/defined-gradient'
 import QueryProvider from '@/providers/query'
 import ReduxProvider from '@/providers/redux'
 import { PropsWithChildren } from 'react'
@@ -30,6 +31,7 @@ const GlobalLayout = () => {
   return (
     <Providers>
       <App />
+      <DefinedGradient />
       <Toaster
         richColors
         closeButton

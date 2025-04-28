@@ -5,6 +5,12 @@ import TOKEN from '@assets/images/branding/token.svg'
 import HOW_IT_WORK from '@assets/images/sites/how-it-work.png'
 import NO_REFS from '@assets/images/sites/no-refs.svg'
 
+import TIER1 from '@assets/images/tiers/tier-1.svg'
+import TIER2 from '@assets/images/tiers/tier-2.svg'
+import TIER3 from '@assets/images/tiers/tier-3.svg'
+import TIER4 from '@assets/images/tiers/tier-4.svg'
+import TIER5 from '@assets/images/tiers/tier-5.svg'
+
 const IMAGES = {
   BRANDING: {
     CORE_NODE_LOGO,
@@ -15,6 +21,13 @@ const IMAGES = {
   SITES: {
     NO_REFS,
     HOW_IT_WORK
+  },
+  TIERS: {
+    TIER1,
+    TIER2,
+    TIER3,
+    TIER4,
+    TIER5
   }
 }
 
