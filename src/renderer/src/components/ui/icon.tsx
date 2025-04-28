@@ -2,6 +2,8 @@ import { cn } from '@/utils/tw'
 import ArrowLeft from '@assets/icons/arrow-left.svg?react'
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
 import Check from '@assets/icons/check.svg?react'
+import ChevronLeft from '@assets/icons/chevron-left.svg?react'
+import ChevronRight from '@assets/icons/chevron-right.svg?react'
 import CircleCheck from '@assets/icons/circle-check.svg?react'
 import Copy from '@assets/icons/copy.svg?react'
 import CPU from '@assets/icons/cpu.svg?react'
@@ -31,6 +33,7 @@ import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
 import TaskFilled from '@assets/icons/task-filled.svg?react'
 import TaskOutlined from '@assets/icons/task-outlined.svg?react'
+import Users from '@assets/icons/users.svg?react'
 import X from '@assets/icons/x.svg?react'
 
 import { SVGProps } from 'react'
@@ -68,7 +71,10 @@ export const Icons = {
   DataOperatorFilled,
   RefOutlined,
   RefFilled,
-  Hexagon
+  Hexagon,
+  ChevronLeft,
+  ChevronRight,
+  Users
 } as const
 
 export type IconName = keyof typeof Icons

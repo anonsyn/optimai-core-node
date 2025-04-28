@@ -5,3 +5,8 @@
 ::-webkit-scrollbar-thumb {
   @apply rounded-lg bg-white/10;
 }
+
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

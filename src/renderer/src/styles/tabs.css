@@ -1,0 +1,19 @@
+@layer components {
+  .tab-trigger {
+    @apply text-16 relative flex min-w-19 items-center justify-center leading-relaxed font-medium text-white/50;
+  }
+
+  .tab-trigger[data-active='true'] {
+    .tab-linear {
+      @apply opacity-100;
+    }
+  }
+
+  .tab-linear {
+    @apply absolute top-1/2 left-1/2 block w-full -translate-x-1/2 -translate-y-1/2 opacity-0 transition-opacity duration-300 ease-in-out;
+    background: linear-gradient(90deg, #f6f655 0%, #5eed87 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

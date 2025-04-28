@@ -8,6 +8,7 @@ import LoginPage from '@/pages/login'
 import NodeOperatorPage from '@/pages/node-operator'
 import NodeUptimePage from '@/pages/node-uptime'
 import ProfilePage from '@/pages/profile'
+import ReferralsPage from '@/pages/referrals'
 import StartUpPage from '@/pages/start-up'
 import { Route, HashRouter as Router, Routes } from 'react-router'
 
@@ -28,7 +29,7 @@ const AppRouters = () => {
               <Route path="node-uptime" element={<NodeUptimePage />} />
               <Route path="data-operator" element={<DataOperatorPage />} />
               <Route path="data-scrapping" element={<DataScrappingPage />} />
-              <Route path="ref" element={<HomePage />} />
+              <Route path="ref" element={<ReferralsPage />} />
             </Route>
             <Route path="profile" element={<ProfilePage />} />
           </Route>

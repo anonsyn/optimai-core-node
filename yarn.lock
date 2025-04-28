@@ -5571,6 +5571,11 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
+truncate-middle@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/truncate-middle/-/truncate-middle-2.0.0.tgz#5dab3b31a92c17da54065adce0bb995f3d25d5bf"
+  integrity sha512-eBRrxfdG80vMeU8mToWqRE4otZwMewMdqNQZD8Gqw7pLrwv45OHf2q50K7rRIkjkCFbU2gsI+8N2Bz8ecXr00A==
+
 truncate-utf8-bytes@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/truncate-utf8-bytes/-/truncate-utf8-bytes-1.0.2.tgz#405923909592d56f78a5818434b0b78489ca5f2b"
