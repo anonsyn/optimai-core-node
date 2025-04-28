@@ -28,5 +28,6 @@
     "titleBar.inactiveBackground": "#94434299",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#944342"
+  "peacock.color": "#944342",
+  "cSpell.words": ["raydial"]
 }

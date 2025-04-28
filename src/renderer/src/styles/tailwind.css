@@ -28,6 +28,7 @@
   --color-green: #5eed87;
 
   /* Radius */
+  --radius-button: 0.75rem;
   --radius-10: 0.625rem;
   --radius-16: 1rem;
   --radius-20: 1.25rem;
@@ -78,10 +79,20 @@
     rgba(246, 246, 85, 0.1) 0%,
     rgba(94, 237, 135, 0.1) 100%
   );
+  --background-image-raydial-5: radial-gradient(
+    119.09% 136.65% at 2.81% 0%,
+    rgba(228, 228, 231, 0.05) 0%,
+    rgba(115, 115, 115, 0.05) 100%
+  );
   --background-image-raydial-10: radial-gradient(
     119.09% 136.65% at 2.81% 0%,
     rgba(228, 228, 231, 0.1) 0%,
     rgba(115, 115, 115, 0.1) 100%
+  );
+  --background-image-raydial-15: radial-gradient(
+    119.09% 136.65% at 2.81% 0%,
+    rgba(228, 228, 231, 0.15) 0%,
+    rgba(115, 115, 115, 0.15) 100%
   );
 }
 
