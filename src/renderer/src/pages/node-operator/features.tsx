@@ -20,7 +20,7 @@ const Features = () => {
     {
       title: 'Node Uptime',
       description: "The longer you're online, the more you earn",
-      href: PATHS.NODE_AVAILABILITY,
+      href: PATHS.NODE_UPTIME,
       banner: (
         <Lottie
           className="absolute top-1/2 left-1/2 size-[390px] -translate-x-1/2 -translate-y-1/2 sm:size-[420px] md:size-[500px]"
