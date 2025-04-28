@@ -25,7 +25,8 @@ const CheckInProvider = ({ children }: PropsWithChildren) => {
     startCheckin()
 
     return () => clearInterval(interval)
-  }, [isSignedIn, performCheckIn])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn])
 
   return (
     <>
