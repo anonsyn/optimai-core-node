@@ -1,5 +1,6 @@
 import { cn } from '@/utils/tw'
 import ArrowLeft from '@assets/icons/arrow-left.svg?react'
+import ArrowUpRight from '@assets/icons/arrow-up-right.svg?react'
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
 import Calendar from '@assets/icons/calendar.svg?react'
 import Check from '@assets/icons/check.svg?react'
@@ -10,6 +11,7 @@ import Copy from '@assets/icons/copy.svg?react'
 import CPU from '@assets/icons/cpu.svg?react'
 import DataOperatorFilled from '@assets/icons/data-operator-filled.svg?react'
 import DataOperatorOutlined from '@assets/icons/data-operator-outlined.svg?react'
+import Extension from '@assets/icons/extension.svg?react'
 import EyeOff from '@assets/icons/eye-off.svg?react'
 import Eye from '@assets/icons/eye.svg?react'
 import Fire from '@assets/icons/fire.svg?react'
@@ -37,6 +39,9 @@ import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
 import TaskFilled from '@assets/icons/task-filled.svg?react'
 import TaskOutlined from '@assets/icons/task-outlined.svg?react'
+import Telegram from '@assets/icons/telegram.svg?react'
+import Timer from '@assets/icons/timer.svg?react'
+import Twitter from '@assets/icons/twitter.svg?react'
 import Users from '@assets/icons/users.svg?react'
 import X from '@assets/icons/x.svg?react'
 
@@ -82,7 +87,12 @@ export const Icons = {
   Calendar,
   Sad,
   Fire,
-  LockOpen
+  LockOpen,
+  ArrowUpRight,
+  Twitter,
+  Telegram,
+  Extension,
+  Timer
 } as const
 
 export type IconName = keyof typeof Icons

@@ -1,8 +1,10 @@
+import { Mission, MissionType } from '@/services/missions'
 import { RootState } from '@/store'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 export enum Modals {
-  LOGOUT_CONFIRMATION = 'LOGOUT_CONFIRMATION'
+  LOGOUT_CONFIRMATION = 'LOGOUT_CONFIRMATION',
+  VERIFY_TWITTER_TASK = 'VERIFY_TWITTER_TASK'
 }
 
 export type ModalState<T = undefined> = {
@@ -22,6 +24,10 @@ export type ReconnectToUnlinkModalState = {
 
 export interface ModalSliceState {
   [Modals.LOGOUT_CONFIRMATION]?: ModalState
+  [Modals.VERIFY_TWITTER_TASK]?: ModalState<{
+    task: Mission
+    taskType: MissionType
+  }>
 }
 
 export type ModalType = keyof ModalSliceState
