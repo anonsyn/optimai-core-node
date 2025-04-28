@@ -6,11 +6,12 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import checkInSlice from './slices/checkin'
+import notificationSlice from './slices/notification'
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [authSlice.name]
+  whitelist: [authSlice.name, checkInSlice.name, notificationSlice.name]
 }
 
 const rootReducer = combineReducers({
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   [modalSlice.name]: modalSlice.reducer,
   [headerSlice.name]: headerSlice.reducer,
   [onlineSlice.name]: onlineSlice.reducer,
-  [checkInSlice.name]: checkInSlice.reducer
+  [checkInSlice.name]: checkInSlice.reducer,
+  [notificationSlice.name]: notificationSlice.reducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
