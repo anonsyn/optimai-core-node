@@ -44,12 +44,12 @@ const AlertDialogContent = React.forwardRef<
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('relative z-10 flex flex-col items-center gap-0', className)} {...props} />
+  <div className={cn('relative z-10 flex flex-col items-start gap-0', className)} {...props} />
 )
 AlertDialogHeader.displayName = 'AlertDialogHeader'
 
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('mt-4 flex flex-col gap-3 md:mt-8', className)} {...props} />
+  <div className={cn('mt-4 flex gap-3 md:mt-8', className)} {...props} />
 )
 AlertDialogFooter.displayName = 'AlertDialogFooter'
 
@@ -60,7 +60,7 @@ const AlertDialogTitle = React.forwardRef<
   <AlertDialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-24 text-foreground text-center leading-relaxed font-semibold tracking-tight',
+      'text-24 text-foreground leading-relaxed font-semibold tracking-tight',
       className
     )}
     {...props}
@@ -75,7 +75,7 @@ const AlertDialogDescription = React.forwardRef<
   <AlertDialogPrimitive.Description
     ref={ref}
     className={cn(
-      'text-14 text-foreground/80 xl:text-16 text-center leading-relaxed tracking-tight',
+      'text-14 text-foreground/80 xl:text-16 leading-relaxed tracking-tight',
       className
     )}
     {...props}
@@ -89,7 +89,7 @@ const AlertDialogAction = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
-    className={cn(buttonVariants(), 'w-full', className)}
+    className={cn(buttonVariants(), 'flex-1', className)}
     {...props}
   />
 ))
@@ -101,7 +101,7 @@ const AlertDialogCancel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonVariants({ variant: 'secondary' }), className)}
+    className={cn(buttonVariants({ variant: 'secondary' }), 'flex-1', className)}
     {...props}
   />
 ))

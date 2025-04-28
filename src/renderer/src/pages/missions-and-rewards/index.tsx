@@ -1,3 +1,4 @@
+import DashboardMissionModal from '@/modals/dashboard-mission-modal'
 import VerifyTwitterTaskModal from '@/modals/verify-twitter-task-modal'
 import DailyTasks from './daily-tasks'
 import TaskTabs from './tabs'
@@ -9,6 +10,7 @@ const MissionsAndRewardsPage = () => {
         <DailyTasks />
         <TaskTabs />
         <VerifyTwitterTaskModal />
+        <DashboardMissionModal />
       </div>
     </div>
   )

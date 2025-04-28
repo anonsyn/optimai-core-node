@@ -12,7 +12,6 @@ import {
   useInvalidateMissionsQuery,
   useVerifyTaskMutationFn
 } from '@/queries/missions/use-verify-mission-mutation'
-import { authService } from '@/services/auth'
 import { Mission, TaskAction as MissionAction, MissionType, TaskStatus } from '@/services/missions'
 import { Modals } from '@/store/slices/modals'
 import { formatNumber } from '@/utils/format-number'
@@ -380,42 +379,45 @@ const TaskAction = ({ className, ...props }: React.HTMLAttributes<HTMLButtonElem
       : !isConnectTwitterTask(task)
     : false
 
+  const openDashboardMissionModal = useOpenModal(Modals.DASHBOARD_MISSION)
+
   const handleConnectTwitter = async () => {
-    try {
-      const res = await authService.getTwitterAuthUrl()
-      const url = res.data.url
-
-      const width = 500
-      const height = 800
-      const left = window.screen.width / 2 - width / 2
-      const top = window.screen.height / 2 - height / 2
-
-      const handleEventMessage = (event: MessageEvent) => {
-        if (event.data.type === 'TWITTER_LINKED') {
-          window.removeEventListener('message', handleEventMessage)
-        } else if (event.data.type === 'TWITTER_LINK_ERROR') {
-          window.removeEventListener('message', handleEventMessage)
-          setStarted(false)
-          const message = event.data.error || 'Failed to connect Twitter'
-          toastError(message)
-        }
-      }
-      window.addEventListener('message', handleEventMessage)
-
-      window.open(url, 'Twitter Login', `width=${width},height=${height},left=${left},top=${top}`)
-    } catch (error) {
-      const message = getErrorMessage(error)
-
-      if (message !== 'You have already linked a Twitter account.') {
-        setStarted(false)
-        toastError('Failed to connect Twitter')
-      } else {
-        toastSuccess('Connected Twitter')
-      }
-    }
+    openDashboardMissionModal()
+    setStarted(false)
+    // try {
+    //   const res = await authService.getTwitterAuthUrl()
+    //   const url = res.data.url
+    //   const width = 500
+    //   const height = 800
+    //   const left = window.screen.width / 2 - width / 2
+    //   const top = window.screen.height / 2 - height / 2
+    //   const handleEventMessage = (event: MessageEvent) => {
+    //     if (event.data.type === 'TWITTER_LINKED') {
+    //       window.removeEventListener('message', handleEventMessage)
+    //     } else if (event.data.type === 'TWITTER_LINK_ERROR') {
+    //       window.removeEventListener('message', handleEventMessage)
+    //       setStarted(false)
+    //       const message = event.data.error || 'Failed to connect Twitter'
+    //       toastError(message)
+    //     }
+    //   }
+    //   window.addEventListener('message', handleEventMessage)
+    //   window.open(url, 'Twitter Login', `width=${width},height=${height},left=${left},top=${top}`)
+    // } catch (error) {
+    //   const message = getErrorMessage(error)
+    //   if (message !== 'You have already linked a Twitter account.') {
+    //     setStarted(false)
+    //     toastError('Failed to connect Twitter')
+    //   } else {
+    //     toastSuccess('Connected Twitter')
+    //   }
+    // }
   }
 
-  const handleConnectTelegram = () => {}
+  const handleConnectTelegram = () => {
+    openDashboardMissionModal()
+    setStarted(false)
+  }
 
   const openModal = useOpenModal(Modals.VERIFY_TWITTER_TASK)
 
