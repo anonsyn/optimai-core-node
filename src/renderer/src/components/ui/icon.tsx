@@ -19,6 +19,7 @@ import Funnel from '@assets/icons/funnel.svg?react'
 import Globe from '@assets/icons/globe.svg?react'
 import GPU from '@assets/icons/gpu.svg?react'
 import Hexagon from '@assets/icons/hexagon.svg?react'
+import Hourglass from '@assets/icons/hourglass.svg?react'
 import Info from '@assets/icons/info.svg?react'
 import List from '@assets/icons/list.svg?react'
 import LoaderCircle from '@assets/icons/loader-circle.svg?react'
@@ -35,6 +36,7 @@ import Pickaxe from '@assets/icons/pickaxe.svg?react'
 import RefFilled from '@assets/icons/ref-filled.svg?react'
 import RefOutlined from '@assets/icons/ref-outlined.svg?react'
 import Sad from '@assets/icons/sad.svg?react'
+import SquarePen from '@assets/icons/square-pen.svg?react'
 import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
 import TaskFilled from '@assets/icons/task-filled.svg?react'
@@ -92,7 +94,9 @@ export const Icons = {
   Twitter,
   Telegram,
   Extension,
-  Timer
+  Timer,
+  Hourglass,
+  SquarePen
 } as const
 
 export type IconName = keyof typeof Icons

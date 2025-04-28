@@ -1,3 +1,4 @@
+import VerifyTwitterTaskModal from '@/modals/verify-twitter-task-modal'
 import DailyTasks from './daily-tasks'
 import TaskTabs from './tabs'
 
@@ -7,6 +8,7 @@ const MissionsAndRewardsPage = () => {
       <div className="container space-y-5 py-4">
         <DailyTasks />
         <TaskTabs />
+        <VerifyTwitterTaskModal />
       </div>
     </div>
   )
