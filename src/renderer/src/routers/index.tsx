@@ -5,6 +5,7 @@ import DataOperatorPage from '@/pages/data-operator'
 import DataScrappingPage from '@/pages/data-scrapping'
 import HomePage from '@/pages/home'
 import LoginPage from '@/pages/login'
+import MissionsAndRewardsPage from '@/pages/missions-and-rewards'
 import NodeOperatorPage from '@/pages/node-operator'
 import NodeUptimePage from '@/pages/node-uptime'
 import ProfilePage from '@/pages/profile'
@@ -24,7 +25,7 @@ const AppRouters = () => {
           <Route element={<ProtectedLayout />}>
             <Route element={<MainLayout />}>
               <Route path="home" element={<HomePage />} />
-              <Route path="missions-rewards" element={<HomePage />} />
+              <Route path="missions-rewards" element={<MissionsAndRewardsPage />} />
               <Route path="node-operator" element={<NodeOperatorPage />} />
               <Route path="node-uptime" element={<NodeUptimePage />} />
               <Route path="data-operator" element={<DataOperatorPage />} />

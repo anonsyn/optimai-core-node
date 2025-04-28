@@ -1,6 +1,7 @@
 import { cn } from '@/utils/tw'
 import ArrowLeft from '@assets/icons/arrow-left.svg?react'
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
+import Calendar from '@assets/icons/calendar.svg?react'
 import Check from '@assets/icons/check.svg?react'
 import ChevronLeft from '@assets/icons/chevron-left.svg?react'
 import ChevronRight from '@assets/icons/chevron-right.svg?react'
@@ -11,6 +12,7 @@ import DataOperatorFilled from '@assets/icons/data-operator-filled.svg?react'
 import DataOperatorOutlined from '@assets/icons/data-operator-outlined.svg?react'
 import EyeOff from '@assets/icons/eye-off.svg?react'
 import Eye from '@assets/icons/eye.svg?react'
+import Fire from '@assets/icons/fire.svg?react'
 import Funnel from '@assets/icons/funnel.svg?react'
 import Globe from '@assets/icons/globe.svg?react'
 import GPU from '@assets/icons/gpu.svg?react'
@@ -18,6 +20,7 @@ import Hexagon from '@assets/icons/hexagon.svg?react'
 import Info from '@assets/icons/info.svg?react'
 import List from '@assets/icons/list.svg?react'
 import LoaderCircle from '@assets/icons/loader-circle.svg?react'
+import LockOpen from '@assets/icons/lock-open.svg?react'
 import Lock from '@assets/icons/lock.svg?react'
 import Mail from '@assets/icons/mail.svg?react'
 import MemoryStick from '@assets/icons/memory-stick.svg?react'
@@ -29,6 +32,7 @@ import PanelRightOpen from '@assets/icons/panel-right-open.svg?react'
 import Pickaxe from '@assets/icons/pickaxe.svg?react'
 import RefFilled from '@assets/icons/ref-filled.svg?react'
 import RefOutlined from '@assets/icons/ref-outlined.svg?react'
+import Sad from '@assets/icons/sad.svg?react'
 import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
 import TaskFilled from '@assets/icons/task-filled.svg?react'
@@ -74,7 +78,11 @@ export const Icons = {
   Hexagon,
   ChevronLeft,
   ChevronRight,
-  Users
+  Users,
+  Calendar,
+  Sad,
+  Fire,
+  LockOpen
 } as const
 
 export type IconName = keyof typeof Icons
