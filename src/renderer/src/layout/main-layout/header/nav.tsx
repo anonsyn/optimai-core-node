@@ -38,7 +38,7 @@ const Title = () => {
         <>
           {backPath && (
             <button
-              className="text-white transition-opacity hover:opacity-60"
+              className="no-drag text-white transition-opacity hover:opacity-60"
               onClick={handleBackClick}
             >
               <Icon className="h-6 w-6" icon="ArrowLeft" />
