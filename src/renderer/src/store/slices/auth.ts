@@ -46,6 +46,7 @@ export const authSelectors = {
   isCheckedAuth: (state: RootState) => state.auth.isChecked,
   isSignedIn: (state: RootState) => !!state.auth.user,
   user: (state: RootState) => state.auth.user,
+  userId: (state: RootState) => state.auth.user?.id,
   userEmail: (state: RootState) => state.auth.user?.email,
   username: (state: RootState) => state.auth.user?.display_name,
   userAddress: (state: RootState) => state.auth.user?.wallet_address,

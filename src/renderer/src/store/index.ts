@@ -7,11 +7,11 @@ import { persistReducer, persistStore } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import checkInSlice from './slices/checkin'
 import notificationSlice from './slices/notification'
-
+import socketSlice from './slices/socket'
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [authSlice.name, checkInSlice.name, notificationSlice.name]
+  whitelist: [authSlice.name, checkInSlice.name, notificationSlice.name, socketSlice.name]
 }
 
 const rootReducer = combineReducers({
@@ -20,7 +20,8 @@ const rootReducer = combineReducers({
   [headerSlice.name]: headerSlice.reducer,
   [onlineSlice.name]: onlineSlice.reducer,
   [checkInSlice.name]: checkInSlice.reducer,
-  [notificationSlice.name]: notificationSlice.reducer
+  [notificationSlice.name]: notificationSlice.reducer,
+  [socketSlice.name]: socketSlice.reducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
