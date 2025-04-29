@@ -112,7 +112,7 @@ const OnBoardingContent = () => {
         </CarouselContent>
       </Carousel>
       <button
-        className="absolute top-3 right-3 flex size-10 items-center justify-center transition-opacity hover:opacity-60"
+        className="no-drag absolute top-3 right-3 flex size-10 items-center justify-center transition-opacity hover:opacity-60"
         onClick={handleClose}
       >
         <Icon icon="X" className="size-6" />

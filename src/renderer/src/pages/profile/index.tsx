@@ -40,7 +40,11 @@ const ProfilePage = () => {
     window.windowIPC.openExternalLink(url)
   }
 
-  const handleViewWalkthrough = () => {}
+  const openOnBoardingModal = useOpenModal(Modals.ON_BOARDING)
+
+  const handleViewWalkthrough = () => {
+    openOnBoardingModal()
+  }
 
   const openModal = useOpenModal(Modals.LOGOUT_CONFIRMATION)
 
@@ -61,7 +65,7 @@ const ProfilePage = () => {
         <div className="relative h-11 w-21">
           <CircleUnion className="absolute inset-0" />
           <div className="relative flex size-full items-center gap-1 p-1">
-            <button className="size-9" onClick={handleViewWalkthrough}>
+            <button className="no-drag size-9" onClick={handleViewWalkthrough}>
               <div className="bg-secondary/60 relative flex size-full shrink-0 items-center justify-center overflow-hidden rounded-full">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

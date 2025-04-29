@@ -1,4 +1,3 @@
-import OnBoardingModal from '@/modals/on-boarding-modal'
 import { Outlet } from 'react-router'
 import Header from './header'
 import NavigationBar from './navigation-bar'
@@ -11,7 +10,6 @@ const MainLayout = () => {
         <Outlet />
       </div>
       <NavigationBar />
-      <OnBoardingModal />
     </div>
   )
 }
