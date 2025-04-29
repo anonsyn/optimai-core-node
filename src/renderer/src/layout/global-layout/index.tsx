@@ -1,4 +1,5 @@
 import { DefinedGradient } from '@/components/svgs/defined-gradient'
+import OnlineProvider from '@/providers/online'
 import QueryProvider from '@/providers/query'
 import ReduxProvider from '@/providers/redux'
 import { PropsWithChildren } from 'react'
@@ -8,7 +9,9 @@ import { Toaster } from 'sonner'
 const Providers = ({ children }: PropsWithChildren) => {
   return (
     <ReduxProvider>
-      <QueryProvider>{children}</QueryProvider>
+      <QueryProvider>
+        <OnlineProvider>{children}</OnlineProvider>
+      </QueryProvider>
     </ReduxProvider>
   )
 }
