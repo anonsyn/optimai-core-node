@@ -19,7 +19,7 @@ const initialState: NotificationState = {
   nextUptimeReward: 0,
   latestUptime: 0,
   uptimeCount: 0,
-  proxyCount: 0,
+  proxyCount: 0
 }
 
 const notificationSlice = createSlice({
@@ -50,11 +50,12 @@ const notificationSlice = createSlice({
     resetUptimeCount: (state) => {
       state.uptimeCount = 0
     },
-  },
+    reset: () => initialState
+  }
 })
 
 export const notificationActions = {
-  ...notificationSlice.actions,
+  ...notificationSlice.actions
 }
 
 export const notificationSelectors = {
@@ -62,7 +63,7 @@ export const notificationSelectors = {
   uptimeCount: (state: RootState) => state.notification.uptimeCount,
   proxyCount: (state: RootState) => state.notification.proxyCount,
   nextUptimeReward: (state: RootState) => state.notification.nextUptimeReward,
-  latestUptime: (state: RootState) => state.notification.latestUptime,
+  latestUptime: (state: RootState) => state.notification.latestUptime
 }
 
 export default notificationSlice

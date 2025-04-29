@@ -33,7 +33,8 @@ const checkInSlice = createSlice({
     },
     setAlreadyCheckIn: (state, action: PayloadAction<boolean>) => {
       state.alreadyCheckedIn = action.payload
-    }
+    },
+    reset: () => initialState
   }
 })
 

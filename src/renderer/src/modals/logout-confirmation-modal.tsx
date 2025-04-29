@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { SecondaryText } from '@/components/ui/button'
 import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
+import { useLogout } from '@/hooks/use-logout'
 import { Modals } from '@/store/slices/modals'
 
 export function LogoutConfirmationModal() {
@@ -17,7 +18,12 @@ export function LogoutConfirmationModal() {
 
   const closeModal = useCloseModal(Modals.LOGOUT_CONFIRMATION)
 
-  const handleLogout = () => {}
+  const logout = useLogout()
+
+  const handleLogout = () => {
+    logout()
+    closeModal()
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={closeModal}>
