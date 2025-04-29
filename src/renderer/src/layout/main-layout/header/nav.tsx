@@ -2,9 +2,11 @@ import Logo from '@/components/branding/logo'
 import UserAvatar from '@/components/modules/user-avatar'
 import CircleUnion from '@/components/svgs/circle-union'
 import { Icon } from '@/components/ui/icon'
+import { useOpenModal } from '@/hooks/modal'
 import { useAppSelector } from '@/hooks/redux'
 import { PATHS } from '@/routers/paths'
 import { headerSelectors } from '@/store/slices/header'
+import { Modals } from '@/store/slices/modals'
 import { useNavigate } from 'react-router'
 
 const Nav = () => {
@@ -55,11 +57,14 @@ const Title = () => {
 }
 
 const TutorialTrigger = () => {
-  const handleClick = () => {}
+  const openModal = useOpenModal(Modals.ON_BOARDING)
+  const handleClick = () => {
+    openModal()
+  }
 
   return (
     <button className="size-9" onClick={handleClick}>
-      <div className="bg-secondary/60 relative flex size-full shrink-0 items-center justify-center overflow-hidden rounded-full">
+      <div className="bg-secondary/60 no-drag relative flex size-full shrink-0 items-center justify-center overflow-hidden rounded-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"

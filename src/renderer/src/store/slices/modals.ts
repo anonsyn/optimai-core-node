@@ -5,7 +5,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 export enum Modals {
   LOGOUT_CONFIRMATION = 'LOGOUT_CONFIRMATION',
   VERIFY_TWITTER_TASK = 'VERIFY_TWITTER_TASK',
-  DASHBOARD_MISSION = 'DASHBOARD_MISSION'
+  DASHBOARD_MISSION = 'DASHBOARD_MISSION',
+  ON_BOARDING = 'ON_BOARDING'
 }
 
 export type ModalState<T = undefined> = {
@@ -30,6 +31,7 @@ export interface ModalSliceState {
     taskType: MissionType
   }>
   [Modals.DASHBOARD_MISSION]?: ModalState
+  [Modals.ON_BOARDING]?: ModalState
 }
 
 export type ModalType = keyof ModalSliceState
