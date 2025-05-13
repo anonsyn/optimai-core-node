@@ -168,6 +168,7 @@ const LoginForm = () => {
           <SubmitButton className="mt-auto" loading={isPending}>
             Log In
           </SubmitButton>
+          <Button onClick={() => window.windowIPC.close()}>Close</Button>
           <Button variant="secondary" onClick={handleNavigateRegister}>
             <SecondaryText>Register Now</SecondaryText>
           </Button>

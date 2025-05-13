@@ -1,3 +1,4 @@
 export const WindowEvents = {
-  OpenExternalLink: 'window:open-external-link'
+  OpenExternalLink: 'window:open-external-link',
+  Close: 'window:close'
 } as const
