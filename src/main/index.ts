@@ -85,7 +85,6 @@ if (!gotTheLock) {
     ])
 
     tray.setToolTip('OptimAI Core Node')
-    tray.on('click', showApp)
     tray.setContextMenu(contextMenu)
 
     return tray
