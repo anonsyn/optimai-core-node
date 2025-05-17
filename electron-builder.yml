@@ -39,5 +39,7 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: s3
+  bucket: core-node
+  region: auto
+  endpoint: https://87715f7d8edee067bb527e0d24f889d6.r2.cloudflarestorage.com

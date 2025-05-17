@@ -1,16 +1,17 @@
-import { BrowserWindow, WebContents } from 'electron'
+import { WebContents } from 'electron'
+import OptimaiBrowserWindow, { WindowName } from './window'
 
 class WindowManager {
-  private windows: BrowserWindow[] = []
+  private windows: OptimaiBrowserWindow[] = []
 
-  addWindow(window: BrowserWindow) {
+  addWindow(window: OptimaiBrowserWindow) {
     window.on('closed', () => {
       this.removeWindow(window)
     })
     this.windows.push(window)
   }
 
-  removeWindow(window: BrowserWindow) {
+  removeWindow(window: OptimaiBrowserWindow) {
     this.windows = this.windows.filter((w) => w !== window)
   }
   windowFromContents(contents: WebContents) {
@@ -20,6 +21,9 @@ class WindowManager {
     this.windows.forEach((window) => {
       window.destroy()
     })
+  }
+  getWindowByName(name: WindowName) {
+    return this.windows.find((w) => w.name === name)
   }
 }
 

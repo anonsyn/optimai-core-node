@@ -11,6 +11,9 @@ import { useNavigate } from 'react-router'
 
 const StartUpPage = () => {
   const [lottieRunning, setLottieRunning] = useState(true)
+  const [checkingUpdate, setCheckingUpdate] = useState(true)
+  const [downloadingUpdate, setDownloadingUpdate] = useState(false)
+  const [installingUpdate, setInstallingUpdate] = useState(false)
 
   const isCheckingAuth = useAppSelector(authSelectors.isCheckingAuth)
   const isSignedIn = useAppSelector(authSelectors.isSignedIn)
@@ -23,7 +26,8 @@ const StartUpPage = () => {
 
   const navigate = useNavigate()
 
-  const isLoading = isCheckingAuth || lottieRunning
+  const isLoading =
+    isCheckingAuth || lottieRunning || checkingUpdate || downloadingUpdate || installingUpdate
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -78,6 +82,46 @@ const StartUpPage = () => {
   }, [])
 
   useEffect(() => {
+    const subscription = window.updaterIPC.onStateChange((state) => {
+      console.log({ state })
+      if (state.status === 'checking') {
+        setCheckingUpdate(true)
+      }
+
+      if (state.status === 'downloading') {
+        setDownloadingUpdate(true)
+      }
+
+      if (state.status === 'idle' || state.status === 'error') {
+        setCheckingUpdate(false)
+        setDownloadingUpdate(false)
+      }
+
+      if (state.status === 'downloaded') {
+        setDownloadingUpdate(false)
+        setInstallingUpdate(true)
+      }
+    })
+    const id = setTimeout(() => {
+      window.updaterIPC.checkForUpdateAndNotify()
+    }, 1200)
+
+    return () => {
+      clearTimeout(id)
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (installingUpdate) {
+      const id = setTimeout(() => {
+        window.updaterIPC.quitAndInstall()
+      }, 2000)
+      return () => clearTimeout(id)
+    }
+  }, [installingUpdate])
+
+  useEffect(() => {
     if (!isLoading) {
       const path = isSignedIn ? PATHS.HOME : PATHS.LOGIN
       navigate(path, { replace: true })
@@ -108,6 +152,15 @@ const StartUpPage = () => {
         <div className="drag-region absolute top-0 h-12 w-full" />
         <Logo className="h-10" />
         <div className="flex flex-col items-center pb-8">
+          <p className="text-12 mb-8 leading-relaxed text-white">
+            {installingUpdate
+              ? 'Restarting...'
+              : downloadingUpdate
+                ? 'Downloading update...'
+                : checkingUpdate
+                  ? 'Checking for updates...'
+                  : 'Starting...'}
+          </p>
           <p className="text-10 leading-relaxed text-white/50">Version {APP_VERSION}</p>
           <p className="text-12 leading-relaxed text-white/80">© OptimAI Network</p>
         </div>

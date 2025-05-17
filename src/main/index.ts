@@ -1,18 +1,29 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, Menu, nativeImage, screen, shell, Tray } from 'electron'
+import { app, Menu, nativeImage, screen, shell, Tray } from 'electron'
+import debug from 'electron-debug'
+import log from 'electron-log/main'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
 import windowManager from './window/manager'
-
+import OptimaiBrowserWindow, { WindowName } from './window/window'
 const gotTheLock = app.requestSingleInstanceLock()
+
+const logFolder = app.getPath('logs')
+log.info(logFolder)
 
 if (!gotTheLock) {
   app.quit()
 } else {
+  if (is.dev) {
+    debug({
+      devToolsMode: 'undocked'
+    })
+  }
   let tray: Tray | null = null
 
-  function createWindow() {
+  const createWindow = () => {
     const primaryDisplay = screen.getPrimaryDisplay()
     const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
 
@@ -20,7 +31,8 @@ if (!gotTheLock) {
     const height = Math.min(screenHeight, 700)
 
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    const mainWindow = new OptimaiBrowserWindow({
+      name: WindowName.Main,
       width: width,
       height: height,
       show: false,
@@ -65,7 +77,7 @@ if (!gotTheLock) {
     tray = new Tray(trayIcon.resize({ width: 16, height: 16 }))
 
     const showApp = () => {
-      const mainWindow = BrowserWindow.getAllWindows()[0]
+      const mainWindow = windowManager.getWindowByName(WindowName.Main)
       if (mainWindow) {
         mainWindow.show()
       }
@@ -91,7 +103,7 @@ if (!gotTheLock) {
   }
 
   app.on('second-instance', () => {
-    const window = BrowserWindow.getAllWindows()[0]
+    const window = windowManager.getWindowByName(WindowName.Main)
     if (window) {
       if (window.isMinimized()) {
         window.restore()
@@ -109,6 +121,7 @@ if (!gotTheLock) {
     electronApp.setAppUserModelId('com.electron')
 
     windowIpcHandler.initialize()
+    updaterIpcHandler.initialize()
 
     const window = createWindow()
     windowManager.addWindow(window)
@@ -127,7 +140,7 @@ if (!gotTheLock) {
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      const window = BrowserWindow.getAllWindows()[0]
+      const window = windowManager.getWindowByName(WindowName.Main)
       if (window) {
         window.show()
       }
