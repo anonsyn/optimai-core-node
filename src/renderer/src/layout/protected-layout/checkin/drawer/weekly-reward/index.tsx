@@ -46,6 +46,8 @@ const WeeklyReward = () => {
   const [claimedWeeklyReward, setClaimedWeeklyReward] = useState(0)
   const [isTickerCompleted, setIsTickerCompleted] = useState(false)
 
+  console.log({})
+
   const { data: task } = useGetDailyTasksQuery()
   const dailyCheckInReward = task?.reward || 5
 
@@ -53,6 +55,8 @@ const WeeklyReward = () => {
     const passedDays = history.slice(0, currentDayIndex + 1)
     const checkedDays = passedDays.filter(Boolean)
     const isFailed = currentDayIndex === 6 && passedDays.some((day) => !day)
+
+    console.log({ checkedDays, passedDays })
 
     const count = checkedDays.length
     if (isFailed) {
@@ -64,17 +68,18 @@ const WeeklyReward = () => {
 
     if (checkedDays.length === 7) {
       return {
-        status: 'inProgress',
+        status: 'completed',
         count
       }
     }
 
     return {
-      status: 'completed',
+      status: 'inProgress',
       count
     }
   }, [currentDayIndex, history])
 
+  console.log({ status })
   const { mutateAsync } = useMutation({
     mutationFn: claimReward
   })
