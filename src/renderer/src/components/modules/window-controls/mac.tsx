@@ -3,7 +3,7 @@ import { cn } from '@/utils/tw'
 import { cva, VariantProps } from 'class-variance-authority'
 
 const buttonVariants = cva(
-  'flex items-center justify-center size-3 disabled:bg-[#5C5D5B] disabled:pointer-events-none text-black/40 rounded-full',
+  'flex items-center justify-center size-3 disabled:bg-[#5C5D5B] disabled:pointer-events-none text-black/60 rounded-full',
   {
     variants: {
       variant: {
@@ -18,7 +18,7 @@ const buttonVariants = cva(
 interface MacControlsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const MacControls = ({ className, ...props }: MacControlsProps) => {
-  return <div className={cn('group flex items-center gap-2', className)} {...props}></div>
+  return <div className={cn('group flex items-center gap-2 py-px', className)} {...props}></div>
 }
 
 interface ButtonProps
@@ -34,7 +34,11 @@ const MacControlButton = ({ variant, className, disabled, ...props }: ButtonProp
   return (
     <button className={cn(buttonVariants({ variant, className }))} disabled={disabled} {...props}>
       <Icon
-        className={cn('size-2 opacity-0', !disabled && 'group:opacity-100')}
+        className={cn(
+          'size-2.5 opacity-0',
+          !disabled && 'group-hover:opacity-100 hover:opacity-100'
+        )}
+        strokeWidth={3}
         icon={icons[variant || 'close']}
       />
     </button>

@@ -16,7 +16,7 @@ const Controls = () => {
           <MacControlButton variant="maximize" disabled />
         </>
       ) : (
-        <WindowsControlButton variant="maximize" onClick={() => window.windowIPC.maximize()} />
+        <WindowsControlButton variant="close" onClick={() => window.windowIPC.close()} />
       )}
     </WindowControls>
   )

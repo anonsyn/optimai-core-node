@@ -3,7 +3,7 @@ import { cn } from '@/utils/tw'
 import { cva, VariantProps } from 'class-variance-authority'
 
 const buttonVariants = cva(
-  'flex items-center justify-center size-3 disabled:pointer-events-none text-black/40',
+  'flex items-center justify-center size-8 disabled:pointer-events-none text-white',
   {
     variants: {
       variant: {
@@ -33,10 +33,7 @@ const WindowsControlButton = ({ variant, className, disabled, ...props }: Button
   }
   return (
     <button className={cn(buttonVariants({ variant, className }))} disabled={disabled} {...props}>
-      <Icon
-        className={cn('size-2 opacity-0', !disabled && 'group-hover/mac-controls:opacity-100')}
-        icon={icons[variant || 'close']}
-      />
+      <Icon className={cn('size-6')} icon={icons[variant || 'close']} />
     </button>
   )
 }
