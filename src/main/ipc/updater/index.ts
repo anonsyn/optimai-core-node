@@ -58,14 +58,6 @@ class UpdaterIpcHandler {
       })
     })
 
-    if (is.dev) {
-      setTimeout(() => {
-        state.next({
-          status: 'idle'
-        })
-      }, 1000)
-    }
-
     state.subscribe((state) => {
       const window = windowManager.getWindowByName(WindowName.Main)
       if (window) {
@@ -75,6 +67,13 @@ class UpdaterIpcHandler {
 
     ipcMain.on(UpdaterEvents.CheckForUpdateAndNotify, () => {
       autoUpdater.checkForUpdatesAndNotify()
+      if (is.dev) {
+        setTimeout(() => {
+          state.next({
+            status: 'idle'
+          })
+        }, 1000)
+      }
     })
     ipcMain.on(UpdaterEvents.StartUpdate, () => {
       autoUpdater.downloadUpdate()
