@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router'
 
 const Nav = () => {
   return (
-    <div className="drag-region relative container flex items-center justify-between pt-3">
+    <div className="relative container flex items-center justify-between pt-3">
       <Title />
       <div className="relative h-11 w-21">
         <CircleUnion className="absolute inset-0" />

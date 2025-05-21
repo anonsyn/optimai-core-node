@@ -6,7 +6,7 @@ import Uptime from './uptime'
 
 const GlobalHeader = () => {
   return (
-    <header className="relative w-full overflow-hidden pb-6">
+    <header className="relative w-full overflow-visible pb-6">
       <Background />
       <div className="relative z-10 flex size-full flex-col gap-2">
         <Nav />

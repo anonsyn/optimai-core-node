@@ -15,3 +15,7 @@ export const balanceFormatOptions: CompactNumberOptions = {
   minimumFractionDigits: 4,
   maximumFractionDigits: 4
 }
+
+export const padStart = (value: number, length: number) => {
+  return value.toString().padStart(length, '0')
+}

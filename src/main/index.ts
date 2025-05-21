@@ -38,6 +38,7 @@ if (!gotTheLock) {
       show: false,
       frame: false,
       transparent: true,
+      maximizable: false,
       roundedCorners: false,
       autoHideMenuBar: true,
       ...(process.platform === 'linux' ? { icon } : {}),

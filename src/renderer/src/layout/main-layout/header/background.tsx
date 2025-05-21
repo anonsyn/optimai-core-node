@@ -26,7 +26,7 @@ const Background = () => {
   }, [])
 
   return (
-    <div className="absolute inset-0">
+    <div className="absolute inset-x-0 -top-16 bottom-0">
       <div
         className="backdrop-blur-50 absolute inset-0 border-b border-b-[#2D2D2D]"
         style={{

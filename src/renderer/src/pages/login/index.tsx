@@ -22,7 +22,7 @@ import { z } from 'zod'
 const LoginPage = () => {
   return (
     <div className="relative container flex size-full flex-col items-center overflow-hidden py-8 pt-5">
-      <div className="drag-region absolute top-0 h-12 w-full" />
+      <div className="absolute top-0 h-12 w-full" />
       <Logo className="h-10" />
       <h1 className="text-28 mt-6 text-center leading-normal font-semibold text-white">
         Welcome to <br /> Optim<span className="font-actual font-normal">AI</span> Network

@@ -9,6 +9,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "tailwindCSS.experimental.configFile": "src/renderer/src/styles/index.css",
+  "tailwindCSS.classFunctions": ["cva", "cx"],
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#b35756",
     "activityBar.background": "#b35756",

@@ -5,6 +5,7 @@ import ReduxProvider from '@/providers/redux'
 import { PropsWithChildren } from 'react'
 import { Outlet } from 'react-router'
 import { Toaster } from 'sonner'
+import TitleBar from './title-bar'
 
 const Providers = ({ children }: PropsWithChildren) => {
   return (
@@ -23,8 +24,11 @@ const App = () => {
         <div className="absolute top-[22%] left-full h-30 w-30 -translate-x-1/2 rounded-full bg-[#FFE75C] opacity-30 blur-[100px] group-[&:has([data-global-glow='false'])]:hidden" />
         <div className="absolute bottom-[5%] left-0 h-30 w-30 -translate-x-13 rounded-full bg-[#3EFBAF] opacity-30 blur-[100px] group-[&:has([data-global-glow='false'])]:hidden" />
       </div>
-      <div className="relative size-full">
-        <Outlet />
+      <div className="relative grid size-full grid-rows-[64px_minmax(0,1fr)]">
+        <TitleBar />
+        <div className="size-full">
+          <Outlet />
+        </div>
       </div>
     </div>
   )

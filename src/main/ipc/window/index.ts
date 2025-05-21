@@ -12,6 +12,18 @@ class WindowIpcHandler {
         window.hide()
       }
     })
+    ipcMain.on(WindowEvents.Minimize, (e) => {
+      const window = BrowserWindow.fromWebContents(e.sender)
+      if (window) {
+        window.minimize()
+      }
+    })
+    ipcMain.on(WindowEvents.Maximize, (e) => {
+      const window = BrowserWindow.fromWebContents(e.sender)
+      if (window) {
+        window.maximize()
+      }
+    })
   }
 }
 
