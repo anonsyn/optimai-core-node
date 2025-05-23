@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { createPreloadEventListener } from '../../utils/create-preload-event-listener'
+import { createPreloadEventListener } from '../../utils/ipc'
 import { UpdaterEvents } from './events'
 import { UpdateState } from './types'
 

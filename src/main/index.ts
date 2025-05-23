@@ -1,6 +1,5 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, Menu, nativeImage, screen, shell, Tray } from 'electron'
-import debug from 'electron-debug'
 import log from 'electron-log/main'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
@@ -17,11 +16,6 @@ log.info(logFolder)
 if (!gotTheLock) {
   app.quit()
 } else {
-  if (is.dev) {
-    debug({
-      devToolsMode: 'undocked'
-    })
-  }
   let tray: Tray | null = null
 
   const createWindow = () => {
@@ -128,6 +122,10 @@ if (!gotTheLock) {
 
     const window = createWindow()
     windowManager.addWindow(window)
+
+    if (is.dev) {
+      window.webContents.openDevTools({ mode: 'undocked' })
+    }
 
     if (!tray || tray.isDestroyed()) {
       tray = createTray()

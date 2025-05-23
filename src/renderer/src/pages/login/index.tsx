@@ -76,13 +76,13 @@ const LoginForm = () => {
         })
         .then((res) => {
           const { access_token, refresh_token } = res.data
-          sessionManager.accessToken = access_token
-          sessionManager.refreshToken = refresh_token
-
-          return getCurrentUserQuery.refetch({
+          return sessionManager.saveTokens(access_token, refresh_token)
+        })
+        .then(() =>
+          getCurrentUserQuery.refetch({
             throwOnError: true
           })
-        })
+        )
         .then((res) => {
           const user = res.data?.user
           if (!user) {

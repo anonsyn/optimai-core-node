@@ -2,10 +2,11 @@ import { ipcRenderer } from 'electron'
 import { AuthEvents } from './events'
 
 const authIPC = {
-  getTokens: () => ipcRenderer.send(AuthEvents.GetTokens),
+  getAccessToken: (): Promise<string> => ipcRenderer.invoke(AuthEvents.GetAccessToken),
   saveTokens: (accessToken: string, refreshToken: string) =>
-    ipcRenderer.send(AuthEvents.SaveTokens, accessToken, refreshToken),
-  refreshToken: () => ipcRenderer.send(AuthEvents.RefreshToken)
+    ipcRenderer.invoke(AuthEvents.SaveTokens, accessToken, refreshToken),
+  refreshToken: () => ipcRenderer.invoke(AuthEvents.RefreshToken),
+  logout: () => ipcRenderer.invoke(AuthEvents.Logout)
 }
 
 type AuthIPC = typeof authIPC

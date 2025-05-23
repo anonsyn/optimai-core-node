@@ -31,24 +31,24 @@ const StartUpPage = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      console.log('Check auth called')
       try {
-        const accessToken = sessionManager.accessToken
+        const accessToken = await sessionManager.getAccessToken()
 
         if (!accessToken) {
           throw new Error('No access token found')
         }
-        console.log('Fetching user...')
+
         const res = await getCurrentUserQuery.refetch({
-          throwOnError: true
+          throwOnError: true,
+          cancelRefetch: false
         })
+
         const user = res.data?.user
 
         if (!user) {
           throw new Error('No user found')
         }
 
-        console.log('Fetched user successfully')
         dispatch(
           authActions.setState({
             isChecked: true,
@@ -67,6 +67,7 @@ const StartUpPage = () => {
       }
     }
     if (isCheckingAuth) {
+      console.log('Call check auth')
       checkAuth()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,7 +84,6 @@ const StartUpPage = () => {
 
   useEffect(() => {
     const subscription = window.updaterIPC.onStateChange((state) => {
-      console.log({ state })
       if (state.status === 'checking') {
         setCheckingUpdate(true)
       }

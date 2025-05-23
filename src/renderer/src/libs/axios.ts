@@ -2,11 +2,6 @@ import { BASE_API_URL } from '@/configs/env'
 import { sessionManager } from '@/utils/session-manager'
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
-// Types
-interface RefreshTokenResponse {
-  access_token: string
-}
-
 // List of endpoints that should skip token refresh on 401
 const SKIP_REFRESH_ENDPOINTS = ['/auth/signin', '/auth/signin-v1.1', '/auth/token', '/auth/refresh']
 
@@ -15,33 +10,10 @@ const axiosClient: AxiosInstance = axios.create({
   baseURL: BASE_API_URL
 })
 
-// Flag to prevent multiple refresh token requests
-let isRefreshing = false
-let failedQueue: Array<{
-  resolve: (token: string) => void
-  reject: (error: any) => void
-}> = []
-
-const processQueue = (error: any = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error)
-    } else {
-      const accessToken = sessionManager.accessToken
-      if (accessToken) {
-        prom.resolve(accessToken)
-      } else {
-        prom.reject(new Error('No access token found'))
-      }
-    }
-  })
-  failedQueue = []
-}
-
 // Request interceptor
 axiosClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    const token = sessionManager.accessToken
+    const token = await sessionManager.getAccessToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -75,49 +47,22 @@ axiosClient.interceptors.response.use(
     }
 
     try {
-      const refreshToken = sessionManager.refreshToken
-      if (!refreshToken) {
-        return Promise.reject(error)
-      }
-
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject })
-        })
-          .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            return axiosClient(originalRequest)
-          })
-          .catch((err) => Promise.reject(err))
-      }
-
-      isRefreshing = true
-
       // Call refresh token endpoint
-      const response = await axios.post<RefreshTokenResponse>(`${BASE_API_URL}/auth/refresh`, {
-        refresh_token: refreshToken
-      })
+      const response = await window.authIPC.refreshToken()
 
       const { access_token: accessToken } = response.data
 
-      // Update tokens
-      sessionManager.accessToken = accessToken
+      if (accessToken) {
+        // Update authorization header
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`
 
-      // Update authorization header
-      originalRequest.headers.Authorization = `Bearer ${accessToken}`
+        // Retry original request with new access token
+        return axiosClient(originalRequest)
+      }
 
-      // Process queued requests
-      processQueue()
-
-      // Retry original request with new access token
-      return axiosClient(originalRequest)
+      return Promise.reject(error)
     } catch (refreshError) {
-      processQueue(refreshError)
-      sessionManager.removeTokens()
-      // Redirect to login or handle token refresh failure
       return Promise.reject(refreshError)
-    } finally {
-      isRefreshing = false
     }
   }
 )

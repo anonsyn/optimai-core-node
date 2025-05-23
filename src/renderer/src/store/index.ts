@@ -8,10 +8,11 @@ import storage from 'redux-persist/lib/storage'
 import checkInSlice from './slices/checkin'
 import notificationSlice from './slices/notification'
 import socketSlice from './slices/socket'
+
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: [authSlice.name, checkInSlice.name, notificationSlice.name, socketSlice.name]
+  whitelist: [checkInSlice.name, notificationSlice.name, socketSlice.name]
 }
 
 const rootReducer = combineReducers({

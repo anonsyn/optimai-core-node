@@ -1,5 +1,6 @@
 export const AuthEvents = {
-  GetTokens: 'auth:get-tokens-command',
+  GetAccessToken: 'auth:get-access-token-command',
   SaveTokens: 'auth:save-tokens-command',
-  RefreshToken: 'auth:refresh-token-command'
+  RefreshToken: 'auth:refresh-token-command',
+  Logout: 'auth:logout-command'
 } as const

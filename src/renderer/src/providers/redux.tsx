@@ -1,16 +1,9 @@
-import { persistor, store } from '@/store'
+import { store } from '@/store'
 import { PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
-import { PersistGate } from 'redux-persist/integration/react'
 
 const ReduxProvider = ({ children }: PropsWithChildren) => {
-  return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        {children}
-      </PersistGate>
-    </Provider>
-  )
+  return <Provider store={store}>{children}</Provider>
 }
 
 export default ReduxProvider

@@ -4,14 +4,19 @@ import { AuthEvents } from './events'
 
 class AuthIpcHandler {
   initialize() {
-    ipcMain.on(AuthEvents.GetTokens, () => {
-      return nodeCommands.getTokens()
+    ipcMain.handle(AuthEvents.GetAccessToken, async () => {
+      return nodeCommands.getAccessToken().then((res) => {
+        return res.access_token
+      })
     })
-    ipcMain.on(AuthEvents.SaveTokens, (_, accessToken: string, refreshToken: string) => {
+    ipcMain.handle(AuthEvents.SaveTokens, (_, accessToken: string, refreshToken: string) => {
       return nodeCommands.saveTokens(accessToken, refreshToken)
     })
-    ipcMain.on(AuthEvents.RefreshToken, () => {
+    ipcMain.handle(AuthEvents.RefreshToken, () => {
       return nodeCommands.refreshToken()
+    })
+    ipcMain.handle(AuthEvents.Logout, () => {
+      return nodeCommands.logout()
     })
   }
 }
