@@ -4,6 +4,7 @@ import debug from 'electron-debug'
 import log from 'electron-log/main'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import authIpcHandler from './ipc/auth'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
 import windowManager from './window/manager'
@@ -123,6 +124,7 @@ if (!gotTheLock) {
 
     windowIpcHandler.initialize()
     updaterIpcHandler.initialize()
+    authIpcHandler.initialize()
 
     const window = createWindow()
     windowManager.addWindow(window)
