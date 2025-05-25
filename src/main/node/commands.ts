@@ -6,48 +6,52 @@ import type { Options } from 'execa'
 
 // Helper function to dynamically import execa
 
-const executeNodeCommand = async (args: string[], options?: Options) => {
+const runNodeCommand = (args: string[], options?: Options) => {
   return runCommand(nodeBinaryPath, ['--data-dir', nodeDataPath, ...args], options)
 }
 
-const executeNodeCommandWithJsonStdout = async (args: string[], options?: Options) => {
+const runNodeCommandWithJsonStdout = (args: string[], options?: Options) => {
   return runCommandWithJsonStdout(nodeBinaryPath, ['--data-dir', nodeDataPath, ...args], options)
 }
 
 // AUTH COMMANDS
-const me = async (options?: Options) => {
-  return executeNodeCommand(['auth', 'me'], options)
+const me = (options?: Options) => {
+  return runNodeCommand(['auth', 'me'], options)
 }
 
-const logout = async (options?: Options) => {
-  return executeNodeCommand(['auth', 'logout'], options)
+const logout = (options?: Options) => {
+  return runNodeCommand(['auth', 'logout'], options)
 }
 
-const getAccessToken = async (options?: Options) => {
-  return executeNodeCommandWithJsonStdout(['auth', 'get-access-token'], options)
+const getAccessToken = (options?: Options) => {
+  return runNodeCommandWithJsonStdout(['auth', 'get-access-token'], options)
 }
 
-const getRefreshToken = async (options?: Options) => {
-  return executeNodeCommand(['auth', 'get-refresh-token'], options)
+const getRefreshToken = (options?: Options) => {
+  return runNodeCommand(['auth', 'get-refresh-token'], options)
 }
 
-const saveAccessToken = async (accessToken: string, options?: Options) => {
-  return executeNodeCommand(['auth', 'save-access-token', '--access_token', accessToken], options)
+const saveAccessToken = (accessToken: string, options?: Options) => {
+  return runNodeCommand(['auth', 'save-access-token', '--access_token', accessToken], options)
 }
 
-const getTokens = async (options?: Options) => {
-  return executeNodeCommand(['auth', 'get-tokens'], options)
+const getTokens = (options?: Options) => {
+  return runNodeCommand(['auth', 'get-tokens'], options)
 }
 
-const saveTokens = async (accessToken: string, refreshToken: string, options?: Options) => {
-  return executeNodeCommand(
+const saveTokens = (accessToken: string, refreshToken: string, options?: Options) => {
+  return runNodeCommand(
     ['auth', 'save-tokens', '--access_token', accessToken, '--refresh_token', refreshToken],
     options
   )
 }
 
-const refreshToken = async (options?: Options) => {
-  return executeNodeCommand(['auth', 'refresh-token'], options)
+const refreshToken = (options?: Options) => {
+  return runNodeCommand(['auth', 'refresh-token'], options)
+}
+
+const startNode = (port: number, options?: Options) => {
+  return runNodeCommand(['node', 'start', '--port', port.toString()], options)
 }
 
 export const nodeCommands = {
@@ -58,5 +62,6 @@ export const nodeCommands = {
   saveAccessToken,
   saveTokens,
   refreshToken,
-  logout
+  logout,
+  startNode
 }

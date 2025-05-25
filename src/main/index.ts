@@ -4,8 +4,10 @@ import log from 'electron-log/main'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import authIpcHandler from './ipc/auth'
+import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
+import { nodeServer } from './node/server'
 import windowManager from './window/manager'
 import OptimaiBrowserWindow, { WindowName } from './window/window'
 const gotTheLock = app.requestSingleInstanceLock()
@@ -119,6 +121,7 @@ if (!gotTheLock) {
     windowIpcHandler.initialize()
     updaterIpcHandler.initialize()
     authIpcHandler.initialize()
+    nodeIpcHandler.initialize()
 
     const window = createWindow()
     windowManager.addWindow(window)
@@ -151,6 +154,7 @@ if (!gotTheLock) {
       try {
         windowManager.destroyAllWindows()
         tray?.destroy()
+        await nodeServer.stop()
       } catch (error) {
         console.error('destroy error', error)
       }
