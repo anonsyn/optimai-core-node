@@ -10,6 +10,16 @@ class NodeIpcHandler {
     ipcMain.handle(NodeEvents.StopNode, async () => {
       return nodeServer.stop()
     })
+    ipcMain.handle(NodeEvents.GetNodeStatus, async () => {
+      return nodeServer.getStatus()
+    })
+    ipcMain.handle(NodeEvents.GetNodeServerUrl, async () => {
+      return nodeServer.getServerUrl()
+    })
+
+    nodeServer.on('statusChange', (status) => {
+      ipcMain.emit(NodeEvents.OnNodeStatusChanged, status)
+    })
   }
 }
 

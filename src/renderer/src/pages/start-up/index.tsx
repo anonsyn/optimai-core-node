@@ -14,6 +14,7 @@ const StartUpPage = () => {
   const [checkingUpdate, setCheckingUpdate] = useState(true)
   const [downloadingUpdate, setDownloadingUpdate] = useState(false)
   const [installingUpdate, setInstallingUpdate] = useState(false)
+  const [isNodeStarting, setIsNodeStarting] = useState(true)
 
   const isCheckingAuth = useAppSelector(authSelectors.isCheckingAuth)
   const isSignedIn = useAppSelector(authSelectors.isSignedIn)
@@ -26,8 +27,15 @@ const StartUpPage = () => {
 
   const navigate = useNavigate()
 
+  const canStartNode = !isCheckingAuth && !checkingUpdate && !downloadingUpdate && !installingUpdate
+
   const isLoading =
-    isCheckingAuth || lottieRunning || checkingUpdate || downloadingUpdate || installingUpdate
+    isCheckingAuth ||
+    lottieRunning ||
+    checkingUpdate ||
+    downloadingUpdate ||
+    installingUpdate ||
+    isNodeStarting
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -120,6 +128,28 @@ const StartUpPage = () => {
       return () => clearTimeout(id)
     }
   }, [installingUpdate])
+
+  useEffect(() => {
+    if (canStartNode) {
+      if (isSignedIn) {
+        const startNode = async () => {
+          try {
+            console.log('Start node')
+            await window.nodeIPC.startNode()
+            setIsNodeStarting(false)
+            console.log('Node started')
+          } catch (error) {
+            console.log('Error starting node')
+            console.error(error)
+            setIsNodeStarting(false)
+          }
+        }
+        startNode()
+      } else {
+        setIsNodeStarting(false)
+      }
+    }
+  }, [canStartNode, isSignedIn])
 
   useEffect(() => {
     if (!isLoading) {

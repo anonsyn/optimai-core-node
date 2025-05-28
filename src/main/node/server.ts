@@ -1,6 +1,8 @@
 import axios from 'axios'
+import EventEmitter from 'eventemitter3'
 import { ExecaChildProcess, ExecaError } from 'execa'
 import {
+  BehaviorSubject,
   catchError,
   concatMap,
   defer,
@@ -18,25 +20,40 @@ import { IS_DEV } from '../configs/constants'
 import logger from '../configs/logger'
 import { retryAfter } from '../utils/rx-operators'
 import { nodeCommands } from './commands'
+import { NodeStatus } from './types'
 
 type NodeProcess = ExecaChildProcess
 
-enum NodeStatus {
-  Idle = 'idle',
-  Running = 'running',
-  Restarting = 'restarting'
+interface NodeServerEvents {
+  statusChange: [NodeStatus]
 }
 
-class NodeServer {
+class NodeServer extends EventEmitter<NodeServerEvents> {
   private port: number | null = null
   private process: NodeProcess | null = null
-  private status: NodeStatus = NodeStatus.Idle
+  private status = new BehaviorSubject<NodeStatus>(NodeStatus.Idle)
   private pingAbortSignal: Subject<void> = new Subject()
   private restartAbortSignal: Subject<void> = new Subject()
   private intentionalShutdown = false // Added flag
 
+  constructor() {
+    super()
+    this.status.subscribe((status) => {
+      this.emit('statusChange', status)
+    })
+  }
+
   get isRunning() {
-    return this.status === NodeStatus.Running || this.status === NodeStatus.Restarting
+    const currentStatus = this.status.getValue()
+    return currentStatus === NodeStatus.Running || currentStatus === NodeStatus.Restarting
+  }
+
+  getStatus() {
+    return this.status.getValue()
+  }
+
+  getServerUrl() {
+    return `http://127.0.0.1:${this.port}`
   }
 
   async start() {
@@ -51,7 +68,7 @@ class NodeServer {
       logger.info(`Starting node on port ${port}`)
 
       this.port = port
-      this.status = NodeStatus.Running
+      this.status.next(NodeStatus.Running)
       this.intentionalShutdown = false // Reset flag
       this.pingAbortSignal = new Subject<void>()
       this.restartAbortSignal = new Subject<void>()
@@ -68,13 +85,14 @@ class NodeServer {
       this.autoRestartNode()
       logger.info(`Node is running on port ${port}`)
       if (IS_DEV) {
-        console.log('Server is running on:', `http://127.0.0.1:${port}`)
+        const serverUrl = this.getServerUrl()
+        console.log('Server is running on:', serverUrl)
       }
 
       return true
     } catch (error) {
       logger.error(`Failed to start node`, error)
-      this.status = NodeStatus.Idle
+      this.status.next(NodeStatus.Idle)
       this.port = null
       this.process = null
       return false
@@ -103,7 +121,7 @@ class NodeServer {
           logger.info('Process exited gracefully but unexpectedly')
         }
       }
-      this.status = NodeStatus.Idle
+      this.status.next(NodeStatus.Idle)
     })
 
     return this.process
@@ -160,7 +178,7 @@ class NodeServer {
       )
       .subscribe(() => {
         logger.info('Node process monitoring completed')
-        this.status = NodeStatus.Idle
+        this.status.next(NodeStatus.Idle)
       })
   }
 
@@ -172,7 +190,7 @@ class NodeServer {
     //  Abort the previous ping
     this.pingAbortSignal.next()
 
-    const serverUrl = `http://127.0.0.1:${port}`
+    const serverUrl = this.getServerUrl()
     return defer(() => axios.get(`${serverUrl}/health`)).pipe(
       retryAfter(3000),
       takeUntil(this.pingAbortSignal),
@@ -187,7 +205,7 @@ class NodeServer {
     }
 
     this.intentionalShutdown = true // Set flag before killing
-    this.status = NodeStatus.Idle
+    this.status.next(NodeStatus.Idle)
 
     if (this.process) {
       this.process.kill('SIGINT')
