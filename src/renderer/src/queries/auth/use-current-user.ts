@@ -6,6 +6,7 @@ export const RQUERY = () => [RQUERY_ROOT]
 
 interface Options {
   enabled?: boolean
+  retry?: boolean
 }
 
 export const useGetCurrentUserQuery = (options?: Options) => {
@@ -17,7 +18,7 @@ export const useGetCurrentUserQuery = (options?: Options) => {
     },
     refetchInterval: false,
     staleTime: 1000 * 60 * 60,
+    retry: options?.retry ?? false,
     enabled: options?.enabled
-    // retry: false,
   })
 }

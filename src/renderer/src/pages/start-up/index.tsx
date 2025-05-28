@@ -20,7 +20,8 @@ const StartUpPage = () => {
   const isSignedIn = useAppSelector(authSelectors.isSignedIn)
 
   const getCurrentUserQuery = useGetCurrentUserQuery({
-    enabled: false
+    enabled: false,
+    retry: false
   })
 
   const dispatch = useAppDispatch()
@@ -41,6 +42,7 @@ const StartUpPage = () => {
     const checkAuth = async () => {
       try {
         const accessToken = await sessionManager.getAccessToken()
+        console.log(accessToken)
 
         if (!accessToken) {
           throw new Error('No access token found')
