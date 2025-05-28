@@ -18,7 +18,9 @@ const buttonVariants = cva(
 interface MacControlsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const MacControls = ({ className, ...props }: MacControlsProps) => {
-  return <div className={cn('group flex items-center gap-2 py-px', className)} {...props}></div>
+  return (
+    <div className={cn('group/controls flex items-center gap-2 py-px', className)} {...props}></div>
+  )
 }
 
 interface ButtonProps
@@ -36,7 +38,7 @@ const MacControlButton = ({ variant, className, disabled, ...props }: ButtonProp
       <Icon
         className={cn(
           'size-2.5 opacity-0',
-          !disabled && 'group-hover:opacity-100 hover:opacity-100'
+          !disabled && 'group-hover/controls:opacity-100 hover:opacity-100'
         )}
         strokeWidth={3}
         icon={icons[variant || 'close']}
