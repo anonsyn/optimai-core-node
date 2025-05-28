@@ -4,7 +4,6 @@ export const REFRESH_TOKEN_KEY = 'opai_refresh_token'
 export class SessionManager {
   async getAccessToken() {
     const accessToken = await window.authIPC.getAccessToken()
-    console.log({ accessToken })
     return `${accessToken}`
   }
 
