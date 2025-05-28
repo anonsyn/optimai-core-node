@@ -1,5 +1,6 @@
 export enum NodeStatus {
   Idle = 'idle',
   Running = 'running',
-  Restarting = 'restarting'
+  Restarting = 'restarting',
+  Stopping = 'stopping'
 }

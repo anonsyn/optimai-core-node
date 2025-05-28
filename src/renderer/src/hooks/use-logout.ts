@@ -20,7 +20,13 @@ const useLogout = () => {
   const uptimeRewardCountStore = useUserUptimeRewardCountStore()
 
   return async () => {
-    await window.authIPC.logout()
+    try {
+      await window.nodeIPC.stopNode()
+      await window.authIPC.logout()
+    } catch (error) {
+      console.error(error)
+    }
+
     dispatch(authActions.setUser(undefined))
     dispatch(checkInActions.reset())
     dispatch(notificationActions.reset())
