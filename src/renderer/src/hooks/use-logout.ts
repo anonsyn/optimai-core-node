@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router'
 
 const useLogout = () => {
   const dispatch = useAppDispatch()
-  const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const uptimeStore = useUserUptimeStore()
   const deviceStore = useUserDeviceStore()
   const uptimeRewardStore = useUserUptimeRewardStore()

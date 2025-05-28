@@ -47,7 +47,7 @@ const saveTokens = (accessToken: string, refreshToken: string, options?: Options
 }
 
 const refreshToken = (options?: Options) => {
-  return runNodeCommand(['auth', 'refresh-token'], options)
+  return runNodeCommandWithJsonStdout(['auth', 'refresh-token'], options)
 }
 
 const startNode = (port: number, options?: Options) => {

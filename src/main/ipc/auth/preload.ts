@@ -5,7 +5,8 @@ const authIPC = {
   getAccessToken: (): Promise<string> => ipcRenderer.invoke(AuthEvents.GetAccessToken),
   saveTokens: (accessToken: string, refreshToken: string) =>
     ipcRenderer.invoke(AuthEvents.SaveTokens, accessToken, refreshToken),
-  refreshToken: () => ipcRenderer.invoke(AuthEvents.RefreshToken),
+  refreshToken: (): Promise<{ access_token: string }> =>
+    ipcRenderer.invoke(AuthEvents.RefreshToken),
   logout: () => ipcRenderer.invoke(AuthEvents.Logout)
 }
 
