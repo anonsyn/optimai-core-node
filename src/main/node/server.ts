@@ -71,6 +71,10 @@ class NodeServer extends EventEmitter<NodeServerEvents> {
     return `http://127.0.0.1:${this.port}`
   }
 
+  getPort() {
+    return this.port
+  }
+
   async start() {
     try {
       if (!this.canStart) {

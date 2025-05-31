@@ -20,7 +20,8 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': resolve('src/renderer/src'),
-        '@assets': resolve('src/renderer/src/assets')
+        '@assets': resolve('src/renderer/src/assets'),
+        '@main': resolve('src/main')
       }
     },
     define: {

@@ -1,9 +1,10 @@
 import { loadingLottieData } from '@/assets/lotties/loading'
 import Logo from '@/components/branding/logo'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { PATHS } from '@/routers/paths'
-import { authActions, authSelectors } from '@/store/slices/auth'
+import { authActions } from '@/store/slices/auth'
+import { getErrorMessage } from '@/utils/get-error-message'
 import { sessionManager } from '@/utils/session-manager'
 import Lottie from 'lottie-react'
 import { useEffect, useState } from 'react'
@@ -16,8 +17,8 @@ const StartUpPage = () => {
   const [installingUpdate, setInstallingUpdate] = useState(false)
   const [isNodeStarting, setIsNodeStarting] = useState(true)
 
-  const isCheckingAuth = useAppSelector(authSelectors.isCheckingAuth)
-  const isSignedIn = useAppSelector(authSelectors.isSignedIn)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+  const [isSignedIn, setIsSignedIn] = useState(false)
 
   const getCurrentUserQuery = useGetCurrentUserQuery({
     enabled: false,
@@ -42,15 +43,13 @@ const StartUpPage = () => {
     const checkAuth = async () => {
       try {
         const accessToken = await sessionManager.getAccessToken()
-        console.log(accessToken)
 
         if (!accessToken) {
           throw new Error('No access token found')
         }
 
         const res = await getCurrentUserQuery.refetch({
-          throwOnError: true,
-          cancelRefetch: false
+          throwOnError: true
         })
 
         const user = res.data?.user
@@ -59,25 +58,21 @@ const StartUpPage = () => {
           throw new Error('No user found')
         }
 
-        dispatch(
-          authActions.setState({
-            isChecked: true,
-            isChecking: false,
-            user: user
-          })
-        )
-      } catch {
-        dispatch(
-          authActions.setState({
-            isChecked: true,
-            isChecking: false,
-            user: undefined
-          })
-        )
+        dispatch(authActions.setUser(user))
+        setIsSignedIn(true)
+        setIsCheckingAuth(false)
+      } catch (error) {
+        const message = getErrorMessage(error)
+        const isCanceled = message === 'CancelledError'
+        if (isCanceled) {
+          return
+        }
+        console.log(message)
+        setIsSignedIn(false)
+        setIsCheckingAuth(false)
       }
     }
     if (isCheckingAuth) {
-      console.log('Call check auth')
       checkAuth()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

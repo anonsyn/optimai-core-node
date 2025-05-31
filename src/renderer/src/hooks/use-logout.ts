@@ -6,7 +6,6 @@ import { useUserUptimeStore } from '@/hooks/use-user-uptime-store'
 import { PATHS } from '@/routers/paths'
 import { authActions } from '@/store/slices/auth'
 import { checkInActions } from '@/store/slices/checkin'
-import { notificationActions } from '@/store/slices/notification'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router'
 
@@ -29,7 +28,6 @@ const useLogout = () => {
 
     dispatch(authActions.setUser(undefined))
     dispatch(checkInActions.reset())
-    dispatch(notificationActions.reset())
 
     navigate(PATHS.LOGIN, { replace: true })
 

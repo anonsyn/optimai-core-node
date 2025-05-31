@@ -4,32 +4,15 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
 export interface AuthState {
-  isChecking: boolean
-  isChecked: boolean
   user?: User
 }
 
-const initialState: AuthState = {
-  isChecking: true,
-  isChecked: false
-}
+const initialState: AuthState = {}
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setState: (state, action: PayloadAction<AuthState>) => {
-      const { isChecking, isChecked, user } = action.payload
-      state.isChecking = isChecking
-      state.isChecked = isChecked
-      state.user = user
-    },
-    setIsChecking: (state, action: PayloadAction<boolean>) => {
-      state.isChecking = action.payload
-    },
-    setIsChecked: (state, action: PayloadAction<boolean>) => {
-      state.isChecked = action.payload
-    },
     setUser: (state, action: PayloadAction<User | undefined>) => {
       state.user = action.payload
     }
@@ -42,8 +25,6 @@ export const authActions = {
 
 export const authSelectors = {
   state: (state: RootState) => state.auth,
-  isCheckingAuth: (state: RootState) => state.auth.isChecking,
-  isCheckedAuth: (state: RootState) => state.auth.isChecked,
   isSignedIn: (state: RootState) => !!state.auth.user,
   user: (state: RootState) => state.auth.user,
   userId: (state: RootState) => state.auth.user?.id,

@@ -1,6 +1,6 @@
 import Token from '@/components/branding/token'
 import { useAppSelector } from '@/hooks/redux'
-import { notificationSelectors } from '@/store/slices/notification'
+import { nodeSelectors } from '@/store/slices/node'
 import NumberFlow from '@number-flow/react'
 import { format } from 'date-fns'
 import { animate, AnimatePresence, motion, useMotionTemplate, useMotionValue } from 'framer-motion'
@@ -13,30 +13,21 @@ const formatNextExecution = (timestamp: string | number | undefined): string => 
 }
 
 const Notification = () => {
-  const notification = useAppSelector(notificationSelectors.notification)
-  const latestUptime = useAppSelector(notificationSelectors.latestUptime)
-  const nextUptimeReward = useAppSelector(notificationSelectors.nextUptimeReward)
+  const cycle = useAppSelector(nodeSelectors.cycle)
+  const latestNotificationReward = useAppSelector(nodeSelectors.latestNotificationReward)
   const progress = useMotionValue(0)
   const maskSize = useMotionTemplate`${progress}% 100%`
 
-  console.log({ latestUptime, nextUptimeReward })
-
   useEffect(() => {
-    if (nextUptimeReward) {
-      const lastUptime = notification?.timestamp || latestUptime
+    if (cycle) {
+      const lastUptime = cycle.createdAt
+      const nextUptimeReward = cycle.refreshAt
       const now = Date.now()
       const duration = nextUptimeReward - lastUptime
       const passedTime = now - lastUptime
       const remainingTime = duration - passedTime
       const currentProgress = (passedTime / duration) * 100
-      console.log({
-        lastUptime,
-        now,
-        passedTime,
-        duration,
-        remainingTime,
-        currentProgress
-      })
+
       progress.set(currentProgress)
 
       const playControl = animate(progress, 100, {
@@ -49,7 +40,7 @@ const Notification = () => {
         playControl.stop()
       }
     }
-  }, [latestUptime, nextUptimeReward, notification])
+  }, [cycle])
 
   return (
     <div className="relative h-9 w-full">
@@ -78,9 +69,9 @@ const Notification = () => {
         />
         <div className="bg-raydial-15 absolute inset-0 flex items-center justify-between">
           <AnimatePresence mode="sync">
-            {notification ? (
+            {latestNotificationReward ? (
               <motion.div
-                key={notification.id}
+                key={latestNotificationReward.timestamp}
                 initial={{
                   y: '100%',
                   opacity: 0
@@ -107,7 +98,7 @@ const Notification = () => {
                     <p className="text-12 flex items-center leading-normal font-normal text-white">
                       +
                       <NumberFlow
-                        value={notification.reward}
+                        value={Number(latestNotificationReward.amount)}
                         trend="increasing"
                         format={{
                           minimumFractionDigits: 0,
@@ -119,7 +110,7 @@ const Notification = () => {
                   </div>
                 </div>
                 <p className="text-12 line-clamp-1 max-w-[80%] leading-relaxed font-medium text-white">
-                  {formatNextExecution(notification.timestamp)}
+                  {formatNextExecution(latestNotificationReward.timestamp)}
                 </p>
               </motion.div>
             ) : (

@@ -43,7 +43,11 @@ type FormValue = z.infer<typeof signInSchema>
 const LoginForm = () => {
   const form = useForm<FormValue>({
     mode: 'all',
-    resolver: zodResolver(signInSchema)
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: '',
+      password: ''
+    }
   })
 
   const navigate = useNavigate()
@@ -97,6 +101,11 @@ const LoginForm = () => {
     return signIn(formValue)
       .then((user) => {
         dispatch(authActions.setUser(user))
+      })
+      .then(() => {
+        return window.nodeIPC.startNode()
+      })
+      .then(() => {
         toastSuccess('Login successful')
         navigate(PATHS.HOME)
       })

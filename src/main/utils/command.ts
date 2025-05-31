@@ -12,6 +12,7 @@ const runCommandWithJsonStdout = async <T = any>(
   return execa(command, args, {
     ...options
   }).then((res) => {
+    console.log(res)
     return JSON.parse(res.stdout)
   })
 }

@@ -16,6 +16,9 @@ class NodeIpcHandler {
     ipcMain.handle(NodeEvents.GetNodeServerUrl, async () => {
       return nodeServer.getServerUrl()
     })
+    ipcMain.handle(NodeEvents.GetPort, async () => {
+      return nodeServer.getPort()
+    })
 
     nodeServer.on('statusChange', (status) => {
       ipcMain.emit(NodeEvents.OnNodeStatusChanged, status)
