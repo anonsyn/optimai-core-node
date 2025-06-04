@@ -18,6 +18,7 @@ import {
 } from 'rxjs'
 import { IS_DEV } from '../configs/constants'
 import logger from '../configs/logger'
+import { killProcess } from '../utils/process'
 import { retryAfter } from '../utils/rx-operators'
 import { nodeCommands } from './commands'
 import { NodeStatus } from './types'
@@ -228,41 +229,47 @@ class NodeServer extends EventEmitter<NodeServerEvents> {
     this.intentionalShutdown = true // Set flag before killing
     this.status.next(NodeStatus.Stopping)
 
-    if (this.process) {
-      console.log('Killing process')
-
-      // Send SIGINT signal for graceful shutdown
-      this.process.kill('SIGINT')
-
+    if (this.process && this.process.pid) {
       try {
-        // Wait for the process to exit gracefully (with timeout)
-        await new Promise<void>((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            reject(new Error('Process shutdown timeout'))
-          }, 5000) // 5 second timeout
-
-          this.process?.once('exit', (code, signal) => {
-            clearTimeout(timeout)
-            logger.info(`Process exited with code: ${code}, signal: ${signal}`)
-            resolve()
-          })
-        })
-
-        console.log('Process exited gracefully')
-      } catch {
-        // If graceful shutdown times out, force kill
-        console.log('Graceful shutdown timed out, force killing process')
-        this.process.kill('SIGKILL')
-
-        // Wait a bit more for force kill to complete
-        await new Promise<void>((resolve) => {
-          const forceTimeout = setTimeout(resolve, 1000) // 1 second for force kill
-          this.process?.once('exit', () => {
-            clearTimeout(forceTimeout)
-            resolve()
-          })
-        })
+        console.log('Killing process')
+        await killProcess(this.process.pid)
+      } catch (error: any) {
+        console.log('Stop node error', error.message)
       }
+      // console.log('Killing process')
+
+      // // Send SIGINT signal for graceful shutdown
+      // this.process.kill('SIGINT')
+
+      // try {
+      //   // Wait for the process to exit gracefully (with timeout)
+      //   await new Promise<void>((resolve, reject) => {
+      //     const timeout = setTimeout(() => {
+      //       reject(new Error('Process shutdown timeout'))
+      //     }, 5000) // 5 second timeout
+
+      //     this.process?.once('exit', (code, signal) => {
+      //       clearTimeout(timeout)
+      //       logger.info(`Process exited with code: ${code}, signal: ${signal}`)
+      //       resolve()
+      //     })
+      //   })
+
+      //   console.log('Process exited gracefully')
+      // } catch {
+      //   // If graceful shutdown times out, force kill
+      //   console.log('Graceful shutdown timed out, force killing process')
+      //   this.process.kill('SIGKILL')
+
+      //   // Wait a bit more for force kill to complete
+      //   await new Promise<void>((resolve) => {
+      //     const forceTimeout = setTimeout(resolve, 1000) // 1 second for force kill
+      //     this.process?.once('exit', () => {
+      //       clearTimeout(forceTimeout)
+      //       resolve()
+      //     })
+      //   })
+      // }
     }
 
     this.status.next(NodeStatus.Idle)

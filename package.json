@@ -69,6 +69,7 @@
     "rxjs": "^7.8.2",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.0.2",
+    "tree-kill": "^1.2.2",
     "truncate-middle": "^2.0.0",
     "vaul": "^1.1.2",
     "zod": "^3.24.3"
