@@ -13,9 +13,13 @@ const SessionHandler = () => {
 
     const autoRefreshToken = async () => {
       try {
+        if (!isMounted) {
+          return
+        }
+
         let accessToken = await sessionManager.getAccessToken()
 
-        if (!accessToken || isMounted) {
+        if (!accessToken || !isMounted) {
           return
         }
         const payload = jwtDecode<JwtPayload>(accessToken)
@@ -36,7 +40,9 @@ const SessionHandler = () => {
               }
 
               accessToken = res.access_token
-              autoRefreshToken()
+              if (isMounted) {
+                autoRefreshToken()
+              }
             } catch (error) {
               logout()
               toastError('Session expired, please login again')
