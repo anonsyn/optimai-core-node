@@ -19,7 +19,8 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "deploy": "npm run build && electron-builder build --publish always"
+    "deploy": "npm run build && electron-builder build --publish always",
+    "download-binary": "tsx scripts/download-binary.ts"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
@@ -97,6 +98,7 @@
     "sass": "^1.86.0",
     "tailwindcss": "^4.0.14",
     "tailwindcss-animate": "^1.0.7",
+    "tsx": "^4.7.1",
     "tw-animate-css": "^1.2.8",
     "typescript": "^5.7.3",
     "vite": "^6.1.0",
