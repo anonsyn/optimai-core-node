@@ -14,7 +14,7 @@ asarUnpack:
 win:
   executableName: optimai-corenode
   extraResources:
-    - from: applications/node/win
+    - from: applications/node/windows
       to: applications/node/bin
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
