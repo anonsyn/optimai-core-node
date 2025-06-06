@@ -15,12 +15,21 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/renderer/src/*",
+      "@assets/*": [
+        "src/renderer/src/assets/*"
+      ],
+      "@lite-node/*": [
+        "src/renderer/src/apps/lite-node/*"
+      ],
+      "@core-node/*": [
+        "src/renderer/src/apps/core-node/*"
       ],
       "@main/*": [
         "src/main/*"
-      ]
+      ],
+      "@/*": [
+        "src/renderer/src/*",
+      ],
     }
   }
 }

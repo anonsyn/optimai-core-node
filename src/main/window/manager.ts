@@ -1,5 +1,5 @@
 import { WebContents } from 'electron'
-import OptimaiBrowserWindow, { WindowName } from './window'
+import OptimaiBrowserWindow, { WindowType } from './window'
 
 class WindowManager {
   private windows: OptimaiBrowserWindow[] = []
@@ -22,8 +22,12 @@ class WindowManager {
       window.destroy()
     })
   }
-  getWindowByName(name: WindowName) {
-    return this.windows.find((w) => w.name === name)
+  getWindowByType(type: WindowType) {
+    return this.windows.find((w) => w.type === type)
+  }
+
+  getVisibleWindow() {
+    return this.windows.find((w) => w.isVisible())
   }
 }
 

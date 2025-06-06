@@ -17,10 +17,20 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
+    build: {
+      rollupOptions: {
+        input: {
+          liteNode: resolve(__dirname, 'src/renderer/lite-node.html'),
+          coreNode: resolve(__dirname, 'src/renderer/core-node.html')
+        }
+      }
+    },
     resolve: {
       alias: {
         '@': resolve('src/renderer/src'),
         '@assets': resolve('src/renderer/src/assets'),
+        '@lite-node': resolve('src/renderer/src/apps/lite-node'),
+        '@core-node': resolve('src/renderer/src/apps/core-node'),
         '@main': resolve('src/main')
       }
     },

@@ -1,20 +1,21 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 
-enum WindowName {
-  Main = 'main'
+enum WindowType {
+  CoreNode = 'main',
+  LiteNode = 'lite-node'
 }
 type OptimaiBrowserWindowOptions = BrowserWindowConstructorOptions & {
-  name?: WindowName
+  type: WindowType
 }
 
 class OptimaiBrowserWindow extends BrowserWindow {
-  public name: string | undefined
+  public type: WindowType
 
-  constructor({ name, ...options }: OptimaiBrowserWindowOptions) {
+  constructor({ type, ...options }: OptimaiBrowserWindowOptions) {
     super(options)
-    this.name = name
+    this.type = type
   }
 }
 
-export { WindowName }
+export { WindowType }
 export default OptimaiBrowserWindow

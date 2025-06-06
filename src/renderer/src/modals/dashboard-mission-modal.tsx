@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { SecondaryText } from '@/components/ui/button'
 import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
-import { EXTERNAL_LINKS } from '@/routers/paths'
 import { Modals } from '@/store/slices/modals'
+import { EXTERNAL_LINKS } from '@lite-node/routers/paths'
 
 function DashboardMissionModal() {
   const open = useIsModalOpen(Modals.DASHBOARD_MISSION)

@@ -4,7 +4,6 @@ import { autoUpdater } from 'electron-updater'
 import { BehaviorSubject } from 'rxjs'
 import logger from '../../configs/logger'
 import windowManager from '../../window/manager'
-import { WindowName } from '../../window/window'
 import { UpdaterEvents } from './events'
 import { UpdateState } from './types'
 
@@ -59,7 +58,7 @@ class UpdaterIpcHandler {
     })
 
     state.subscribe((state) => {
-      const window = windowManager.getWindowByName(WindowName.Main)
+      const window = windowManager.getVisibleWindow()
       if (window) {
         window.webContents.send(UpdaterEvents.OnStateChange, state)
       }
