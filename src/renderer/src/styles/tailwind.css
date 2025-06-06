@@ -144,6 +144,10 @@
   color: transparent;
 }
 
+@utility bg-core-node {
+  background: linear-gradient(0deg, #121614 0%, #121614 100%), #fff;
+}
+
 @utility container {
   @apply mx-auto px-4;
 }

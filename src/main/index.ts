@@ -13,7 +13,7 @@ import { WindowType } from './window/window'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
-const DEFAULT_WINDOW = WindowType.LiteNode
+const DEFAULT_WINDOW = WindowType.CoreNode
 
 const logFolder = app.getPath('logs')
 log.info(logFolder)
@@ -80,7 +80,7 @@ if (!gotTheLock) {
     authIpcHandler.initialize()
     nodeIpcHandler.initialize()
 
-    const window = createWindow(WindowType.LiteNode)
+    const window = createWindow(DEFAULT_WINDOW)
     windowManager.addWindow(window)
 
     if (is.dev) {

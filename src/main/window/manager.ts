@@ -23,7 +23,7 @@ class WindowManager {
     })
   }
   getWindowByType(type: WindowType) {
-    return this.windows.find((w) => w.type === type)
+    return this.windows.find((w) => w.windowType === type)
   }
 
   getVisibleWindow() {

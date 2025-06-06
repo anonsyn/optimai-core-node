@@ -5,15 +5,15 @@ enum WindowType {
   LiteNode = 'lite-node'
 }
 type OptimaiBrowserWindowOptions = BrowserWindowConstructorOptions & {
-  type: WindowType
+  windowType: WindowType
 }
 
 class OptimaiBrowserWindow extends BrowserWindow {
-  public type: WindowType
+  public windowType: WindowType
 
-  constructor({ type, ...options }: OptimaiBrowserWindowOptions) {
+  constructor({ windowType, ...options }: OptimaiBrowserWindowOptions) {
     super(options)
-    this.type = type
+    this.windowType = windowType
   }
 }
 
