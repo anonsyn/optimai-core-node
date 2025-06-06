@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { EXTERNAL_LINKS } from '@lite-node/routers/paths'
+import { EXTERNAL_LINKS } from '@/configs/links'
 
 const CTA = () => {
   const handleClick = () => {

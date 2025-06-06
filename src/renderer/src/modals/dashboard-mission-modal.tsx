@@ -9,9 +9,9 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { SecondaryText } from '@/components/ui/button'
+import { EXTERNAL_LINKS } from '@/configs/links'
 import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
-import { EXTERNAL_LINKS } from '@lite-node/routers/paths'
 
 function DashboardMissionModal() {
   const open = useIsModalOpen(Modals.DASHBOARD_MISSION)

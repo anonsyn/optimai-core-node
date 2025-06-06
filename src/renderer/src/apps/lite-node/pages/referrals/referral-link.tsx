@@ -1,7 +1,7 @@
 import { CopyButton } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { EXTERNAL_LINKS } from '@/configs/links'
 import { useGetReferralStatsQuery } from '@/queries/referral'
-import { EXTERNAL_LINKS } from '@lite-node/routers/paths'
 import truncateMiddle from 'truncate-middle'
 
 const ReferralLink = () => {
