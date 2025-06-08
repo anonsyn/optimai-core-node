@@ -3,16 +3,14 @@ import headerSlice from '@/store/slices/header'
 import modalSlice from '@/store/slices/modals'
 import onlineSlice from '@/store/slices/online'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { persistReducer, persistStore } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
 import checkInSlice from './slices/checkin'
 import nodeSlice from './slices/node'
 
-const persistConfig = {
-  key: 'root',
-  storage,
-  whitelist: [authSlice.name]
-}
+// const persistConfig = {
+//   key: 'root',
+//   storage,
+//   whitelist: [authSlice.name]
+// }
 
 const rootReducer = combineReducers({
   [authSlice.name]: authSlice.reducer,
@@ -23,10 +21,10 @@ const rootReducer = combineReducers({
   [nodeSlice.name]: nodeSlice.reducer
 })
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+// const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -35,7 +33,7 @@ export const store = configureStore({
     })
 })
 
-export const persistor = persistStore(store)
+// export const persistor = persistStore(store)
 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

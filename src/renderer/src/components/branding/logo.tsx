@@ -6,12 +6,13 @@ interface LogoProps extends ImgHTMLAttributes<HTMLImageElement> {
   horizontal?: boolean
 }
 
-const Logo = ({ className, horizontal }: LogoProps) => {
+const Logo = ({ className, horizontal, ...props }: LogoProps) => {
   return (
     <img
       className={cn('max-h-none w-auto max-w-none', className)}
       src={horizontal ? IMAGES.BRANDING.CORE_NODE_LOGO_HORIZONTAL : IMAGES.BRANDING.CORE_NODE_LOGO}
       alt="logo"
+      {...props}
     />
   )
 }
