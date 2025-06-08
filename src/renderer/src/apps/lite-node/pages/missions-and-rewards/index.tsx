@@ -1,6 +1,6 @@
 import { useHeader } from '@/hooks/use-header'
-import DashboardMissionModal from '@/modals/dashboard-mission-modal'
-import VerifyTwitterTaskModal from '@/modals/verify-twitter-task-modal'
+import DashboardMissionModal from '@lite-node/modals/dashboard-mission-modal'
+import VerifyTwitterTaskModal from '@lite-node/modals/verify-twitter-task-modal'
 import DailyTasks from './daily-tasks'
 import TaskTabs from './tabs'
 
