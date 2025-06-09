@@ -6,8 +6,10 @@ import { Modals } from '@/store/slices/modals'
 import { sessionManager } from '@/utils/session-manager'
 import { sleep } from '@/utils/sleep'
 import { cn } from '@/utils/tw'
+import { PATHS } from '@core-node/routers/paths'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { HTMLAttributes, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 interface StatusProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -19,6 +21,8 @@ const Status = ({ className, ...props }: StatusProps) => {
   const [listRef] = useAutoAnimate()
 
   const dispatch = useAppDispatch()
+
+  const navigate = useNavigate()
 
   const getCurrentUserQuery = useGetCurrentUserQuery({
     enabled: false,
@@ -89,7 +93,7 @@ const Status = ({ className, ...props }: StatusProps) => {
       try {
         setStatuses((prev) => [...prev, { message: 'Starting Node...' }])
         await window.nodeIPC.startNode()
-        console.log('Node started')
+        navigate(PATHS.BROWSER)
       } catch (error) {
         console.log('Error starting node')
         console.error(error)

@@ -19,7 +19,10 @@ interface MacControlsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const MacControls = ({ className, ...props }: MacControlsProps) => {
   return (
-    <div className={cn('group/controls flex items-center gap-2 py-px', className)} {...props}></div>
+    <div
+      className={cn('group/controls no-drag flex items-center gap-2 py-px', className)}
+      {...props}
+    ></div>
   )
 }
 

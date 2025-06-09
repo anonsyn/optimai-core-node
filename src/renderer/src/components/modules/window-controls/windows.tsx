@@ -18,7 +18,7 @@ const buttonVariants = cva(
 interface WindowsControlsProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const WindowsControls = ({ className, ...props }: WindowsControlsProps) => {
-  return <div className={cn('flex items-center gap-2', className)} {...props}></div>
+  return <div className={cn('no-drag flex items-center gap-2', className)} {...props}></div>
 }
 
 interface ButtonProps
