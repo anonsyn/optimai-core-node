@@ -1,4 +1,5 @@
 import Logo from '@/components/branding/logo'
+import LoginModal from '@core-node/modals/login-modal'
 import CanvasGlow from '@core-node/pages/start-up/canvas-glow'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -138,6 +139,7 @@ const StartUpPage = () => {
         <CanvasGlow />
       </div>
       <WaveVisualizer />
+      <LoginModal />
     </div>
   )
 }

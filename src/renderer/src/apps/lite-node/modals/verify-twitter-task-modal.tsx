@@ -30,10 +30,7 @@ function VerifyTwitterTaskModal() {
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
-      <DialogContent
-        className="bg-secondary inset-auto top-1/2 left-1/2 h-auto max-h-[98svh] w-full max-w-[min(92dvw,343px)] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg !p-0 xl:max-w-[640px]"
-        container={document.querySelector('main')}
-      >
+      <DialogContent className="bg-secondary inset-auto top-1/2 left-1/2 h-auto max-h-[98svh] w-full max-w-[min(92dvw,343px)] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-lg !p-0 xl:max-w-[640px]">
         <VerifyForm />
       </DialogContent>
     </Dialog>

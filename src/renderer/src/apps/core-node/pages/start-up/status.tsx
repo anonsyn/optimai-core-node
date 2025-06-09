@@ -1,6 +1,8 @@
+import { useOpenModal } from '@/hooks/modal'
 import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { authActions } from '@/store/slices/auth'
+import { Modals } from '@/store/slices/modals'
 import { sessionManager } from '@/utils/session-manager'
 import { sleep } from '@/utils/sleep'
 import { cn } from '@/utils/tw'
@@ -23,10 +25,13 @@ const Status = ({ className, ...props }: StatusProps) => {
     retry: false
   })
 
+  const openLoginModal = useOpenModal(Modals.LOGIN)
+
   useEffect(() => {
     const checkForUpdates = async () => {
       return new Promise<boolean>((resolve) => {
-        console.log('Checking for updates')
+        setStatuses((prev) => [...prev, { message: 'Checking for updates...' }])
+
         window.updaterIPC.onStateChange((state) => {
           if (state.status === 'checking') {
             setStatuses((prev) => [...prev, { message: 'Checking for updates...' }])
@@ -67,12 +72,14 @@ const Status = ({ className, ...props }: StatusProps) => {
         })
 
         const user = res.data?.user
+        console.log({ user })
 
         if (!user) {
           throw new Error('No user found')
         }
 
         dispatch(authActions.setUser(user))
+        return true
       } catch {
         return false
       }
@@ -82,6 +89,7 @@ const Status = ({ className, ...props }: StatusProps) => {
       try {
         setStatuses((prev) => [...prev, { message: 'Starting Node...' }])
         await window.nodeIPC.startNode()
+        console.log('Node started')
       } catch (error) {
         console.log('Error starting node')
         console.error(error)
@@ -94,14 +102,13 @@ const Status = ({ className, ...props }: StatusProps) => {
 
     const startApplication = async () => {
       // Wait for animation to complete
-      await sleep(2000)
+      await sleep(3000)
 
       const shouldRestart = await checkForUpdates()
 
-      console.log({ shouldRestart })
+      await sleep(1000)
 
       if (shouldRestart) {
-        await sleep(1000)
         window.updaterIPC.quitAndInstall()
         return
       }
@@ -109,7 +116,11 @@ const Status = ({ className, ...props }: StatusProps) => {
       const isAuthenticated = await checkAuth()
 
       if (!isAuthenticated) {
-        // TODO: open login modal
+        openLoginModal({
+          onSuccess: () => {
+            startNode()
+          }
+        })
         return
       }
 
@@ -127,19 +138,15 @@ const Status = ({ className, ...props }: StatusProps) => {
     <div className={cn('relative h-full w-full overflow-visible', className)} {...props}>
       <div
         ref={listRef}
-        className="absolute inset-x-0 bottom-0 flex h-25 w-full flex-col justify-end overflow-hidden"
+        className="absolute inset-x-0 bottom-0 flex h-[108px] w-full flex-col justify-end overflow-visible"
         style={{
-          maskImage: 'linear-gradient(180deg, rgba(217, 217, 217, 0.00) 0%, #737373 90%)'
+          maskImage: 'linear-gradient(180deg, rgba(217, 217, 217, 0.00) 0%, #737373 100%)'
         }}
       >
         {statuses.map((status) => {
           return (
             <p
               key={status.message}
-              // initial={{ opacity: 0, y: 100 }}
-              // animate={{ opacity: 1, y: 0 }}
-              // exit={{ opacity: 0, y: -100 }}
-              // transition={{ duration: 0.5 }}
               className={cn(
                 'text-24 shrink-0 text-center leading-normal font-medium text-white',
                 status.error && 'text-destructive'
