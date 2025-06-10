@@ -182,8 +182,6 @@ class BrowserViewManager {
       if (mainWindow && !mainWindow.contentView.children.includes(this._webContentsView)) {
         mainWindow.contentView.addChildView(this._webContentsView)
 
-        this._webContentsView.webContents.loadURL('https://www.google.com')
-
         if (bounds) {
           this._webContentsView.setBounds(bounds)
         } else {

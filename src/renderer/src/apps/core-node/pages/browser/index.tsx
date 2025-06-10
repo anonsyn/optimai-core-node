@@ -23,11 +23,10 @@ const BrowserPage = () => {
     }
 
     // Small delay to ensure the component is fully rendered
-    const timer = setTimeout(showBrowserView, 100)
+    showBrowserView()
 
     // Hide browser view when component unmounts
     return () => {
-      clearTimeout(timer)
       window.browserIPC.hideBrowserView()
     }
   }, [])
