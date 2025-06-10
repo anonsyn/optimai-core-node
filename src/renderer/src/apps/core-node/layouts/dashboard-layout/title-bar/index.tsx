@@ -12,7 +12,7 @@ const TitleBar = () => {
   const { isMac } = useOs()
 
   return (
-    <div className="drag-region flex size-full items-center justify-between px-5 py-4">
+    <header className="drag-region flex size-full items-center justify-between px-5 py-4">
       <div className="flex items-center gap-8">
         {isMac && (
           <MacControls>
@@ -33,7 +33,7 @@ const TitleBar = () => {
           </WindowsControls>
         )}
       </div>
-    </div>
+    </header>
   )
 }
 

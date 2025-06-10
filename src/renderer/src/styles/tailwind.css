@@ -111,6 +111,7 @@
   --blur-20: 1.25rem;
   --blur-40: 2.5rem;
   --blur-50: 3.125rem;
+  --blur-400: 25rem;
 }
 
 @layer base {

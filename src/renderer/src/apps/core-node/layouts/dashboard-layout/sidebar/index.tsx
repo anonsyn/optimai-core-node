@@ -29,7 +29,7 @@ const Sidebar = () => {
   ]
 
   return (
-    <div className="size-full overflow-x-hidden overflow-y-auto">
+    <aside className="size-full overflow-x-hidden overflow-y-auto">
       <div className="flex flex-col items-center gap-5 py-5">
         {navItems.map((item, index) => {
           const isDivider = !item.path
@@ -62,7 +62,7 @@ const Sidebar = () => {
           )
         })}
       </div>
-    </div>
+    </aside>
   )
 }
 

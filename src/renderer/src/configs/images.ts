@@ -11,6 +11,9 @@ import TIER3 from '@assets/images/tiers/tier-3.svg'
 import TIER4 from '@assets/images/tiers/tier-4.svg'
 import TIER5 from '@assets/images/tiers/tier-5.svg'
 
+import GREEN_GLOW from '@assets/images/glows/green-glow.png'
+import YELLOW_GLOW from '@assets/images/glows/yellow-glow.png'
+
 const IMAGES = {
   BRANDING: {
     CORE_NODE_LOGO,
@@ -28,6 +31,11 @@ const IMAGES = {
     TIER3,
     TIER4,
     TIER5
+  },
+
+  GLOWS: {
+    GREEN_GLOW,
+    YELLOW_GLOW
   }
 }
 
