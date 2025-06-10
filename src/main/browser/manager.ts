@@ -15,6 +15,12 @@ interface NewWindowHandlerOptions {
   navigateInCurrentView?: boolean
 }
 
+interface BrowserDataOptions {
+  dataFolderName?: string
+  clearDataOnStartup?: boolean
+  usePrivateSession?: boolean
+}
+
 class BrowserViewManager {
   private _webContentsView: WebContentsView | null = null
   private isViewCreated = false
@@ -23,22 +29,71 @@ class BrowserViewManager {
     allowExternal: true,
     navigateInCurrentView: false
   }
+  private dataOptions: BrowserDataOptions = {
+    dataFolderName: 'browser-data',
+    clearDataOnStartup: false,
+    usePrivateSession: false
+  }
 
   get webContentsView(): WebContentsView | null {
     return this._webContentsView
   }
 
+  // Configure data persistence options
+  setDataOptions(options: Partial<BrowserDataOptions>) {
+    this.dataOptions = { ...this.dataOptions, ...options }
+  }
+
+  // Get the partition string for session storage
+  private getPartitionString(): string {
+    if (this.dataOptions.usePrivateSession) {
+      return '' // Default partition (in-memory)
+    }
+    return `persist:${this.dataOptions.dataFolderName}`
+  }
+
+  // Clear stored browser data
+  async clearStoredData() {
+    if (this._webContentsView) {
+      const session = this._webContentsView.webContents.session
+      await session.clearStorageData({
+        storages: [
+          'cookies',
+          'filesystem',
+          'indexdb',
+          'localstorage',
+          'shadercache',
+          'websql',
+          'serviceworkers',
+          'cachestorage'
+        ]
+      })
+      console.log('Browser data cleared')
+    }
+  }
+
   createBrowserView() {
     if (!this.isViewCreated) {
+      const partition = this.getPartitionString()
+
       this._webContentsView = new WebContentsView({
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
           webSecurity: true,
           // Enable DevTools in development
-          devTools: process.env.NODE_ENV === 'development'
+          devTools: process.env.NODE_ENV === 'development',
+          // Enable dark mode
+          enablePreferredSizeMode: true,
+          // Set partition for data persistence
+          partition: partition
         }
       })
+
+      // Clear data on startup if requested
+      if (this.dataOptions.clearDataOnStartup) {
+        this.clearStoredData()
+      }
 
       // Set transparent background
       this._webContentsView.setBackgroundColor('#00000000') // Transparent
@@ -54,12 +109,9 @@ class BrowserViewManager {
       // Load a default URL or blank page
       this._webContentsView.webContents.loadURL('https://www.google.com')
 
-      // Inject CSS for border radius and styling after page loads
-      this._webContentsView.webContents.once('dom-ready', () => {
-        this.injectBorderRadiusCSS()
-      })
-
       this.isViewCreated = true
+
+      console.log(`Browser view created with data storage: ${partition ? partition : 'in-memory'}`)
     }
   }
 
@@ -116,39 +168,6 @@ class BrowserViewManager {
       // You can add custom navigation logic here
       // For now, allow all navigation within the same view
     })
-  }
-
-  private injectBorderRadiusCSS() {
-    if (this._webContentsView) {
-      const css = `
-        html, body {
-          border-top-left-radius: 24px !important;
-          overflow: hidden !important;
-          background: transparent !important;
-        }
-        
-        body::before {
-          content: '';
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          border-top-left-radius: 24px;
-          background: inherit;
-          z-index: -1;
-          pointer-events: none;
-        }
-        
-        /* Ensure the main content area respects the border radius */
-        body > * {
-          border-top-left-radius: 24px;
-          overflow: hidden;
-        }
-      `
-
-      this._webContentsView.webContents.insertCSS(css)
-    }
   }
 
   showBrowserView(bounds?: BrowserViewBounds) {
@@ -237,4 +256,4 @@ class BrowserViewManager {
 const browserViewManager = new BrowserViewManager()
 
 export default browserViewManager
-export type { BrowserViewBounds, NewWindowHandlerOptions }
+export type { BrowserDataOptions, BrowserViewBounds, NewWindowHandlerOptions }

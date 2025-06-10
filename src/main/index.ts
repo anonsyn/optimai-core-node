@@ -1,5 +1,5 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, Menu, nativeImage, Tray } from 'electron'
+import { app, Menu, nativeImage, nativeTheme, Tray } from 'electron'
 import log from 'electron-log/main'
 import icon from '../../resources/icon.png?asset'
 import authIpcHandler from './ipc/auth'
@@ -83,6 +83,7 @@ if (!gotTheLock) {
     browserIpcHandler.initialize()
 
     const window = createWindow(DEFAULT_WINDOW)
+    nativeTheme.themeSource = 'dark'
     windowManager.addWindow(window)
 
     if (is.dev) {
