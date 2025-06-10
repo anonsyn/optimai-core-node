@@ -3,6 +3,7 @@ import { app, Menu, nativeImage, Tray } from 'electron'
 import log from 'electron-log/main'
 import icon from '../../resources/icon.png?asset'
 import authIpcHandler from './ipc/auth'
+import browserIpcHandler from './ipc/browser'
 import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
@@ -79,6 +80,7 @@ if (!gotTheLock) {
     updaterIpcHandler.initialize()
     authIpcHandler.initialize()
     nodeIpcHandler.initialize()
+    browserIpcHandler.initialize()
 
     const window = createWindow(DEFAULT_WINDOW)
     windowManager.addWindow(window)
