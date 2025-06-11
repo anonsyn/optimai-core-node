@@ -46,6 +46,7 @@ const Sidebar = () => {
               key={index}
               className="relative flex size-12 items-center justify-center"
               to={path}
+              draggable="false"
             >
               <Icon icon={icon} className="size-6" />
               <AnimatePresence>
