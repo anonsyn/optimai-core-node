@@ -1,5 +1,6 @@
 import { cn } from '@/utils/tw'
 import ArrowLeft from '@assets/icons/arrow-left.svg?react'
+import ArrowRight from '@assets/icons/arrow-right.svg?react'
 import ArrowUpRight from '@assets/icons/arrow-up-right.svg?react'
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
 import Calendar from '@assets/icons/calendar.svg?react'
@@ -37,7 +38,9 @@ import Plus from '@assets/icons/plus.svg?react'
 import Profile from '@assets/icons/profile.svg?react'
 import RefFilled from '@assets/icons/ref-filled.svg?react'
 import RefOutlined from '@assets/icons/ref-outlined.svg?react'
+import RotateCcw from '@assets/icons/rotate-ccw.svg?react'
 import Sad from '@assets/icons/sad.svg?react'
+import Search from '@assets/icons/search.svg?react'
 import SquarePen from '@assets/icons/square-pen.svg?react'
 import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
@@ -76,6 +79,8 @@ export const Icons = {
   Check,
   Info,
   ArrowLeft,
+  ArrowRight,
+  RotateCcw,
   TaskOutlined,
   TaskFilled,
   NodeOperatorOutlined,
@@ -100,7 +105,8 @@ export const Icons = {
   Hourglass,
   SquarePen,
   Plus,
-  Profile
+  Profile,
+  Search
 } as const
 
 export type IconName = keyof typeof Icons

@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react'
+import NavigationBar from './navigation-bar'
+import Tabs from './tabs'
 
 const BrowserPage = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const browserViewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const showBrowserView = () => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect()
+      if (browserViewRef.current) {
+        const rect = browserViewRef.current.getBoundingClientRect()
         const bounds = {
           x: Math.round(rect.left),
           y: Math.round(rect.top),
@@ -32,17 +34,14 @@ const BrowserPage = () => {
   }, [])
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        minHeight: '400px',
-        backgroundColor: 'transparent',
-        borderTopLeftRadius: '24px',
-        overflow: 'hidden'
-      }}
-    ></div>
+    <div className="grid h-full w-full grid-rows-[auto_minmax(0,1fr)]">
+      <div className="rounded-tl-24 bg-secondary backdrop-blur-10 relative w-full">
+        <div className="rounded-tl-24 pointer-events-none absolute inset-0 z-40 shadow-[4px_4px_12px_0px_rgba(0,0,0,0.50)_inset]" />
+        <NavigationBar />
+        <Tabs />
+      </div>
+      <div className="size-full" ref={browserViewRef} />
+    </div>
   )
 }
 
