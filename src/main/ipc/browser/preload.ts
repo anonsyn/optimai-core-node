@@ -15,9 +15,8 @@ interface NewWindowHandlerOptions {
 }
 
 const browserIPC = {
-  showBrowserView: () => ipcRenderer.send(BrowserEvents.ShowBrowserView),
-  showBrowserViewWithBounds: (bounds: BrowserViewBounds) =>
-    ipcRenderer.send(BrowserEvents.ShowBrowserViewWithBounds, bounds),
+  showBrowserView: (bounds?: BrowserViewBounds) =>
+    ipcRenderer.send(BrowserEvents.ShowBrowserView, bounds),
   hideBrowserView: () => ipcRenderer.send(BrowserEvents.HideBrowserView),
   destroyBrowserView: () => ipcRenderer.send(BrowserEvents.DestroyBrowserView),
   navigateToUrl: (url: string) => ipcRenderer.send(BrowserEvents.NavigateToUrl, url),
@@ -27,8 +26,7 @@ const browserIPC = {
   goForward: () => ipcRenderer.send(BrowserEvents.GoForward),
   reload: () => ipcRenderer.send(BrowserEvents.Reload),
   getCurrentUrl: () => ipcRenderer.invoke(BrowserEvents.GetCurrentUrl),
-  setNewWindowOptions: (options: Partial<NewWindowHandlerOptions>) =>
-    ipcRenderer.send(BrowserEvents.SetNewWindowOptions, options)
+  getAllTabs: () => ipcRenderer.invoke(BrowserEvents.GetAllTabs)
 }
 
 type BrowserIPC = typeof browserIPC

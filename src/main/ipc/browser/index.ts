@@ -1,77 +1,57 @@
 import { ipcMain } from 'electron'
-import browserViewManager, {
-  type BrowserViewBounds,
-  type NewWindowHandlerOptions
-} from '../../browser/manager'
+import browserTabManager from '../../browser/tabManager'
 import { BrowserEvents } from './events'
 
 class BrowserIpcHandler {
   initialize() {
-    ipcMain.on(BrowserEvents.ShowBrowserView, () => {
-      browserViewManager.showBrowserView()
-    })
-
-    ipcMain.on(BrowserEvents.ShowBrowserViewWithBounds, (_, bounds: BrowserViewBounds) => {
-      browserViewManager.showBrowserView(bounds)
+    ipcMain.on(BrowserEvents.ShowBrowserView, (_event, bounds?: any) => {
+      browserTabManager.showBrowserView(bounds)
     })
 
     ipcMain.on(BrowserEvents.HideBrowserView, () => {
-      browserViewManager.hideBrowserView()
+      browserTabManager.hideBrowserView()
     })
 
     ipcMain.on(BrowserEvents.DestroyBrowserView, () => {
-      browserViewManager.destroyBrowserView()
+      const active = browserTabManager.getActiveTabId()
+      if (active !== null) {
+        browserTabManager.closeTab(active)
+      }
     })
 
     ipcMain.on(BrowserEvents.NavigateToUrl, (_, url: string) => {
-      const webContentsView = browserViewManager.webContentsView
-      if (webContentsView) {
-        webContentsView.webContents.loadURL(url)
-      }
+      browserTabManager.navigateActive(url)
     })
 
     ipcMain.on(BrowserEvents.GoBack, () => {
-      const webContentsView = browserViewManager.webContentsView
-      if (webContentsView && webContentsView.webContents.navigationHistory.canGoBack()) {
-        webContentsView.webContents.goBack()
-      }
+      browserTabManager.goBackActive()
     })
 
     ipcMain.handle(BrowserEvents.CanGoBack, () => {
-      const webContentsView = browserViewManager.webContentsView
-      return webContentsView?.webContents.navigationHistory.canGoBack() || false
+      const state = browserTabManager.getActiveTab()?.state
+      return state?.canGoBack || false
     })
 
     ipcMain.handle(BrowserEvents.CanGoForward, () => {
-      const webContentsView = browserViewManager.webContentsView
-      return webContentsView?.webContents.navigationHistory.canGoForward() || false
+      const state = browserTabManager.getActiveTab()?.state
+      return state?.canGoForward || false
     })
 
     ipcMain.on(BrowserEvents.GoForward, () => {
-      const webContentsView = browserViewManager.webContentsView
-      if (webContentsView && webContentsView.webContents.navigationHistory.canGoForward()) {
-        webContentsView.webContents.goForward()
-      }
+      browserTabManager.goForwardActive()
     })
 
     ipcMain.on(BrowserEvents.Reload, () => {
-      const webContentsView = browserViewManager.webContentsView
-      if (webContentsView) {
-        webContentsView.webContents.reload()
-      }
+      browserTabManager.reloadActive()
     })
 
     ipcMain.handle(BrowserEvents.GetCurrentUrl, () => {
-      const webContentsView = browserViewManager.webContentsView
-      return webContentsView?.webContents.getURL() || null
+      return browserTabManager.getActiveTab()?.state.url || null
     })
 
-    ipcMain.on(
-      BrowserEvents.SetNewWindowOptions,
-      (_, options: Partial<NewWindowHandlerOptions>) => {
-        browserViewManager.setNewWindowOptions(options)
-      }
-    )
+    ipcMain.handle(BrowserEvents.GetAllTabs, () => {
+      return browserTabManager.getAllTabStates()
+    })
   }
 }
 
