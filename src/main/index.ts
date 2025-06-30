@@ -8,6 +8,7 @@ import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
 import { nodeServer } from './node/server'
+import { isMac } from './utils/os'
 import { createWindow } from './window/factory'
 import windowManager from './window/manager'
 import { WindowType } from './window/window'
@@ -17,6 +18,9 @@ const gotTheLock = app.requestSingleInstanceLock()
 const DEFAULT_WINDOW = WindowType.CoreNode
 
 const logFolder = app.getPath('logs')
+
+console.log('logFolder', logFolder)
+console.log('app.getPath("userData")', app.getPath('userData'))
 log.info(logFolder)
 
 if (!gotTheLock) {
@@ -36,6 +40,9 @@ if (!gotTheLock) {
       const mainWindow = windowManager.getVisibleWindow()
       if (mainWindow) {
         mainWindow.show()
+        if (isMac) {
+          app.dock.show()
+        }
       }
     }
 
@@ -66,6 +73,9 @@ if (!gotTheLock) {
       }
       window.focus()
       window.show()
+      if (isMac) {
+        app.dock.show()
+      }
     }
   })
 
@@ -107,6 +117,9 @@ if (!gotTheLock) {
       const window = windowManager.getVisibleWindow()
       if (window) {
         window.show()
+        if (isMac) {
+          app.dock.show()
+        }
       } else {
         const window = createWindow(DEFAULT_WINDOW)
         windowManager.addWindow(window)

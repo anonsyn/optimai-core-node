@@ -1,4 +1,5 @@
-import { BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { isMac } from '../../utils/os'
 import { WindowEvents } from './events'
 
 class WindowIpcHandler {
@@ -10,6 +11,9 @@ class WindowIpcHandler {
       const window = BrowserWindow.fromWebContents(e.sender)
       if (window) {
         window.hide()
+        if (isMac) {
+          app.dock.hide()
+        }
       }
     })
     ipcMain.on(WindowEvents.Minimize, (e) => {
@@ -22,6 +26,15 @@ class WindowIpcHandler {
       const window = BrowserWindow.fromWebContents(e.sender)
       if (window) {
         window.maximize()
+      }
+    })
+    ipcMain.on(WindowEvents.Hide, (e) => {
+      const window = BrowserWindow.fromWebContents(e.sender)
+      if (window) {
+        window.hide()
+        if (isMac) {
+          app.dock.hide()
+        }
       }
     })
   }

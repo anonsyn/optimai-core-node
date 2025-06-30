@@ -92,6 +92,12 @@ export class BrowserTab extends EventEmitter {
       }
     })
 
+    view.webContents.on('did-finish-load', () => {
+      view.webContents.executeJavaScript('window').then((window) => {
+        console.log('window', window.document.body.innerHTML)
+      })
+    })
+
     // Transparent background so it blends with the window
     view.setBackgroundColor('#00000000')
 

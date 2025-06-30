@@ -17,7 +17,7 @@ const BrowserPage = () => {
         }
 
         // Show browser view with specific bounds
-        window.browserIPC.showBrowserViewWithBounds(bounds)
+        window.browserIPC.showBrowserView(bounds)
       } else {
         // Fallback to regular show if bounds can't be determined
         window.browserIPC.showBrowserView()
