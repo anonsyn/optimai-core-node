@@ -1,25 +1,25 @@
-import treeKill from 'tree-kill';
+import treeKill from 'tree-kill'
 
 /**
  * Configuration options for killing processes
  */
 export interface KillProcessOptions {
   /** Timeout in milliseconds before force kill (default: 5000) */
-  timeout?: number;
+  timeout?: number
   /** Initial signal to send (default: 'SIGTERM') */
-  signal?: NodeJS.Signals;
+  signal?: NodeJS.Signals
   /** Whether to force kill after timeout (default: true) */
-  forceKill?: boolean;
+  forceKill?: boolean
 }
 
 /**
  * Result of a kill operation
  */
 export interface KillResult {
-  pid: number;
-  success: boolean;
-  error?: Error;
-  graceful?: boolean;
+  pid: number
+  success: boolean
+  error?: Error
+  graceful?: boolean
 }
 
 /**
@@ -31,8 +31,8 @@ export class ProcessKillError extends Error {
     public readonly pid: number,
     public readonly originalError?: Error
   ) {
-    super(message);
-    this.name = 'ProcessKillError';
+    super(message)
+    this.name = 'ProcessKillError'
   }
 }
 
@@ -47,43 +47,35 @@ export async function killProcess(
   pid: number,
   options: KillProcessOptions = {}
 ): Promise<KillResult> {
-  const {
-    timeout = 5000,
-    signal = 'SIGTERM',
-    forceKill = true
-  } = options;
+  const { timeout = 5000, signal = 'SIGTERM', forceKill = true } = options
 
   return new Promise<KillResult>((resolve, reject) => {
     // Validate PID
     if (!pid || typeof pid !== 'number' || pid <= 0) {
-      reject(new ProcessKillError('Invalid PID provided', pid));
-      return;
+      reject(new ProcessKillError('Invalid PID provided', pid))
+      return
     }
 
-    console.log(`Attempting to kill process ${pid} with ${signal}`);
+    console.log(`Attempting to kill process ${pid} with ${signal}`)
 
     // First attempt: graceful termination
     treeKill(pid, signal, (err) => {
       if (err) {
-        if ('code' in err &&  err.code === 'ESRCH') {
-          console.log(`Process ${pid} already terminated`);
+        if ('code' in err && err.code === 'ESRCH') {
+          console.log(`Process ${pid} already terminated`)
           resolve({
             pid,
             success: true,
             graceful: true
-          });
-          return;
+          })
+          return
         }
-        
-        reject(new ProcessKillError(
-          `Failed to kill process ${pid}: ${err.message}`,
-          pid,
-          err
-        ));
-        return;
+
+        reject(new ProcessKillError(`Failed to kill process ${pid}: ${err.message}`, pid, err))
+        return
       }
 
-      console.log(`Sent ${signal} to process ${pid}`);
+      console.log(`Sent ${signal} to process ${pid}`)
 
       // If force kill is disabled, resolve immediately
       if (!forceKill) {
@@ -91,92 +83,94 @@ export async function killProcess(
           pid,
           success: true,
           graceful: true
-        });
-        return;
+        })
+        return
       }
 
-      let resolved = false;
-      
+      let resolved = false
+
       // Wait for graceful shutdown, then force kill if needed
       const forceKillTimer = setTimeout(() => {
-        if (resolved) return;
-        
-        console.log(`Process ${pid} didn't terminate gracefully, force killing...`);
-        
+        if (resolved) return
+
+        console.log(`Process ${pid} didn't terminate gracefully, force killing...`)
+
         treeKill(pid, 'SIGKILL', (killErr) => {
-          if (resolved) return;
-          resolved = true;
-          
+          if (resolved) return
+          resolved = true
+
           if (killErr) {
             if ('code' in killErr && killErr.code === 'ESRCH') {
-              console.log(`Process ${pid} terminated during grace period`);
+              console.log(`Process ${pid} terminated during grace period`)
               resolve({
                 pid,
                 success: true,
                 graceful: true
-              });
+              })
             } else {
-              reject(new ProcessKillError(
-                `Failed to force kill process ${pid}: ${killErr.message}`,
-                pid,
-                killErr
-              ));
+              reject(
+                new ProcessKillError(
+                  `Failed to force kill process ${pid}: ${killErr.message}`,
+                  pid,
+                  killErr
+                )
+              )
             }
           } else {
-            console.log(`Process ${pid} force killed`);
+            console.log(`Process ${pid} force killed`)
             resolve({
               pid,
               success: true,
               graceful: false
-            });
+            })
           }
-        });
-      }, timeout);
+        })
+      }, timeout)
 
       // Check if process is still alive periodically
       const checkInterval = setInterval(() => {
         if (resolved) {
-          clearInterval(checkInterval);
-          return;
+          clearInterval(checkInterval)
+          return
         }
-        
+
         try {
           // process.kill with signal 0 checks if process exists without killing it
-          process.kill(pid, 0);
+          process.kill(pid, 0)
         } catch (e: any) {
           if (e.code === 'ESRCH') {
             // Process is dead
-            resolved = true;
-            clearTimeout(forceKillTimer);
-            clearInterval(checkInterval);
-            console.log(`Process ${pid} terminated gracefully`);
+            resolved = true
+            clearTimeout(forceKillTimer)
+            clearInterval(checkInterval)
+            console.log(`Process ${pid} terminated gracefully`)
             resolve({
               pid,
               success: true,
               graceful: true
-            });
+            })
           }
         }
-      }, 500);
+      }, 500)
 
       // Cleanup interval when force kill timer expires
-      forceKillTimer.unref?.();
+      forceKillTimer.unref?.()
       setTimeout(() => {
-        clearInterval(checkInterval);
-      }, timeout + 1000);
-    });
-  });
+        clearInterval(checkInterval)
+      }, timeout + 1000)
+    })
+  })
 }
 
 /**
  * Result of killing multiple processes
  */
 export interface MultiKillResult {
-  successful: KillResult[];
-  failed: Array<KillResult & { error: Error }>;
-  totalCount: number;
-  successCount: number;
-  failureCount: number;
+  successful: KillResult[]
+  failed: Array<KillResult & { error: Error }>
+  totalCount: number
+  successCount: number
+  failureCount: number
 }
 
 /**
@@ -190,26 +184,26 @@ export async function killMultipleProcesses(
   options: KillProcessOptions = {}
 ): Promise<MultiKillResult> {
   if (!Array.isArray(pids) || pids.length === 0) {
-    throw new Error('PIDs must be a non-empty array');
+    throw new Error('PIDs must be a non-empty array')
   }
 
   const killPromises = pids.map(async (pid): Promise<KillResult> => {
     try {
-      return await killProcess(pid, options);
+      return await killProcess(pid, options)
     } catch (error) {
-      console.error(`Failed to kill process ${pid}:`, (error as Error).message);
+      console.error(`Failed to kill process ${pid}:`, (error as Error).message)
       return {
         pid,
         success: false,
         error: error as Error
-      };
+      }
     }
-  });
+  })
 
-  const results = await Promise.all(killPromises);
-  
-  const successful = results.filter(r => r.success);
-  const failed = results.filter(r => !r.success) as Array<KillResult & { error: Error }>;
+  const results = await Promise.all(killPromises)
+
+  const successful = results.filter((r) => r.success)
+  const failed = results.filter((r) => !r.success) as Array<KillResult & { error: Error }>
 
   return {
     successful,
@@ -217,7 +211,7 @@ export async function killMultipleProcesses(
     totalCount: results.length,
     successCount: successful.length,
     failureCount: failed.length
-  };
+  }
 }
 
 /**
@@ -226,7 +220,7 @@ export async function killMultipleProcesses(
  * @returns Promise that resolves when process is killed
  */
 export async function simpleKill(pid: number): Promise<void> {
-  await killProcess(pid, { timeout: 3000 });
+  await killProcess(pid, { timeout: 3000 })
 }
 
 /**
@@ -236,10 +230,10 @@ export async function simpleKill(pid: number): Promise<void> {
  */
 export function processExists(pid: number): boolean {
   try {
-    process.kill(pid, 0);
-    return true;
+    process.kill(pid, 0)
+    return true
   } catch (e: any) {
-    return e.code !== 'ESRCH';
+    return e.code !== 'ESRCH'
   }
 }
 
@@ -247,7 +241,7 @@ export function processExists(pid: number): boolean {
  * Process manager class for tracking and managing multiple processes
  */
 export class ProcessManager {
-  private processes = new Map<string, number>();
+  private processes = new Map<string, number>()
 
   /**
    * Add a process to be managed
@@ -255,7 +249,7 @@ export class ProcessManager {
    * @param pid - Process ID
    */
   addProcess(name: string, pid: number): void {
-    this.processes.set(name, pid);
+    this.processes.set(name, pid)
   }
 
   /**
@@ -264,7 +258,7 @@ export class ProcessManager {
    * @returns True if process was removed, false if not found
    */
   removeProcess(name: string): boolean {
-    return this.processes.delete(name);
+    return this.processes.delete(name)
   }
 
   /**
@@ -273,7 +267,7 @@ export class ProcessManager {
    * @returns Process ID or undefined if not found
    */
   getProcessId(name: string): number | undefined {
-    return this.processes.get(name);
+    return this.processes.get(name)
   }
 
   /**
@@ -281,7 +275,7 @@ export class ProcessManager {
    * @returns Array of [name, pid] pairs
    */
   getAllProcesses(): Array<[string, number]> {
-    return Array.from(this.processes.entries());
+    return Array.from(this.processes.entries())
   }
 
   /**
@@ -292,16 +286,16 @@ export class ProcessManager {
    * @throws Error if process not found
    */
   async killProcess(name: string, options?: KillProcessOptions): Promise<KillResult> {
-    const pid = this.processes.get(name);
+    const pid = this.processes.get(name)
     if (!pid) {
-      throw new Error(`Process '${name}' not found`);
+      throw new Error(`Process '${name}' not found`)
     }
 
-    const result = await killProcess(pid, options);
+    const result = await killProcess(pid, options)
     if (result.success) {
-      this.processes.delete(name);
+      this.processes.delete(name)
     }
-    return result;
+    return result
   }
 
   /**
@@ -310,20 +304,20 @@ export class ProcessManager {
    * @returns Promise with results of all kill operations
    */
   async killAll(options?: KillProcessOptions): Promise<MultiKillResult> {
-    const pids = Array.from(this.processes.values());
-    const result = await killMultipleProcesses(pids, options);
-    
+    const pids = Array.from(this.processes.values())
+    const result = await killMultipleProcesses(pids, options)
+
     // Remove successfully killed processes
-    result.successful.forEach(r => {
+    result.successful.forEach((r) => {
       for (const [name, pid] of this.processes.entries()) {
         if (pid === r.pid) {
-          this.processes.delete(name);
-          break;
+          this.processes.delete(name)
+          break
         }
       }
-    });
+    })
 
-    return result;
+    return result
   }
 
   /**
@@ -331,9 +325,7 @@ export class ProcessManager {
    * @returns Array of [name, pid] pairs for running processes
    */
   getRunningProcesses(): Array<[string, number]> {
-    return Array.from(this.processes.entries()).filter(([, pid]) => 
-      processExists(pid)
-    );
+    return Array.from(this.processes.entries()).filter(([, pid]) => processExists(pid))
   }
 
   /**
@@ -341,16 +333,16 @@ export class ProcessManager {
    * @returns Number of processes removed
    */
   cleanupDeadProcesses(): number {
-    const deadProcesses: string[] = [];
-    
+    const deadProcesses: string[] = []
+
     for (const [name, pid] of this.processes.entries()) {
       if (!processExists(pid)) {
-        deadProcesses.push(name);
+        deadProcesses.push(name)
       }
     }
 
-    deadProcesses.forEach(name => this.processes.delete(name));
-    return deadProcesses.length;
+    deadProcesses.forEach((name) => this.processes.delete(name))
+    return deadProcesses.length
   }
 
   /**
@@ -358,6 +350,6 @@ export class ProcessManager {
    * @returns Number of managed processes
    */
   get count(): number {
-    return this.processes.size;
+    return this.processes.size
   }
 }

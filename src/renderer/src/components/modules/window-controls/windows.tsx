@@ -29,7 +29,7 @@ const WindowsControlButton = ({ variant, className, disabled, ...props }: Button
   const icons = {
     close: Icons.X,
     minimize: Icons.Minus,
-    maximize: Icons.Plus
+    maximize: Icons.Copy
   }
   return (
     <button className={cn(buttonVariants({ variant, className }))} disabled={disabled} {...props}>
