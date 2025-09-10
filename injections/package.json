@@ -1,0 +1,42 @@
+{
+  "name": "@xagent/injections-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo for XAgent injection scripts",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "build:x": "pnpm --filter @xagent/injection-x build",
+    "build:linkedin": "pnpm --filter @xagent/injection-linkedin build",
+    "build:pancakeswap": "pnpm --filter @xagent/injection-pancakeswap build",
+    "dev:x": "pnpm --filter @xagent/injection-x dev",
+    "dev:linkedin": "pnpm --filter @xagent/injection-linkedin dev",
+    "dev:pancakeswap": "pnpm --filter @xagent/injection-pancakeswap dev",
+    "lint": "pnpm -r run lint",
+    "lint:fix": "pnpm -r run lint:fix",
+    "format": "pnpm -r run format",
+    "clean": "pnpm -r run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@types/node": "^22.5.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.30.1",
+    "prettier": "^3.3.3",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.35.1",
+    "vite": "^7.0.4"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.1.0",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.14",
+    "tailwindcss": "^4.1.8"
+  }
+}

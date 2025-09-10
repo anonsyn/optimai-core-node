@@ -1,0 +1,17 @@
+{
+  "name": "@xagent/styles",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.css",
+  "exports": {
+    ".": "./src/index.css",
+    "./tailwind": "./src/tailwind.css"
+  },
+  "scripts": {
+    "lint": "echo 'No linting for CSS'",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.8"
+  }
+}
