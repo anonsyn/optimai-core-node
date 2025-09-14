@@ -7,7 +7,6 @@ import browserIpcHandler from './ipc/browser'
 import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
-import { nodeServer } from './node/server'
 import { isMac } from './utils/os'
 import { createWindow } from './window/factory'
 import windowManager from './window/manager'
@@ -82,14 +81,14 @@ if (!gotTheLock) {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
     // Set app user model id for windows
     electronApp.setAppUserModelId('com.electron')
 
     windowIpcHandler.initialize()
     updaterIpcHandler.initialize()
     authIpcHandler.initialize()
-    nodeIpcHandler.initialize()
+    nodeIpcHandler.initialize() // Initialize node IPC handler which starts the API server
     browserIpcHandler.initialize()
 
     const window = createWindow(DEFAULT_WINDOW)
@@ -130,7 +129,7 @@ if (!gotTheLock) {
       try {
         windowManager.destroyAllWindows()
         tray?.destroy()
-        await nodeServer.stop()
+        await nodeIpcHandler.cleanup()
       } catch (error) {
         console.error('destroy error', error)
       }

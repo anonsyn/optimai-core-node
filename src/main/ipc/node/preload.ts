@@ -1,14 +1,45 @@
 import { ipcRenderer } from 'electron'
-import { NodeStatus } from '../../node/types'
+import {
+  NodeStatus,
+  NodeStatusResponse,
+  RewardResponse,
+  ServerStatus,
+  TokensResponse,
+  UptimeProgressResponse,
+  UserResponse
+} from '../../node/types'
 import { createPreloadEventListener } from '../../utils/ipc'
 import { NodeEvents } from './events'
 
 const nodeIPC = {
-  startNode: () => ipcRenderer.invoke(NodeEvents.StartNode),
-  stopNode: () => ipcRenderer.invoke(NodeEvents.StopNode),
-  getNodeStatus: () => ipcRenderer.invoke(NodeEvents.GetNodeStatus),
-  getNodeServerUrl: () => ipcRenderer.invoke(NodeEvents.GetNodeServerUrl),
-  getPort: () => ipcRenderer.invoke(NodeEvents.GetPort),
+  // API Server
+  getServerStatus: (): Promise<ServerStatus> => ipcRenderer.invoke(NodeEvents.GetServerStatus),
+  getServerUrl: (): Promise<string | null> => ipcRenderer.invoke(NodeEvents.GetServerUrl),
+  getServerPort: (): Promise<number | null> => ipcRenderer.invoke(NodeEvents.GetServerPort),
+
+  // WebSocket
+  getWebSocketStatus: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.GetWebSocketStatus),
+
+  // Node Operations
+  startNode: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.StartNode),
+  stopNode: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.StopNode),
+  getNodeStatus: (): Promise<NodeStatusResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.GetNodeStatus),
+
+  // API Calls - Authentication
+  loginApi: (email: string, password: string): Promise<TokensResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.LoginApi, email, password),
+  logoutApi: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.LogoutApi),
+  getUserApi: (): Promise<UserResponse | null> => ipcRenderer.invoke(NodeEvents.GetUserApi),
+  getTokensApi: (): Promise<TokensResponse | null> => ipcRenderer.invoke(NodeEvents.GetTokensApi),
+  refreshTokenApi: (): Promise<string | null> => ipcRenderer.invoke(NodeEvents.RefreshTokenApi),
+
+  // API Calls - Uptime & Rewards
+  getUptimeApi: (): Promise<UptimeProgressResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.GetUptimeApi),
+  getRewardApi: (): Promise<RewardResponse | null> => ipcRenderer.invoke(NodeEvents.GetRewardApi),
+
+  // Events
   onNodeStatusChanged: (callback: (status: NodeStatus) => void) =>
     createPreloadEventListener(NodeEvents.OnNodeStatusChanged, callback)
 }
