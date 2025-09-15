@@ -5,9 +5,9 @@
 
 import EventEmitter from 'eventemitter3'
 import { ExecaChildProcess } from 'execa'
-import getPort from 'get-port'
 import { IS_DEV } from '../configs/constants'
 import logger from '../configs/logger'
+import { getPort } from '../utils/get-port'
 import { killProcess } from '../utils/process'
 import { NodeAPIClient } from './api-client'
 import { nodeCommands } from './commands'
@@ -173,6 +173,12 @@ export class APIServer extends EventEmitter<APIServerEvents> {
     const tempClient = new NodeAPIClient(this.port)
 
     for (let i = 0; i < maxRetries; i++) {
+      // Check if process is still running
+      if (!this.process || this.process.killed) {
+        logger.warn('API server process exited while waiting for health check')
+        return false
+      }
+
       const isHealthy = await tempClient.health()
       if (isHealthy) {
         return true
