@@ -120,12 +120,12 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         const serverStatus = await window.nodeIPC.getServerStatus()
 
         if (serverStatus.isReady) {
-          addStatus('CLI server is ready')
+          addStatus('Server is ready')
           return true
         }
 
         if (i === 0) {
-          addStatus(`CLI server starting on port ${serverStatus.port || 'auto'}...`)
+          addStatus(`Server starting on port ${serverStatus.port || 'auto'}...`)
         }
 
         await sleep(delayMs)
@@ -133,8 +133,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         console.error('Error checking server status:', error)
 
         if (i === maxRetries - 1) {
-          addStatus('Failed to connect to CLI server', true)
-          setError('CLI server failed to start')
+          addStatus('Failed to connect to server', true)
+          setError('Server failed to start')
           return false
         }
 
@@ -142,15 +142,15 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
     }
 
-    addStatus('CLI server startup timeout', true)
-    setError('CLI server took too long to start')
+    addStatus('Server startup timeout', true)
+    setError('Server took too long to start')
     return false
   }, [addStatus])
 
   // Check authentication
   const checkAuth = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.CHECKING_AUTH)
-    addStatus('Checking authentication...')
+    addStatus('Verifying your account...')
 
     try {
       const accessToken = await sessionManager.getAccessToken()
@@ -171,7 +171,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
 
       dispatch(authActions.setUser(user))
-      addStatus('Authentication successful')
+      addStatus('Successfully signed in')
       return true
     } catch (err) {
       console.error('Authentication check failed:', err)
@@ -184,7 +184,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const startNode = useCallback(async (): Promise<boolean> => {
     try {
       setPhase(StartupPhase.STARTING_NODE)
-      addStatus('Starting Node...')
+      addStatus('Starting your node...')
 
       const success = await window.nodeIPC.startNode()
 
@@ -199,7 +199,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       const nodeStatus = await window.nodeIPC.getNodeStatus()
 
       if (nodeStatus?.running) {
-        addStatus('Node started successfully')
+        addStatus('Node is running')
         setPhase(StartupPhase.COMPLETED)
         return true
       } else {
@@ -207,8 +207,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
     } catch (err) {
       console.error('Error starting node:', err)
-      addStatus('Starting node failed, please restart the application', true)
-      setError('Failed to start node')
+      addStatus('Unable to start your node. Please restart the app.', true)
+      setError('Node startup failed')
       setPhase(StartupPhase.ERROR)
       return false
     }
