@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/record'
 import Spinner from '@/components/ui/spinner'
 import { useGetInfiniteProxyRewardsQuery } from '@/queries/proxy/use-get-proxy-rewards-query'
-import { compactNumber } from '@/utils/compact-number'
+import { compactNumber } from '@/utils/number'
 import { format } from 'date-fns'
 import lodash from 'lodash'
 import { useMemo } from 'react'

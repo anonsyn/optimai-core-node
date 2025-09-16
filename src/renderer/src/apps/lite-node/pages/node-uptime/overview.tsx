@@ -3,7 +3,7 @@ import AnimatedNumber from '@/components/ui/animated-number'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardTitle } from '@/components/ui/card'
 import { useGetNodeAvailabilityStatsQuery } from '@/queries/node-avail/use-get-node-avail-stats-query'
-import { formatNumber } from '@/utils/format-number'
+import { formatNumber } from '@/utils/number'
 import NodeUptimeCounter from './node-uptime-counter'
 
 const Overview = () => {

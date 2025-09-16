@@ -1,4 +1,4 @@
-import { padStart } from '@/utils/format-number'
+import { padStart } from '@/utils/number'
 import { useEffect, useState } from 'react'
 const getCurrentTime = () => {
   const date = new Date()

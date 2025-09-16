@@ -1,6 +1,6 @@
 import { DrawerCloseButton, DrawerDescription, DrawerTitle } from '@/components/ui/drawer'
 import { useGetDailyTasksQuery } from '@/queries/daily-tasks/use-get-daily-tasks-query'
-import { compactNumber } from '@/utils/compact-number'
+import { compactNumber } from '@/utils/number'
 
 const Header = () => {
   const { data: task } = useGetDailyTasksQuery()

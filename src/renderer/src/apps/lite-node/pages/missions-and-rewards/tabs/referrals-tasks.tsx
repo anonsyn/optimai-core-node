@@ -9,8 +9,8 @@ import { RQUERY as MISSIONS_STATS_RQUERY } from '@/queries/missions/use-get-miss
 import { useGetReferralStatsQuery } from '@/queries/referral/use-get-referral-stats-query'
 import { useGetReferralTiersQuery } from '@/queries/referral/use-get-referral-tiers-query'
 import { referralService, ReferralTier } from '@/services/referral'
-import { formatNumber } from '@/utils/format-number'
 import { getErrorMessage } from '@/utils/get-error-message'
+import { formatNumber } from '@/utils/number'
 import { cn } from '@/utils/tw'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 

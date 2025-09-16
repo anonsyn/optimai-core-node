@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardTitle } from '@/components/ui/card'
 import { StatsMeasure, StatsUnit, StatsValue } from '@/components/ui/measure'
 import { useGetProxyStatsQuery } from '@/queries/proxy/use-get-proxy-stats-query'
-import { formatNumber } from '@/utils/format-number'
+import { formatNumber } from '@/utils/number'
 import NumberFlow from '@number-flow/react'
 
 const Overview = () => {

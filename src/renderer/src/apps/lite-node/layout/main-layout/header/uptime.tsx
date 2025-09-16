@@ -2,7 +2,7 @@ import Signal from '@/components/ui/signal'
 import { useAppSelector } from '@/hooks/redux'
 import { useGetNodeOperatorRewardsQuery } from '@/queries/dashboard/use-get-node-operator-rewards-query'
 import { onlineSelectors } from '@/store/slices/online'
-import { compactNumber } from '@/utils/compact-number'
+import { compactNumber } from '@/utils/number'
 import { cn } from '@/utils/tw'
 
 const Uptime = () => {

@@ -1,4 +1,4 @@
-import { balanceFormatOptions } from '@/utils/format-number'
+import { balanceFormatOptions } from '@/utils/number'
 import NumberFlow from '@number-flow/react'
 
 interface AnimatedNumberProps {

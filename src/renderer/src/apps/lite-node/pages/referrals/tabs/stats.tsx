@@ -2,7 +2,7 @@ import Token from '@/components/branding/token'
 import { Icon } from '@/components/ui/icon'
 import { Separator } from '@/components/ui/separator'
 import { useGetReferralStatsQuery } from '@/queries/referral'
-import { balanceFormatOptions, formatNumber } from '@/utils/format-number'
+import { balanceFormatOptions, formatNumber } from '@/utils/number'
 import NumberFlow from '@number-flow/react'
 
 const Stats = () => {

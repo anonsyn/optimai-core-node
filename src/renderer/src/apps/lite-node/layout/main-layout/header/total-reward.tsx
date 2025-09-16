@@ -2,7 +2,7 @@ import Token from '@/components/branding/token'
 import { Icon } from '@/components/ui/icon'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useGetDashboardStatsQuery } from '@/queries/dashboard/use-get-dashboard-stats-query'
-import { balanceFormatOptions } from '@/utils/format-number'
+import { balanceFormatOptions } from '@/utils/number'
 import { cn } from '@/utils/tw'
 import NumberFlow from '@number-flow/react'
 
