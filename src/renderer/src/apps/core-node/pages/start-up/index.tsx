@@ -4,6 +4,7 @@ import CanvasGlow from '@core-node/pages/start-up/canvas-glow'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef } from 'react'
+import { StartupProvider } from './provider'
 import RoundedBoxLine from './rounded-box-line'
 import Status from './status'
 import TopBar from './top-bar'
@@ -106,41 +107,43 @@ const StartUpPage = () => {
   )
 
   return (
-    <div
-      ref={containerRef}
-      className="relative size-full overflow-hidden px-17 pt-11 pb-19 select-none"
-    >
-      <div className="drag-region absolute inset-x-0 top-0 h-25" />
-      <div className="relative size-full">
-        <div
-          id="decorator-top"
-          className="box-line box-line__top pointer-events-none absolute top-1/2 left-1/2 flex h-17 w-40 -translate-x-1/2 -translate-y-1/2 items-center justify-between opacity-0"
-        >
-          <RoundedBoxLine />
-          <RoundedBoxLine dir="ltr" />
-        </div>
-        <div className="top-bar absolute top-0 left-1/2 h-17 w-[calc(100%-25rem)] -translate-x-1/2 opacity-0">
-          <TopBar />
-        </div>
+    <StartupProvider>
+      <div
+        ref={containerRef}
+        className="relative size-full overflow-hidden px-17 pt-11 pb-19 select-none"
+      >
+        <div className="drag-region absolute inset-x-0 top-0 h-25" />
+        <div className="relative size-full">
+          <div
+            id="decorator-top"
+            className="box-line box-line__top pointer-events-none absolute top-1/2 left-1/2 flex h-17 w-40 -translate-x-1/2 -translate-y-1/2 items-center justify-between opacity-0"
+          >
+            <RoundedBoxLine />
+            <RoundedBoxLine dir="ltr" />
+          </div>
+          <div className="top-bar absolute top-0 left-1/2 h-17 w-[calc(100%-25rem)] -translate-x-1/2 opacity-0">
+            <TopBar />
+          </div>
 
-        <Logo
-          id="logo"
-          className="absolute top-1/2 left-1/2 h-[min(120px,11.125vh)] -translate-x-1/2 -translate-y-1/2 opacity-0"
-        />
-        <div className="box-line box-line__bottom pointer-events-none absolute top-1/2 left-1/2 flex h-9 w-50 -translate-x-1/2 -translate-y-1/2 items-center justify-between opacity-0">
-          <RoundedBoxLine />
-          <RoundedBoxLine dir="ltr" />
+          <Logo
+            id="logo"
+            className="absolute top-1/2 left-1/2 h-[min(120px,11.125vh)] -translate-x-1/2 -translate-y-1/2 opacity-0"
+          />
+          <div className="box-line box-line__bottom pointer-events-none absolute top-1/2 left-1/2 flex h-9 w-50 -translate-x-1/2 -translate-y-1/2 items-center justify-between opacity-0">
+            <RoundedBoxLine />
+            <RoundedBoxLine dir="ltr" />
+          </div>
+          <div className="node-status absolute bottom-0 left-1/2 h-9 w-[calc(100%-25rem)] -translate-x-1/2 opacity-0">
+            <Status />
+          </div>
         </div>
-        <div className="node-status absolute bottom-0 left-1/2 h-9 w-[calc(100%-25rem)] -translate-x-1/2 opacity-0">
-          <Status />
+        <div className="glow pointer-events-none absolute inset-0 opacity-0">
+          <CanvasGlow />
         </div>
+        <WaveVisualizer />
+        <LoginModal />
       </div>
-      <div className="glow pointer-events-none absolute inset-0 opacity-0">
-        <CanvasGlow />
-      </div>
-      <WaveVisualizer />
-      <LoginModal />
-    </div>
+    </StartupProvider>
   )
 }
 

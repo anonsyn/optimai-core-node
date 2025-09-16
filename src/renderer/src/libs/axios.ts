@@ -48,10 +48,9 @@ axiosClient.interceptors.response.use(
 
     try {
       // Call refresh token endpoint
-      const response = await window.authIPC.refreshToken()
+      const accessToken = await window.nodeIPC.refreshTokenApi()
 
-      if (response && response.access_token) {
-        const accessToken = response.access_token
+      if (accessToken) {
         // Update authorization header
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
 

@@ -14,12 +14,9 @@ import { EXTERNAL_LINKS } from '@/configs/links'
 import { useCloseModal, useIsModalOpen, useModalData } from '@/hooks/modal'
 import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
-import { authService } from '@/services/auth'
 import { authActions } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
-import { generateCodeChallenge, generateCodeVerifier } from '@/utils/auth'
 import { getErrorMessage } from '@/utils/get-error-message'
-import { sessionManager } from '@/utils/session-manager'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
@@ -80,41 +77,24 @@ const LoginForm = () => {
 
   const { mutateAsync: signIn, isPending } = useMutation({
     mutationFn: async (formValue: FormValue) => {
-      const codeVerifier = await generateCodeVerifier()
-      const codeChallenge = await generateCodeChallenge(codeVerifier)
+      // Use IPC to handle login through the API server
+      const tokens = await window.nodeIPC.loginApi(formValue.email, formValue.password)
 
-      return authService
-        .signInV2({
-          email: formValue.email,
-          password: formValue.password,
-          code_challenge_method: 'S256',
-          code_challenge: codeChallenge
-        })
-        .then((res) => {
-          const { authorization_code } = res.data
+      if (!tokens || !tokens.access_token) {
+        throw new Error('Login failed - no tokens received')
+      }
 
-          return authService.exchangeToken({
-            code: authorization_code,
-            code_verifier: codeVerifier,
-            grant_type: 'authorization_code'
-          })
-        })
-        .then((res) => {
-          const { access_token, refresh_token } = res.data
-          return sessionManager.saveTokens(access_token, refresh_token)
-        })
-        .then(() =>
-          getCurrentUserQuery.refetch({
-            throwOnError: true
-          })
-        )
-        .then((res) => {
-          const user = res.data?.user
-          if (!user) {
-            throw new Error('No user found')
-          }
-          return user
-        })
+      // After successful login, get the user data
+      const res = await getCurrentUserQuery.refetch({
+        throwOnError: true
+      })
+
+      const user = res.data?.user
+      if (!user) {
+        throw new Error('No user found')
+      }
+
+      return user
     }
   })
 

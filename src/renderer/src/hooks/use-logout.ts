@@ -21,7 +21,7 @@ const useLogout = () => {
   return async () => {
     try {
       await window.nodeIPC.stopNode()
-      await window.authIPC.logout()
+      await window.nodeIPC.logoutApi()
     } catch (error) {
       console.error(error)
     }

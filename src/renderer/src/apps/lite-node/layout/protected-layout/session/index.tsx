@@ -34,12 +34,12 @@ const SessionHandler = () => {
         timeout = setTimeout(
           async () => {
             try {
-              const res = await window.authIPC.refreshToken()
-              if (!res || !res.access_token) {
+              const newAccessToken = await window.nodeIPC.refreshTokenApi()
+              if (!newAccessToken) {
                 throw new Error('Failed to refresh token')
               }
 
-              accessToken = res.access_token
+              accessToken = newAccessToken
               if (isMounted) {
                 autoRefreshToken()
               }

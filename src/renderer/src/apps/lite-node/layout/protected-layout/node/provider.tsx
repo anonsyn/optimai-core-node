@@ -49,7 +49,9 @@ const NodeProvider = ({ children }: PropsWithChildren) => {
       .getNodeStatus()
       .then((status) => {
         console.log({ initStatus: status })
-        dispatch(nodeActions.setStatus(status))
+        if (status) {
+          dispatch(nodeActions.setStatus(status.status as NodeStatus))
+        }
       })
       .finally(() => {
         window.nodeIPC.onNodeStatusChanged((status) => {
@@ -63,7 +65,7 @@ const NodeProvider = ({ children }: PropsWithChildren) => {
     if (isRunning) {
       let ws: WebSocket | null = null
       const syncNodeData = async () => {
-        const port = await window.nodeIPC.getPort()
+        const port = await window.nodeIPC.getServerPort()
         if (!port) {
           throw new Error('Failed to get node port')
         }

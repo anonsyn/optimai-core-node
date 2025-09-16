@@ -64,7 +64,7 @@ export class APIServer extends EventEmitter<APIServerEvents> {
     }
 
     // Get an available port
-    const port = await getPort({ port: [5000, 5001, 5002, 5003, 5004] })
+    const port = await getPort({ port: [8888] })
     this.port = port
     this.isIntentionalStop = false
     this.restartAttempts = 0
