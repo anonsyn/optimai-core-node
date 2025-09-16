@@ -21,7 +21,7 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
       }
       return data
     },
-    refetchInterval: 10000, // Refresh every 10 seconds
+    refetchInterval: 5000, // Refresh every 3 seconds
     staleTime: 1000 * 5, // Consider data stale after 5 seconds
     retry: options?.retry ?? false,
     enabled: options?.enabled ?? true
