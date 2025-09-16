@@ -18,6 +18,7 @@ import Eye from '@assets/icons/eye.svg?react'
 import Fire from '@assets/icons/fire.svg?react'
 import Funnel from '@assets/icons/funnel.svg?react'
 import Globe from '@assets/icons/globe.svg?react'
+import Google from '@assets/icons/google.svg?react'
 import GPU from '@assets/icons/gpu.svg?react'
 import Hexagon from '@assets/icons/hexagon.svg?react'
 import Hourglass from '@assets/icons/hourglass.svg?react'
@@ -106,7 +107,8 @@ export const Icons = {
   SquarePen,
   Plus,
   Profile,
-  Search
+  Search,
+  Google
 } as const
 
 export type IconName = keyof typeof Icons

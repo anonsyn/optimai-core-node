@@ -1,3 +1,4 @@
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetMiningAssignmentsQuery } from '@/queries/ipc'
 import { AssignmentItem } from './assignment-item'
@@ -27,10 +28,14 @@ export const AssignmentsList = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {assignments.map((assignment) => (
-        <AssignmentItem key={assignment.id} assignment={assignment} />
-      ))}
+    <div className="h-full w-full">
+      <ScrollArea className="h-full">
+        <div className="flex w-full flex-col gap-6 p-6">
+          {assignments.map((assignment) => (
+            <AssignmentItem key={assignment.id} assignment={assignment} />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { LeftPanel } from './left-panel'
 
 const DataMiningPage = () => {
   return (
-    <div className="flex h-full gap-5">
+    <div className="flex h-full">
       <LeftPanel />
       <AssignmentsList />
     </div>

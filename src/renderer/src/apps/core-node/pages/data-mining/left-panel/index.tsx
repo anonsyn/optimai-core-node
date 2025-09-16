@@ -56,7 +56,7 @@ export const LeftPanel = () => {
   const supportedPlatforms = ['Twitter', 'Facebook', 'Telegram', 'Google', 'Discord', 'Instagram']
 
   return (
-    <div className="h-full w-[480px] bg-[#1E2221] backdrop-blur-xl">
+    <div className="h-full w-[480px] flex-shrink-0 bg-[#1E2221] backdrop-blur-xl">
       <ScrollArea className="h-full w-full space-y-5">
         <div className="p-5">
           <div>

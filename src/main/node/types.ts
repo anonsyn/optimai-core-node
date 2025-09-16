@@ -51,21 +51,29 @@ export interface RewardResponse {
 // Mining types
 export interface MiningAssignment {
   id: string
-  status: string
+  status: 'not_started' | 'in_progress' | 'completed' | 'failed'
+  started_at?: string | null
+  completed_at?: string | null
+  failed_at?: string | null
+  failure_reason?: string | null
+  failure_reason_expires_at?: string | null
+  created_at?: string
+  updated_at?: string
+  metadata?: Record<string, any>
   task: {
     id: string
-    platform: string
-    source_url?: string
+    platform: 'google' | 'twitter'
+    source_url?: 'https://www.justice.gov/archives/opa/pr/binance-and-ceo-plead-guilty-federal-charges-4b-resolution'
+    status: string
+    reward_amount?: number
+    metadata: {
+      title?: string
+      snippet?: string
+      query?: string
+    }
+    created_at?: string
     search_query?: string
-    title?: string
-    snippet?: string
-    reward_amount?: string
-    [key: string]: any
   }
-  metadata?: Record<string, any>
-  started_at?: string
-  completed_at?: string
-  failed_at?: string
 }
 
 export interface MiningAssignmentsResponse {
