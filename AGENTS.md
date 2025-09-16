@@ -1,19 +1,19 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-TypeScript sources sit in `src/`: `src/main` hosts the Electron main process, `src/preload` exposes vetted APIs, and `src/renderer` contains the React 19 UI. Built assets publish to `out/` during development and to `dist/` for packaged installers. The `injections/` workspace provides the companion node agent and is built separately. Shared automation lives in `scripts/`, while distributable artifacts are archived under `applications/`.
+## Project Layout & Runtime
+Electron sources live in `src/main` (process lifecycle and IPC), `src/preload` (sandboxed bridges), and `src/renderer` (React 19 UI). Packaged binaries, including the CLI wrapper, reside under `applications/`; in dev we mirror them into `tmp/applications` so the Electron shell can spawn them. The wrapped CLI (`applications/node/bin/node_cli`) stores encrypted state in `app.getPath('userData')/node` via its `--data-dir` flag. Auxiliary scripts sit in `scripts/`, while build outputs drop into `out/` for dev and `dist/` for installers.
 
-## Build, Test, and Development Commands
-Install dependencies with `npm install`, which also bootstraps `injections/`. Use `npm run dev` for the full desktop + injection workflow, or `npm run dev:electron` when iterating only on the shell. Build production bundles with `npm run build`; add `npm run build:mac|win|linux` for platform-specific installers. `npm run typecheck` runs both node and renderer TypeScript configs, `npm run lint` applies the ESLint suite, and `npm run format` rewrites files with Prettier. Call `npm run download-binary` whenever you need the packaged agent binary locally.
+## Build & Development Commands
+Run `npm install` once; the postinstall step installs and builds the `injections/` workspace. `npm run dev` launches Electron and the injection dev server, while `npm run dev:electron` targets only the desktop shell. Ship builds with `npm run build`, or `npm run build:mac|win|linux` for platform installers. Lint and format with `npm run lint` and `npm run format`; type safety comes from `npm run typecheck`. Use `npm run download-binary` to refresh the bundled CLI before packaging.
 
-## Coding Style & Naming Conventions
-Prettier (with the Tailwind plugin) and ESLint enforce formatting—run them before committing or rely on editor integrations. Keep two-space indentation, PascalCase React components, camelCase logic, and SCREAMING_SNAKE_CASE bridge constants. File names should remain kebab-case inside `renderer/` and align feature folders between main, preload, and renderer code.
+## CLI API & Integration Flow
+`src/main/node/api-server.ts` spawns the CLI with `node_cli api-server --port <dynamic> --no-reload --data-dir <appData>/node`, polls `/health`, then exposes the chosen port to renderers through IPC. All auth, node control, uptime, and mining actions flow through `apiClient` hitting endpoints such as `/auth/login`, `/node/start`, `/uptime/progress`, and `/api/mining/assignments`. Real-time updates arrive over `ws://127.0.0.1:<port>/ws` via `websocketClient`, and unexpected CLI exits trigger up to five automated restarts.
 
-## Testing Guidelines
-Automated tests are minimal today, so treat type-checking, linting, and manual QA as blocking gates. When you add coverage, colocate specs beside the source as `<name>.spec.ts` files and execute them with `tsx` to avoid bundler assumptions. Record manual verification steps in your PR—especially API endpoints, WebSocket flows, or installer scenarios touched by the change.
+## Coding Style & Naming
+Follow Prettier (with Tailwind plugin) and ESLint defaults; keep two-space indentation. Use PascalCase for React components, camelCase for functions and variables, and SCREAMING_SNAKE_CASE only for preload constants. Align feature folders between `main`, `preload`, and `renderer`, and keep filenames kebab-case in the renderer.
 
-## Commit & Pull Request Guidelines
-Match the short, imperative commit messages already in history (e.g., "Add get-port utility..."). Consolidate related edits, reference issue IDs, and keep commits buildable. Pull requests must supply a concise summary, linked tasks, screenshots or recordings for UI changes, and the list of validation commands run. Confirm `npm run build` passes before requesting review, and call out any packaging or updater implications.
+## Testing & Verification
+Automated coverage is sparse; enforce lint, format, and typecheck at minimum. When adding tests, co-locate `<name>.spec.ts` files and run them with `tsx`. For CLI changes, document manual runs (`node_cli node start`, API server smoke tests, WebSocket verification) in PRs.
 
-## Security & Configuration Tips
-Do not commit secrets; use the provided `.example` files and share credentials securely. Verify binaries fetched via `npm run download-binary` and confirm `electron-builder.env` values before publishing. Strip verbose logging from production entries and review preload bridges for least-privilege exposure.
+## Commit, PR, & Security Notes
+Write short imperative commits (`Add API server health check`). PRs need a summary, linked issues, UI evidence, and the commands you ran. Highlight changes that affect packaging, updater config, or CLI binaries. Never commit secrets; rely on `.example` files, verify binaries fetched by helper scripts, and confirm `electron-builder.env` values before publishing.

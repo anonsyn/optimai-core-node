@@ -5,7 +5,11 @@ import {
   TokensResponse,
   UserResponse,
   UptimeProgressResponse,
-  RewardResponse
+  RewardResponse,
+  MiningAssignment,
+  MiningAssignmentsResponse,
+  WorkerPreferences,
+  PreferencesResponse
 } from './types'
 
 export class NodeAPIClient {
@@ -202,6 +206,89 @@ export class NodeAPIClient {
       logger.error(`Failed to get latest reward: ${error.message}`)
       return null
     }
+  }
+
+  // Mining API endpoints
+  async getMiningAssignments(params?: {
+    platforms?: string[]
+    search_query_id?: string
+    limit?: number
+    offset?: number
+    statuses?: string[]
+    created_after?: string
+  }): Promise<MiningAssignmentsResponse | null> {
+    try {
+      const response = await this.client.get<MiningAssignmentsResponse>('/api/mining/assignments', {
+        params
+      })
+      return response.data
+    } catch (error: any) {
+      logger.error(`Failed to get mining assignments: ${error.message}`)
+      return null
+    }
+  }
+
+  async getMiningAssignmentDetail(assignmentId: string): Promise<MiningAssignment | null> {
+    try {
+      const response = await this.client.get<MiningAssignment>(
+        `/api/mining/assignments/${assignmentId}`
+      )
+      return response.data
+    } catch (error: any) {
+      logger.error(`Failed to get assignment detail: ${error.message}`)
+      return null
+    }
+  }
+
+  async getWorkerPreferences(): Promise<PreferencesResponse | null> {
+    try {
+      const response = await this.client.get<PreferencesResponse>('/api/mining/preferences')
+      return response.data
+    } catch (error: any) {
+      logger.error(`Failed to get worker preferences: ${error.message}`)
+      return null
+    }
+  }
+
+  async setWorkerPreferences(preferences: WorkerPreferences): Promise<PreferencesResponse | null> {
+    try {
+      const response = await this.client.put<PreferencesResponse>(
+        '/api/mining/preferences',
+        preferences
+      )
+      return response.data
+    } catch (error: any) {
+      logger.error(`Failed to set worker preferences: ${error.message}`)
+      return null
+    }
+  }
+
+  // Helper method to get only Twitter assignments
+  async getTwitterAssignments(params?: {
+    search_query_id?: string
+    limit?: number
+    offset?: number
+    statuses?: string[]
+    created_after?: string
+  }): Promise<MiningAssignmentsResponse | null> {
+    return this.getMiningAssignments({
+      ...params,
+      platforms: ['twitter']
+    })
+  }
+
+  // Helper method to get only Google assignments
+  async getGoogleAssignments(params?: {
+    search_query_id?: string
+    limit?: number
+    offset?: number
+    statuses?: string[]
+    created_after?: string
+  }): Promise<MiningAssignmentsResponse | null> {
+    return this.getMiningAssignments({
+      ...params,
+      platforms: ['google']
+    })
   }
 }
 

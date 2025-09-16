@@ -48,6 +48,40 @@ export interface RewardResponse {
   } | null
 }
 
+// Mining types
+export interface MiningAssignment {
+  id: string
+  status: string
+  task: {
+    id: string
+    platform: string
+    source_url?: string
+    search_query?: string
+    title?: string
+    snippet?: string
+    reward_amount?: string
+    [key: string]: any
+  }
+  metadata?: Record<string, any>
+  started_at?: string
+  completed_at?: string
+  failed_at?: string
+}
+
+export interface MiningAssignmentsResponse {
+  assignments: MiningAssignment[]
+  total: number
+}
+
+export interface WorkerPreferences {
+  platforms: string[]
+}
+
+export interface PreferencesResponse {
+  platforms: string[]
+  updated_at?: string
+}
+
 export interface WebSocketMessage {
   event: string
   data: any
