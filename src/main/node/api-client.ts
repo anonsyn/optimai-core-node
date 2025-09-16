@@ -9,7 +9,8 @@ import {
   MiningAssignment,
   MiningAssignmentsResponse,
   WorkerPreferences,
-  PreferencesResponse
+  PreferencesResponse,
+  MiningStatsResponse
 } from './types'
 
 export class NodeAPIClient {
@@ -259,6 +260,16 @@ export class NodeAPIClient {
       return response.data
     } catch (error: any) {
       logger.error(`Failed to set worker preferences: ${error.message}`)
+      return null
+    }
+  }
+
+  async getMiningStats(): Promise<MiningStatsResponse | null> {
+    try {
+      const response = await this.client.get<MiningStatsResponse>('/api/mining/stats')
+      return response.data
+    } catch (error: any) {
+      logger.error(`Failed to get mining stats: ${error.message}`)
       return null
     }
   }

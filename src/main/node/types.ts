@@ -82,6 +82,26 @@ export interface PreferencesResponse {
   updated_at?: string
 }
 
+export interface MiningStatsResponse {
+  total_rewards: {
+    amount: number
+    percentage_change: number
+    period: string
+  }
+  weekly_rank: {
+    current: number
+    previous: number
+  }
+  data_points: number
+  data_storage: number
+  data_distribution: {
+    video: number
+    text: number
+    image: number
+    audio: number
+  }
+}
+
 export interface WebSocketMessage {
   event: string
   data: any

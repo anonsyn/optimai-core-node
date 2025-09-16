@@ -108,6 +108,27 @@ class NodeIpcHandler {
     ipcMain.handle(NodeEvents.GetRewardApi, async () => {
       return apiClient.getLatestReward()
     })
+
+    // API Calls - Mining
+    ipcMain.handle(NodeEvents.GetMiningStatsApi, async () => {
+      return apiClient.getMiningStats()
+    })
+
+    ipcMain.handle(NodeEvents.GetMiningAssignmentsApi, async (_, params) => {
+      return apiClient.getMiningAssignments(params)
+    })
+
+    ipcMain.handle(NodeEvents.GetMiningAssignmentDetailApi, async (_, assignmentId: string) => {
+      return apiClient.getMiningAssignmentDetail(assignmentId)
+    })
+
+    ipcMain.handle(NodeEvents.GetWorkerPreferencesApi, async () => {
+      return apiClient.getWorkerPreferences()
+    })
+
+    ipcMain.handle(NodeEvents.SetWorkerPreferencesApi, async (_, preferences) => {
+      return apiClient.setWorkerPreferences(preferences)
+    })
   }
 
   async cleanup() {

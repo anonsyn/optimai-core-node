@@ -6,7 +6,12 @@ import {
   ServerStatus,
   TokensResponse,
   UptimeProgressResponse,
-  UserResponse
+  UserResponse,
+  MiningStatsResponse,
+  MiningAssignmentsResponse,
+  MiningAssignment,
+  PreferencesResponse,
+  WorkerPreferences
 } from '../../node/types'
 import { createPreloadEventListener } from '../../utils/ipc'
 import { NodeEvents } from './events'
@@ -38,6 +43,25 @@ const nodeIPC = {
   getUptimeApi: (): Promise<UptimeProgressResponse | null> =>
     ipcRenderer.invoke(NodeEvents.GetUptimeApi),
   getRewardApi: (): Promise<RewardResponse | null> => ipcRenderer.invoke(NodeEvents.GetRewardApi),
+
+  // API Calls - Mining
+  getMiningStatsApi: (): Promise<MiningStatsResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.GetMiningStatsApi),
+  getMiningAssignmentsApi: (params?: {
+    platforms?: string[]
+    search_query_id?: string
+    limit?: number
+    offset?: number
+    statuses?: string[]
+    created_after?: string
+  }): Promise<MiningAssignmentsResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.GetMiningAssignmentsApi, params),
+  getMiningAssignmentDetailApi: (assignmentId: string): Promise<MiningAssignment | null> =>
+    ipcRenderer.invoke(NodeEvents.GetMiningAssignmentDetailApi, assignmentId),
+  getWorkerPreferencesApi: (): Promise<PreferencesResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.GetWorkerPreferencesApi),
+  setWorkerPreferencesApi: (preferences: WorkerPreferences): Promise<PreferencesResponse | null> =>
+    ipcRenderer.invoke(NodeEvents.SetWorkerPreferencesApi, preferences),
 
   // Events
   onNodeStatusChanged: (callback: (status: NodeStatus) => void) =>
