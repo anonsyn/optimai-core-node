@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'mining-stats'
-export const RQUERY = () => [RQUERY_ROOT]
+export const MINING_STATS_RQUERY = () => [RQUERY_ROOT]
 
 interface Options {
   enabled?: boolean
@@ -10,7 +10,7 @@ interface Options {
 
 export const useGetMiningStatsQuery = (options?: Options) => {
   return useQuery({
-    queryKey: RQUERY(),
+    queryKey: MINING_STATS_RQUERY(),
     queryFn: async () => {
       const data = await window.nodeIPC.getMiningStatsApi()
       if (!data) {

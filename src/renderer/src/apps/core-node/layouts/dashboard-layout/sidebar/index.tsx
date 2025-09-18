@@ -8,13 +8,6 @@ const Sidebar = () => {
   const { pathname } = useLocation()
   const navItems = [
     {
-      icon: Icons.Globe,
-      path: PATHS.BROWSER
-    },
-    {
-      type: 'divider'
-    },
-    {
       icon: Icons.Pickaxe,
       path: PATHS.DATA_MINING
     },

@@ -250,7 +250,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
             // After successful login, continue with node startup
             const success = await startNode()
             if (success) {
-              navigate(PATHS.BROWSER)
+              navigate(PATHS.DATA_MINING)
             }
           }
         })
@@ -262,9 +262,9 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       const nodeStarted = await startNode()
 
       if (nodeStarted) {
-        // Navigate to browser after a short delay
+        // Navigate to data mining after a short delay
         await sleep(500)
-        navigate(PATHS.BROWSER)
+        navigate(PATHS.DATA_MINING)
       }
     } catch (err) {
       console.error('Startup error:', err)

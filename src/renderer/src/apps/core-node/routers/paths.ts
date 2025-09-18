@@ -3,8 +3,6 @@ export const PATHS = {
 
   SETTINGS: '/settings',
 
-  BROWSER: '/browser',
-
   DATA_MINING: '/data-mining',
 
   DATA_VALIDATION: '/data-validation',

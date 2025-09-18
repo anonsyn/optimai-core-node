@@ -114,9 +114,9 @@ class NodeIpcHandler {
       return apiClient.getMiningStats()
     })
 
-    ipcMain.handle(NodeEvents.GetMiningAssignmentsApi, async (_, params) => {
+    ipcMain.handle(NodeEvents.GetMiningAssignmentsApi, async () => {
       return apiClient.getMiningAssignments({
-        platforms: 'google'
+        platforms: ['google']
       })
     })
 

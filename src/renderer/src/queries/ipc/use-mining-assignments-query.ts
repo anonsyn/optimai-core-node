@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'mining-assignments'
-export const RQUERY = (limit?: number) => [RQUERY_ROOT, { limit }]
+export const MINING_ASSIGNMENTS_RQUERY = (limit?: number) => [RQUERY_ROOT, { limit }]
 
 interface Options {
   enabled?: boolean
@@ -11,7 +11,7 @@ interface Options {
 
 export const useGetMiningAssignmentsQuery = (options?: Options) => {
   return useQuery({
-    queryKey: RQUERY(options?.limit),
+    queryKey: MINING_ASSIGNMENTS_RQUERY(options?.limit),
     queryFn: async () => {
       const data = await window.nodeIPC.getMiningAssignmentsApi({
         limit: options?.limit ?? 50
