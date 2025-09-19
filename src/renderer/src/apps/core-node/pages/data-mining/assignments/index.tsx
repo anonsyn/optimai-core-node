@@ -1,6 +1,6 @@
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetMiningAssignmentsQuery } from '@/queries/ipc'
+import { useGetMiningAssignmentsQuery } from '@/queries/mining'
 import { AssignmentItem } from './assignment-item'
 
 export const AssignmentsList = () => {

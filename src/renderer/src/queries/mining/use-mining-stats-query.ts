@@ -1,7 +1,8 @@
+import { miningService } from '@/services/mining'
 import { useQuery } from '@tanstack/react-query'
 
-const RQUERY_ROOT = 'mining-stats'
-export const MINING_STATS_RQUERY = () => [RQUERY_ROOT]
+const QUERY_KEY = 'mining-stats'
+export const getMiningStatsQueryKey = () => [QUERY_KEY]
 
 interface Options {
   enabled?: boolean
@@ -10,12 +11,9 @@ interface Options {
 
 export const useGetMiningStatsQuery = (options?: Options) => {
   return useQuery({
-    queryKey: MINING_STATS_RQUERY(),
+    queryKey: getMiningStatsQueryKey(),
     queryFn: async () => {
-      const data = await window.nodeIPC.getMiningStatsApi()
-      if (!data) {
-        throw new Error('Failed to fetch mining stats')
-      }
+      const { data } = await miningService.getStats()
       return data
     },
     refetchInterval: 30000, // Refresh every 30 seconds
