@@ -1,9 +1,9 @@
-import axiosClient from '@/libs/axios'
+import { apiClient } from '@/libs/axios'
 import type { LogUptimeRequest, LogUptimeResponse } from './type'
 
 export const uptimeService = {
   logUptime(request: LogUptimeRequest) {
-    return axiosClient.post<LogUptimeResponse>('/uptime/online', request)
+    return apiClient.post<LogUptimeResponse>('/uptime/online', request)
   },
 }
 

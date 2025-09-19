@@ -1,4 +1,4 @@
-import axiosClient from '@/libs/axios'
+import { apiClient } from '@/libs/axios'
 import {
   GetDeviceByIdResponse,
   GetDevicesParams,
@@ -11,13 +11,13 @@ import {
 
 export const deviceService = {
   getDevices(params: GetDevicesParams) {
-    return axiosClient.get<GetDevicesResponse>('/devices', { params })
+    return apiClient.get<GetDevicesResponse>('/devices', { params })
   },
   getDeviceById(deviceId: string) {
-    return axiosClient.get<GetDeviceByIdResponse>(`/devices/${deviceId}`)
+    return apiClient.get<GetDeviceByIdResponse>(`/devices/${deviceId}`)
   },
   registerDevice(token: string, request: RegisterDeviceRequest, signal?: AbortSignal) {
-    return axiosClient.post<RegisterDeviceResponse>('/devices/register', request, {
+    return apiClient.post<RegisterDeviceResponse>('/devices/register', request, {
       headers: {
         'x-client-authentication': token,
       },
@@ -26,7 +26,7 @@ export const deviceService = {
   },
 
   registerDeviceV2(request: RegisterDeviceRequestV2, signal?: AbortSignal) {
-    return axiosClient.post<RegisterDeviceResponseV2>('/devices/register-v2', request, {
+    return apiClient.post<RegisterDeviceResponseV2>('/devices/register-v2', request, {
       signal,
     })
   },

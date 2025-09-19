@@ -1,4 +1,4 @@
-import axiosClient from '@/libs/axios'
+import { apiClient } from '@/libs/axios'
 import {
   GetNodeAvailabilityStatsResponse,
   GetNodeRewardsParams,
@@ -10,18 +10,18 @@ import {
 
 export const nodeAvailService = {
   getStats() {
-    return axiosClient.get<GetNodeAvailabilityStatsResponse>('/node-avail/stats')
+    return apiClient.get<GetNodeAvailabilityStatsResponse>('/node-avail/stats')
   },
   getUserNodes() {
-    return axiosClient.get<GetUserNodesResponse>('/node-avail/nodes')
+    return apiClient.get<GetUserNodesResponse>('/node-avail/nodes')
   },
   getNodeStats(nodeId: string, params: GetNodeStatsParams) {
-    return axiosClient.get<GetNodeStatsResponse>(`/node-avail/nodes/${nodeId}`, {
+    return apiClient.get<GetNodeStatsResponse>(`/node-avail/nodes/${nodeId}`, {
       params,
     })
   },
   getNodeRewards(params?: GetNodeRewardsParams) {
-    return axiosClient.get<GetNodeRewardsResponse>(`/node-avail/ips/rewards`, {
+    return apiClient.get<GetNodeRewardsResponse>(`/node-avail/ips/rewards`, {
       params,
     })
   },

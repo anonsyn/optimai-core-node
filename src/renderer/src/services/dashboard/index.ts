@@ -1,4 +1,4 @@
-import axiosClient from '@/libs/axios'
+import { apiClient } from '@/libs/axios'
 import {
   GetActivityLogParams,
   GetActivityLogResponse,
@@ -15,25 +15,25 @@ import {
 
 export const dashboardService = {
   getDashboardStats() {
-    return axiosClient.get<GetDashboardStatsResponse>('/dashboard/stats')
+    return apiClient.get<GetDashboardStatsResponse>('/dashboard/stats')
   },
   getAllStats(params: GetAllStatsParams) {
-    return axiosClient.get<GetAllStatsResponse>('/dashboard/all-stats', { params })
+    return apiClient.get<GetAllStatsResponse>('/dashboard/all-stats', { params })
   },
   getBalanceChange(params: GetBalanceChangeParams) {
-    return axiosClient.get<GetBalanceChangeResponse>('/dashboard/balance-change', { params })
+    return apiClient.get<GetBalanceChangeResponse>('/dashboard/balance-change', { params })
   },
   getRewards(params?: GetRewardsParams) {
-    return axiosClient.get<GetRewardsResponse>('/dashboard/rewards', { params })
+    return apiClient.get<GetRewardsResponse>('/dashboard/rewards', { params })
   },
   getNodeOperatorRewards() {
-    return axiosClient.get<GetNodeOperatorRewardsResponse>('/dashboard/node-operator-rewards')
+    return apiClient.get<GetNodeOperatorRewardsResponse>('/dashboard/node-operator-rewards')
   },
   getReferralRewards() {
-    return axiosClient.get<GetReferralRewardsStatsResponse>('/dashboard/referral-rewards-stats')
+    return apiClient.get<GetReferralRewardsStatsResponse>('/dashboard/referral-rewards-stats')
   },
   getActivityLog(params?: GetActivityLogParams) {
-    return axiosClient.get<GetActivityLogResponse>('/dashboard/activity-log', { params })
+    return apiClient.get<GetActivityLogResponse>('/dashboard/activity-log', { params })
   },
 }
 

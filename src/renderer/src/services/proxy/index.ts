@@ -1,4 +1,4 @@
-import axiosClient from '@/libs/axios'
+import { apiClient } from '@/libs/axios'
 import { AxiosRequestConfig } from 'axios'
 import {
   GetAssignmentByIdResponse,
@@ -17,13 +17,13 @@ import {
 
 export const proxyService = {
   getStats() {
-    return axiosClient.get<GetProxyStatsResponse>('/proxies/stats')
+    return apiClient.get<GetProxyStatsResponse>('/proxies/stats')
   },
   getRequests(params: GetProxyRequestsParams) {
-    return axiosClient.get<GetProxyRequestsResponse>('/proxies/requests', { params })
+    return apiClient.get<GetProxyRequestsResponse>('/proxies/requests', { params })
   },
   getNetworks(params: GetProxyNetworkParams) {
-    return axiosClient.get<GetProxyNetworksResponse>('/proxies/networks', { params })
+    return apiClient.get<GetProxyNetworksResponse>('/proxies/networks', { params })
   },
   getAssignments(params: GetAssignmentsParams, config?: AxiosRequestConfig) {
     const { status, ...restParams } = params
@@ -35,22 +35,22 @@ export const proxyService = {
         queryString = `status=${status}`
       }
     }
-    return axiosClient.get<GetAssignmentsResponse>(`/proxies/assignments?${queryString}`, {
+    return apiClient.get<GetAssignmentsResponse>(`/proxies/assignments?${queryString}`, {
       params: { ...restParams },
       ...config,
     })
   },
   getAssignmentById(id: string) {
-    return axiosClient.get<GetAssignmentByIdResponse>(`/proxies/assignments/${id}`)
+    return apiClient.get<GetAssignmentByIdResponse>(`/proxies/assignments/${id}`)
   },
   updateAssignmentStatus(id: string, request: UpdateAssignmentStatusRequest) {
-    return axiosClient.put(`/proxies/assignments/${id}/status`, request)
+    return apiClient.put(`/proxies/assignments/${id}/status`, request)
   },
   submitAssignment(id: string, request: SubmitAssignmentRequest) {
-    return axiosClient.post(`/proxies/assignments/${id}/submit`, request)
+    return apiClient.post(`/proxies/assignments/${id}/submit`, request)
   },
   getProxyRewards(params?: GetProxyRewardsParams) {
-    return axiosClient.get<GetProxyRewardsResponse>('/proxies/rewards', {
+    return apiClient.get<GetProxyRewardsResponse>('/proxies/rewards', {
       params,
     })
   },

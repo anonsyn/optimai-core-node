@@ -47,18 +47,6 @@ const wsUrl = await localClient.getWebSocketURL()
 const ws = new WebSocket(wsUrl)
 ```
 
-## Backward Compatibility
-
-The default export maintains backward compatibility:
-
-```typescript
-// Old way (still works)
-import axiosClient from '@/libs/axios'
-
-// New way (recommended for clarity)
-import { apiClient, minerClient, localClient } from '@/libs/axios'
-```
-
 ## Key Design Decisions
 
 1. **Three Separate Clients**: Clear separation of concerns for different backend services

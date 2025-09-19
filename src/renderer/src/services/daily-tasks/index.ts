@@ -1,4 +1,4 @@
-import axiosClient from '@/libs/axios'
+import { apiClient } from '@/libs/axios'
 import {
   CheckInResponse,
   ClaimCheckInWeeklyRewardResponse,
@@ -9,21 +9,21 @@ import {
 
 export const dailyTaskService = {
   getDailyTasks() {
-    return axiosClient.get<GetDailyTasksResponse>('/daily-tasks')
+    return apiClient.get<GetDailyTasksResponse>('/daily-tasks')
   },
   checkIn() {
-    return axiosClient.post<CheckInResponse>('/daily-tasks/check-in')
+    return apiClient.post<CheckInResponse>('/daily-tasks/check-in')
   },
   getCheckInHistory() {
-    return axiosClient.get<GetCheckInHistoryResponse>('/daily-tasks/check-in-history')
+    return apiClient.get<GetCheckInHistoryResponse>('/daily-tasks/check-in-history')
   },
   claimCheckInWeeklyReward() {
-    return axiosClient.post<ClaimCheckInWeeklyRewardResponse>(
+    return apiClient.post<ClaimCheckInWeeklyRewardResponse>(
       '/daily-tasks/claim-checkin-weekly-reward'
     )
   },
   hasClaimedCheckInWeeklyReward() {
-    return axiosClient.get<HasClaimedWeeklyRewardResponse>('/daily-tasks/has-claimed-weekly-reward')
+    return apiClient.get<HasClaimedWeeklyRewardResponse>('/daily-tasks/has-claimed-weekly-reward')
   }
 }
 

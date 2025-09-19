@@ -211,8 +211,3 @@ export const localClient = {
     })
   }
 }
-
-// Legacy default export for backward compatibility
-// Old code can still use: import axiosClient from '@/libs/axios'
-const axiosClient = apiClient
-export default axiosClient
