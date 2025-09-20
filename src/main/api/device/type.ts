@@ -32,6 +32,8 @@ export interface DeviceInfo {
   extension_id?: string // Extension only (from chrome-extension-id)
   device_id?: string // Mobile only (iOS UUID or Android ID)
   browser_id?: string // Browser only (FingerprintJS visitor ID)
+  os_name?: string
+  os_version?: string
 
   // Level 2: Raw Device Characteristics
   cpu_cores?: number // Optional: Available in most environments
