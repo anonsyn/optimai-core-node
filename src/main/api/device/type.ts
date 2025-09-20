@@ -1,10 +1,10 @@
-import { BaseApiQueryParams } from '@/types/query-params'
+import type { BaseApiQueryParams } from '../types'
 
 export enum DeviceType {
   EXTENSION = 'extension',
   MOBILE = 'mobile',
   PC = 'pc',
-  TELEGRAM = 'telegram',
+  TELEGRAM = 'telegram'
 }
 export interface Device {
   id: string
@@ -21,7 +21,7 @@ export const browserName = {
   FIREFOX: 'firefox',
   EDGE: 'edge',
   OPERA: 'opera',
-  BRAVE: 'brave',
+  BRAVE: 'brave'
 } as const
 
 export type BrowserName = (typeof browserName)[keyof typeof browserName]
@@ -102,17 +102,10 @@ export interface ClientToken {
   signature: string
 }
 
-export type RegisterDeviceRequest = DeviceInfo
-
-export type RegisterDeviceRequestV2 = {
+export type RegisterDeviceRequest = {
   data: string
 }
 
 export type RegisterDeviceResponse = {
-  device_id: string
-  ws_auth_token: string
-}
-
-export type RegisterDeviceResponseV2 = {
   data: string
 }

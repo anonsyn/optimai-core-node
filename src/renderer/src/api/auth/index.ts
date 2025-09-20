@@ -1,4 +1,3 @@
-import { apiClient } from '@/libs/axios'
 import {
   ChangeDisplayNameRequest,
   ChangePasswordRequest,
@@ -23,8 +22,9 @@ import {
   SignInResponse,
   SignUpRequest,
   UnlinkWalletRequest,
-  VerifyEmailParams,
+  VerifyEmailParams
 } from '@/api/auth/type'
+import { apiClient } from '@/libs/axios'
 
 export const authApi = {
   signUp(request: SignUpRequest) {
@@ -45,13 +45,13 @@ export const authApi = {
   getCurrentUser() {
     return apiClient.get<GetCurrentUserResponse>('/auth/me', {
       params: {
-        platforms: 'all',
-      },
+        platforms: 'all'
+      }
     })
   },
   verifyEmail(params: VerifyEmailParams) {
     return apiClient.get('/auth/verify-email', {
-      params,
+      params
     })
   },
   resendVerifyEmail(request: ResendVerifyEmailRequest) {
@@ -71,7 +71,7 @@ export const authApi = {
   },
   generateNonce(params: GenerateNonceParams) {
     return apiClient.get<GenerateNonceResponse>('/auth/nonce', {
-      params,
+      params
     })
   },
   changeDisplayName(request: ChangeDisplayNameRequest) {
@@ -88,17 +88,17 @@ export const authApi = {
   },
   getTwitterAuthUrlV2(params: GetTwitterAuthUrlV2Params) {
     return apiClient.get<GetTwitterAuthUrlResponse>('/auth/twitter/connect-v1.1', {
-      params,
+      params
     })
   },
   checkExists(params: CheckExistsParams) {
     return apiClient.get<CheckExistsResponse>('/auth/check-exists', {
-      params,
+      params
     })
   },
   connectTelegram(request: ConnectTelegramRequest) {
     return apiClient.post('/auth/telegram/auth', request)
-  },
+  }
 }
 
 export * from './type'
