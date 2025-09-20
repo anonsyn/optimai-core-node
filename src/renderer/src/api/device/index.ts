@@ -9,7 +9,7 @@ import {
   RegisterDeviceResponseV2,
 } from './type'
 
-export const deviceService = {
+export const deviceApi = {
   getDevices(params: GetDevicesParams) {
     return apiClient.get<GetDevicesResponse>('/devices', { params })
   },

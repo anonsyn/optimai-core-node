@@ -10,7 +10,6 @@ export type GetMiningAssignmentsParams = {
   created_after?: string
 }
 
-
 export type StartAssignmentResponse = {
   success: boolean
   message?: string

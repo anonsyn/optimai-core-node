@@ -1,4 +1,4 @@
-import { ClientToken, DeviceInfo, DeviceType } from '@/services/device/type'
+import { ClientToken, DeviceInfo, DeviceType } from '@/api/device/type'
 import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs'
 import CryptoJS from 'crypto-js'
 import stringify from 'json-stable-stringify-without-jsonify'

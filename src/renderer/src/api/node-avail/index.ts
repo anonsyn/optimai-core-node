@@ -8,7 +8,7 @@ import {
   GetUserNodesResponse,
 } from './type'
 
-export const nodeAvailService = {
+export const nodeAvailApi = {
   getStats() {
     return apiClient.get<GetNodeAvailabilityStatsResponse>('/node-avail/stats')
   },

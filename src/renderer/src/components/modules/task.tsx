@@ -12,7 +12,7 @@ import {
   useInvalidateMissionsQuery,
   useVerifyTaskMutationFn
 } from '@/queries/missions/use-verify-mission-mutation'
-import { Mission, TaskAction as MissionAction, MissionType, TaskStatus } from '@/services/missions'
+import { Mission, TaskAction as MissionAction, MissionType, TaskStatus } from '@/api/missions'
 import { Modals } from '@/store/slices/modals'
 import { getErrorMessage } from '@/utils/get-error-message'
 import { formatNumber } from '@/utils/number'
@@ -385,7 +385,7 @@ const TaskAction = ({ className, ...props }: React.HTMLAttributes<HTMLButtonElem
     openDashboardMissionModal()
     setStarted(false)
     // try {
-    //   const res = await authService.getTwitterAuthUrl()
+    //   const res = await authApi.getTwitterAuthUrl()
     //   const url = res.data.url
     //   const width = 500
     //   const height = 800

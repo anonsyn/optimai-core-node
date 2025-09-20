@@ -1,10 +1,10 @@
-import { authService } from '@/services/auth'
+import { authApi } from '@/api/auth'
 import { AppMutationOptions } from '@/types/react-query'
 import { useMutation } from '@tanstack/react-query'
 
 export const useResetPasswordMutation = (options: AppMutationOptions = {}) => {
   return useMutation({
-    mutationFn: authService.resetPassword,
+    mutationFn: authApi.resetPassword,
     ...options,
   })
 }

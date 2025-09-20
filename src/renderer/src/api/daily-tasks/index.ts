@@ -7,7 +7,7 @@ import {
   HasClaimedWeeklyRewardResponse
 } from './type'
 
-export const dailyTaskService = {
+export const dailyTaskApi = {
   getDailyTasks() {
     return apiClient.get<GetDailyTasksResponse>('/daily-tasks')
   },

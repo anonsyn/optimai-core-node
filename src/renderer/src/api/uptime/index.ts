@@ -1,7 +1,7 @@
 import { apiClient } from '@/libs/axios'
 import type { LogUptimeRequest, LogUptimeResponse } from './type'
 
-export const uptimeService = {
+export const uptimeApi = {
   logUptime(request: LogUptimeRequest) {
     return apiClient.post<LogUptimeResponse>('/uptime/online', request)
   },

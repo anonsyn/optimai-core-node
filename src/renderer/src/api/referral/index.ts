@@ -8,7 +8,7 @@ import {
   GetReferralStatsResponse,
 } from './type'
 
-export const referralService = {
+export const referralApi = {
   getStats() {
     return apiClient.get<GetReferralStatsResponse>('/referrals/stats')
   },

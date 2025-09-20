@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
-import { tokenStore } from '../../services/storage'
+import { tokenStore } from '../../storage'
 import { AuthEvents } from './events'
 
 class AuthIpcHandler {

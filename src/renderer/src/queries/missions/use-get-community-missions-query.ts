@@ -1,4 +1,4 @@
-import { missionService, TaskStatus } from '@/services/missions'
+import { missionApi, TaskStatus } from '@/api/missions'
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'community-missions'
@@ -8,7 +8,7 @@ export const useGetCommunityMissionsQuery = () => {
   return useQuery({
     queryKey: RQUERY(),
     queryFn: async () => {
-      return missionService.getCommunityMissions().then((res) => res.data)
+      return missionApi.getCommunityMissions().then((res) => res.data)
     },
     refetchInterval: (query) => {
       const res = query.state.data

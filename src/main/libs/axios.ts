@@ -1,6 +1,9 @@
-import { BASE_API_URL, BASE_MINER_URL } from '@/configs/env'
-import { sessionManager } from '@/utils/session-manager'
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import { tokenStore } from '../storage'
+
+// Get environment variables with defaults
+const BASE_API_URL = process.env.VITE_API_URL || 'https://api.optimai.network'
+const BASE_MINER_URL = process.env.VITE_MINER_URL || 'https://api-onchain-staging.optimai.network'
 
 // Types
 interface RefreshTokenResponse {
@@ -22,16 +25,12 @@ const processQueue = (error: any = null) => {
     if (error) {
       prom.reject(error)
     } else {
-      sessionManager
-        .getAccessToken()
-        .then((token) => {
-          if (token) {
-            prom.resolve(token)
-          } else {
-            prom.reject(new Error('No access token available'))
-          }
-        })
-        .catch(prom.reject)
+      const token = tokenStore.getAccessToken()
+      if (token) {
+        prom.resolve(token)
+      } else {
+        prom.reject(new Error('No access token available'))
+      }
     }
   })
   failedQueue = []
@@ -52,7 +51,7 @@ function createAuthenticatedClient(
 ): AxiosInstance {
   const client = axios.create({
     baseURL,
-    timeout: options.timeout || 10000,
+    timeout: options.timeout || 30000, // 30 seconds for main process
     headers: {
       'Content-Type': 'application/json',
       ...options.customHeaders
@@ -63,7 +62,7 @@ function createAuthenticatedClient(
   if (!options.skipAuth) {
     client.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
-        const token = await sessionManager.getAccessToken()
+        const token = tokenStore.getAccessToken()
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
@@ -101,7 +100,7 @@ function createAuthenticatedClient(
       originalRequest._retry = true
 
       try {
-        const refreshToken = await sessionManager.getRefreshToken()
+        const refreshToken = tokenStore.getRefreshToken()
         if (!refreshToken) {
           // No refresh token available, reject original error
           return Promise.reject(error)
@@ -129,7 +128,7 @@ function createAuthenticatedClient(
         const { access_token: accessToken } = response.data
 
         // Update access token in store
-        await sessionManager.setAccessToken(accessToken)
+        tokenStore.saveAccessToken(accessToken)
 
         // Update authorization header
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
@@ -143,11 +142,11 @@ function createAuthenticatedClient(
         // Token refresh failed, process queue with error
         processQueue(refreshError)
 
-        // Clear tokens and redirect to login
-        await sessionManager.clearTokens()
+        // Clear tokens
+        tokenStore.removeTokens()
 
-        // You might want to dispatch a logout action here if using Redux
-        // store.dispatch(authActions.logout())
+        // Log error
+        console.error('Token refresh failed:', refreshError)
 
         return Promise.reject(refreshError)
       } finally {
@@ -172,5 +171,16 @@ export const apiClient = createAuthenticatedClient(BASE_API_URL)
 export const minerClient = createAuthenticatedClient(BASE_MINER_URL, {
   customHeaders: {
     'X-Service': 'miner'
+  }
+})
+
+/**
+ * Create an unauthenticated client for public endpoints (e.g., login, signup)
+ */
+export const publicClient = axios.create({
+  baseURL: BASE_API_URL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json'
   }
 })

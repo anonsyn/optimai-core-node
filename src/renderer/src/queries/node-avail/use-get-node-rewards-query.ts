@@ -1,10 +1,10 @@
-import { GetNodeRewardsParams, GetNodeRewardsResponse, nodeAvailService } from '@/services/node-avail'
+import { GetNodeRewardsParams, GetNodeRewardsResponse, nodeAvailApi } from '@/api/node-avail'
 import { keepPreviousData, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
 const getQueryOptions = (params?: GetNodeRewardsParams) => {
   return {
     queryKey: ['node-avail-node-rewards', params],
-    queryFn: () => nodeAvailService.getNodeRewards(params).then((res) => res.data),
+    queryFn: () => nodeAvailApi.getNodeRewards(params).then((res) => res.data),
     placeholderData: keepPreviousData,
     refetchInterval: 60000,
     staleTime: 1000 * 60 * 5,
@@ -29,6 +29,6 @@ export const useGetInfiniteNodeRewardsQuery = (params: Omit<GetNodeRewardsParams
       return lastOffset >= total || offset >= 100 ? null : offset
     },
     queryFn: ({ pageParam }) =>
-      nodeAvailService.getNodeRewards({ limit: 20, ...params, offset: pageParam }).then((res) => res.data),
+      nodeAvailApi.getNodeRewards({ limit: 20, ...params, offset: pageParam }).then((res) => res.data),
   })
 }

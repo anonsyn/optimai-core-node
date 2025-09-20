@@ -1,4 +1,4 @@
-import { authService } from '@/services/auth'
+import { authApi } from '@/api/auth'
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'current-user'
@@ -14,7 +14,7 @@ export const useGetCurrentUserQuery = (options?: Options) => {
     queryKey: RQUERY(),
     queryFn: async () => {
       console.log('Query execute fetch user')
-      return authService.getCurrentUser().then((res) => res.data)
+      return authApi.getCurrentUser().then((res) => res.data)
     },
     refetchInterval: false,
     staleTime: 1000 * 60 * 60,

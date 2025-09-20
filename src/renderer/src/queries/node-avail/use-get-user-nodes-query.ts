@@ -1,4 +1,4 @@
-import { nodeAvailService } from '@/services/node-avail'
+import { nodeAvailApi } from '@/api/node-avail'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 
 const getQueryOptions = () => {
@@ -6,7 +6,7 @@ const getQueryOptions = () => {
     queryKey: ['node-avail-user-nodes'],
     queryFn: () => {
       try {
-        return nodeAvailService.getUserNodes().then((res) => res.data)
+        return nodeAvailApi.getUserNodes().then((res) => res.data)
       } catch (error) {
         console.log({ error })
       }

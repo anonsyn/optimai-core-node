@@ -1,4 +1,4 @@
-import { miningService } from '@/services/mining'
+import { miningApi } from '@/api/mining'
 import { useQuery } from '@tanstack/react-query'
 
 const QUERY_KEY = 'mining-assignment-detail'
@@ -16,7 +16,7 @@ export const useGetMiningAssignmentDetailQuery = (assignmentId: string, options?
   return useQuery({
     queryKey: getMiningAssignmentDetailQueryKey(assignmentId),
     queryFn: async () => {
-      const { data } = await miningService.getAssignmentDetail(assignmentId)
+      const { data } = await miningApi.getAssignmentDetail(assignmentId)
       return data
     },
     staleTime: 1000 * 10, // Consider data stale after 10 seconds

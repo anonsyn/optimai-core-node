@@ -1,4 +1,4 @@
-import { missionService, TaskStatus } from '@/services/missions'
+import { missionApi, TaskStatus } from '@/api/missions'
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'network-missions'
@@ -8,7 +8,7 @@ export const useGetNetworkMissionsQuery = () => {
   return useQuery({
     queryKey: RQUERY(),
     queryFn: async () => {
-      return missionService.getNetworkMissions().then((res) => res.data)
+      return missionApi.getNetworkMissions().then((res) => res.data)
     },
     refetchInterval: (query) => {
       const res = query.state.data
@@ -27,7 +27,7 @@ export const useGetNetworkMissionSuspenseQuery = () => {
   return useQuery({
     queryKey: RQUERY(),
     queryFn: async () => {
-      return missionService.getNetworkMissions().then((res) => res.data)
+      return missionApi.getNetworkMissions().then((res) => res.data)
     },
   })
 }

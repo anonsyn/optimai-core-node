@@ -1,4 +1,4 @@
-import { missionService, TaskStatus } from '@/services/missions'
+import { missionApi, TaskStatus } from '@/api/missions'
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'engagement-missions'
@@ -8,7 +8,7 @@ export const useGetEngagementMissionsQuery = () => {
   return useQuery({
     queryKey: RQUERY(),
     queryFn: async () => {
-      return missionService.getEngagementMissions().then((res) => res.data)
+      return missionApi.getEngagementMissions().then((res) => res.data)
     },
     refetchInterval: (query) => {
       const res = query.state.data

@@ -1,4 +1,4 @@
-import { missionService } from '@/services/missions'
+import { missionApi } from '@/api/missions'
 import { useQuery } from '@tanstack/react-query'
 
 const RQUERY_ROOT = 'engagement-mission'
@@ -8,7 +8,7 @@ export const useGetEngagementMissionByIdQuery = (id: string) => {
   return useQuery({
     queryKey: RQUERY(id),
     queryFn: async () => {
-      return missionService.getEngagementMissionById(id).then((res) => res.data)
+      return missionApi.getEngagementMissionById(id).then((res) => res.data)
     },
   })
 }

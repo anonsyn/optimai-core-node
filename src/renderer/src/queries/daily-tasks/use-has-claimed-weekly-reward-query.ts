@@ -1,4 +1,4 @@
-import { dailyTaskService } from "@/services/daily-tasks";
+import { dailyTaskApi } from "@/api/daily-tasks";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export const useHasClaimedWeeklyRewardQuery = (
@@ -9,7 +9,7 @@ export const useHasClaimedWeeklyRewardQuery = (
   return useQuery({
     queryKey: ["has-claimed-weekly-reward"],
     queryFn: () =>
-      dailyTaskService.hasClaimedCheckInWeeklyReward().then((res) => res.data),
+      dailyTaskApi.hasClaimedCheckInWeeklyReward().then((res) => res.data),
     placeholderData: keepPreviousData,
     enabled: options.enabled,
   });

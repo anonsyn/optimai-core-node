@@ -1,4 +1,4 @@
-import { GetMiningAssignmentsParams, miningService } from '@/services/mining'
+import { GetMiningAssignmentsParams, miningApi } from '@/api/mining'
 import { useQuery } from '@tanstack/react-query'
 
 const QUERY_KEY = 'mining-assignments'
@@ -25,7 +25,7 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
   return useQuery({
     queryKey: getMiningAssignmentsQueryKey(params),
     queryFn: async () => {
-      const { data } = await miningService.getAssignments(params)
+      const { data } = await miningApi.getAssignments(params)
       return data
     },
     refetchInterval: 5000, // Refresh every 5 seconds

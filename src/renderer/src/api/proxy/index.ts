@@ -15,7 +15,7 @@ import {
   UpdateAssignmentStatusRequest,
 } from './type'
 
-export const proxyService = {
+export const proxyApi = {
   getStats() {
     return apiClient.get<GetProxyStatsResponse>('/proxies/stats')
   },

@@ -1,9 +1,9 @@
 import {
   Mission,
-  missionService,
+  missionApi,
   MissionType,
   VerifyEngagementMissionRequest,
-} from '@/services/missions'
+} from '@/api/missions'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { RQUERY as COMMUNITY_MISSIONS_QUERY } from './use-get-community-missions-query'
 import { RQUERY as ENGAGEMENT_MISSIONS_QUERY } from './use-get-engagement-missions-query'
@@ -12,14 +12,14 @@ import { RQUERY as NETWORK_MISSIONS_QUERY } from './use-get-network-missions-que
 export const useVerifyTaskMutationFn = (task: Mission, taskType: MissionType) => {
   return async (request?: VerifyEngagementMissionRequest) => {
     if (taskType === MissionType.COMMUNITY) {
-      return missionService.verifyCommunityMission(task.id, request)
+      return missionApi.verifyCommunityMission(task.id, request)
     }
 
     if (taskType === MissionType.ENGAGEMENT) {
-      return missionService.verifyEngagementMission(task.id, request)
+      return missionApi.verifyEngagementMission(task.id, request)
     }
 
-    return missionService.verifyNetworkMission(task.id, request)
+    return missionApi.verifyNetworkMission(task.id, request)
   }
 }
 

@@ -1,4 +1,4 @@
-import { miningService } from '@/services/mining'
+import { miningApi } from '@/api/mining'
 import { useQuery } from '@tanstack/react-query'
 
 const QUERY_KEY = 'mining-stats'
@@ -13,7 +13,7 @@ export const useGetMiningStatsQuery = (options?: Options) => {
   return useQuery({
     queryKey: getMiningStatsQueryKey(),
     queryFn: async () => {
-      const { data } = await miningService.getStats()
+      const { data } = await miningApi.getStats()
       return data
     },
     refetchInterval: 30000, // Refresh every 30 seconds

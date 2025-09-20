@@ -12,7 +12,7 @@ import {
   SubmitAssignmentResponse
 } from './type'
 
-export const miningService = {
+export const miningApi = {
   getStats() {
     return minerClient.get<MiningStatsResponse>('/mining/stats')
   },

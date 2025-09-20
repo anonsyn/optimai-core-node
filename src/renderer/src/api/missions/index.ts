@@ -11,7 +11,7 @@ import {
   VerifyEngagementMissionRequest,
 } from './type'
 
-export const missionService = {
+export const missionApi = {
   getStats() {
     return apiClient.get<GetStatsResponse>('/missions/stats')
   },

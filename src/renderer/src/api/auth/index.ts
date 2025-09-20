@@ -24,9 +24,9 @@ import {
   SignUpRequest,
   UnlinkWalletRequest,
   VerifyEmailParams,
-} from '@/services/auth/type'
+} from '@/api/auth/type'
 
-export const authService = {
+export const authApi = {
   signUp(request: SignUpRequest) {
     return apiClient.post('/auth/signup', request)
   },

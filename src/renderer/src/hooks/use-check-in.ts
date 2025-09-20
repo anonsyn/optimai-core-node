@@ -1,5 +1,5 @@
 import { useAppDispatch } from '@/hooks/redux'
-import { dailyTaskService } from '@/services/daily-tasks'
+import { dailyTaskApi } from '@/api/daily-tasks'
 import { checkInActions } from '@/store/slices/checkin'
 
 export const useCheckIn = () => {
@@ -7,7 +7,7 @@ export const useCheckIn = () => {
 
   return async () => {
     try {
-      const res = await dailyTaskService.checkIn()
+      const res = await dailyTaskApi.checkIn()
       const { already_checked_in, reward } = res.data
       if (!already_checked_in) {
         dispatch(checkInActions.setShouldRunAnimation(true))

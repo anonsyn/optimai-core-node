@@ -13,7 +13,7 @@ import {
   GetRewardsResponse,
 } from './type'
 
-export const dashboardService = {
+export const dashboardApi = {
   getDashboardStats() {
     return apiClient.get<GetDashboardStatsResponse>('/dashboard/stats')
   },

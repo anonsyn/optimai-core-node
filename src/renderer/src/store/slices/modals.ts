@@ -1,4 +1,4 @@
-import { Mission, MissionType } from '@/services/missions'
+import { Mission, MissionType } from '@/api/missions'
 import { RootState } from '@/store'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 

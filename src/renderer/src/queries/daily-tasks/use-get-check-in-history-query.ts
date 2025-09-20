@@ -1,4 +1,4 @@
-import { dailyTaskService } from '@/services/daily-tasks'
+import { dailyTaskApi } from '@/api/daily-tasks'
 import { useQuery } from '@tanstack/react-query'
 
 export const useGetCheckInHistoryQuery = (
@@ -10,7 +10,7 @@ export const useGetCheckInHistoryQuery = (
   return useQuery({
     queryKey: ['check-in-history'],
     queryFn: () =>
-      dailyTaskService
+      dailyTaskApi
         .getCheckInHistory()
         .then((res) => res.data)
         .then((res) => {

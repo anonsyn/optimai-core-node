@@ -1,10 +1,10 @@
-import { GetProxyRewardsParams, GetProxyRewardsResponse, proxyService } from '@/services/proxy'
+import { GetProxyRewardsParams, GetProxyRewardsResponse, proxyApi } from '@/api/proxy'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 
 export const useGetProxyRewardsQuery = (params?: GetProxyRewardsParams) => {
   return useQuery({
     queryKey: ['proxy-rewards', params],
-    queryFn: () => proxyService.getProxyRewards(params).then((res) => res.data),
+    queryFn: () => proxyApi.getProxyRewards(params).then((res) => res.data),
     refetchInterval: 60000,
   })
 }
@@ -23,7 +23,7 @@ export const useGetInfiniteProxyRewardsQuery = (
       return lastOffset >= total || offset >= 100 ? null : offset
     },
     queryFn: ({ pageParam }) =>
-      proxyService
+      proxyApi
         .getProxyRewards({ limit: 20, ...params, offset: pageParam })
         .then((res) => res.data),
     refetchInterval: 60000,
