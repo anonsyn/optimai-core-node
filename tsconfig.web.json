@@ -18,9 +18,6 @@
       "@assets/*": [
         "src/renderer/src/assets/*"
       ],
-      "@lite-node/*": [
-        "src/renderer/src/apps/lite-node/*"
-      ],
       "@core-node/*": [
         "src/renderer/src/apps/core-node/*"
       ],

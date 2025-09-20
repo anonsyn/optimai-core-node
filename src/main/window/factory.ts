@@ -12,10 +12,6 @@ export const createWindow = (windowType: WindowType) => {
     [WindowType.CoreNode]: {
       width: Math.min(screenWidth, 1200),
       height: Math.min(screenHeight, 800)
-    },
-    [WindowType.LiteNode]: {
-      width: Math.min(screenWidth, 420),
-      height: Math.min(screenHeight, 700)
     }
   }
 
@@ -48,16 +44,10 @@ export const createWindow = (windowType: WindowType) => {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    const url =
-      windowType === WindowType.CoreNode
-        ? process.env['ELECTRON_RENDERER_URL'] + '/core-node.html'
-        : process.env['ELECTRON_RENDERER_URL'] + '/lite-node.html'
+    const url = process.env['ELECTRON_RENDERER_URL'] + '/core-node.html'
     window.loadURL(url)
   } else {
-    const url =
-      windowType === WindowType.CoreNode
-        ? join(__dirname, '../renderer/core-node.html')
-        : join(__dirname, '../renderer/lite-node.html')
+    const url = join(__dirname, '../renderer/core-node.html')
     window.loadFile(url)
   }
 

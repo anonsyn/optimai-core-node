@@ -5,7 +5,7 @@ import { useUserUptimeRewardCountStore } from '@/hooks/use-user-uptime-reward-co
 import { useUserUptimeStore } from '@/hooks/use-user-uptime-store'
 import { authActions } from '@/store/slices/auth'
 import { checkInActions } from '@/store/slices/checkin'
-import { PATHS } from '@lite-node/routers/paths'
+import { PATHS } from '@core-node/routers/paths'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router'
 
@@ -29,7 +29,7 @@ const useLogout = () => {
     dispatch(authActions.setUser(undefined))
     dispatch(checkInActions.reset())
 
-    navigate(PATHS.LOGIN, { replace: true })
+    navigate(PATHS.START_UP, { replace: true })
 
     queryClient.removeQueries()
 

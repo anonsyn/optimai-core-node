@@ -1,8 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 
 enum WindowType {
-  CoreNode = 'main',
-  LiteNode = 'lite-node'
+  CoreNode = 'main'
 }
 type OptimaiBrowserWindowOptions = BrowserWindowConstructorOptions & {
   windowType: WindowType
