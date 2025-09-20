@@ -2,6 +2,7 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, Menu, nativeImage, nativeTheme, Tray } from 'electron'
 import log from 'electron-log/main'
 import icon from '../../resources/icon.png?asset'
+import authIpcHandler from './ipc/auth'
 import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
@@ -85,6 +86,7 @@ if (!gotTheLock) {
 
     windowIpcHandler.initialize()
     updaterIpcHandler.initialize()
+    authIpcHandler.initialize() // Initialize auth IPC handler for token management
     nodeIpcHandler.initialize() // Initialize node IPC handler which starts the API server
 
     const window = createWindow(DEFAULT_WINDOW)
