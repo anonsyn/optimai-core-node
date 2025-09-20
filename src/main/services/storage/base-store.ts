@@ -26,8 +26,5 @@ export function createStore<T extends Record<string, any>>(options: StoreOptions
  */
 function generateEncryptionKey(storeName: string): string {
   const salt = 'OptimAI-Core-Node-2024'
-  return crypto
-    .createHash('sha256')
-    .update(`${app.getName()}-${storeName}-${salt}`)
-    .digest('hex')
+  return crypto.createHash('sha256').update(`${app.getName()}-${storeName}-${salt}`).digest('hex')
 }

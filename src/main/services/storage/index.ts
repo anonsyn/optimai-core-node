@@ -4,33 +4,28 @@
  */
 
 // Export store instances
-export { tokenStore } from './token-store'
-export { userStore } from './user-store'
-export { uptimeStore } from './uptime-store'
-export { rewardStore } from './reward-store'
 export { deviceStore } from './device-store'
+export { rewardStore } from './reward-store'
+export { tokenStore } from './token-store'
+export { uptimeStore } from './uptime-store'
+export { userStore } from './user-store'
 
 // Export all types
 export type {
-  // Token types
-  TokenData,
-
-  // User types
-  User,
-  UserData,
-
-  // Uptime types
-  UptimeData,
-  UptimeStoreData,
-
+  // Device types
+  DeviceData,
   // Reward types
   RewardData,
   RewardStoreData,
-
-  // Device types
-  DeviceData,
-  SystemInfo,
-
   // Common types
-  StoreOptions
+  StoreOptions,
+  SystemInfo,
+  // Token types
+  TokenData,
+  // Uptime types
+  UptimeData,
+  UptimeStoreData,
+  // User types
+  User,
+  UserData
 } from './types'
