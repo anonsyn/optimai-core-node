@@ -11,9 +11,10 @@ class AuthIpcHandler {
         tokenStore.saveTokens(accessToken, refreshToken)
         log.info('Tokens stored successfully')
         return { success: true }
-      } catch (error) {
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
         log.error('Failed to store tokens:', error)
-        return { success: false, error: error.message }
+        return { success: false, error: message }
       }
     })
 
@@ -22,7 +23,7 @@ class AuthIpcHandler {
       try {
         const token = tokenStore.getAccessToken()
         return token || null
-      } catch (error) {
+      } catch (error: unknown) {
         log.error('Failed to get access token:', error)
         return null
       }
@@ -33,7 +34,7 @@ class AuthIpcHandler {
       try {
         const token = tokenStore.getRefreshToken()
         return token || null
-      } catch (error) {
+      } catch (error: unknown) {
         log.error('Failed to get refresh token:', error)
         return null
       }
@@ -45,9 +46,10 @@ class AuthIpcHandler {
         tokenStore.saveAccessToken(accessToken)
         log.info('Access token updated successfully')
         return { success: true }
-      } catch (error) {
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
         log.error('Failed to update access token:', error)
-        return { success: false, error: error.message }
+        return { success: false, error: message }
       }
     })
 
@@ -66,9 +68,10 @@ class AuthIpcHandler {
         }
         log.info('Refresh token updated successfully')
         return { success: true }
-      } catch (error) {
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
         log.error('Failed to update refresh token:', error)
-        return { success: false, error: error.message }
+        return { success: false, error: message }
       }
     })
 
@@ -78,9 +81,10 @@ class AuthIpcHandler {
         tokenStore.removeTokens()
         log.info('Tokens removed successfully')
         return { success: true }
-      } catch (error) {
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
         log.error('Failed to remove tokens:', error)
-        return { success: false, error: error.message }
+        return { success: false, error: message }
       }
     })
 
