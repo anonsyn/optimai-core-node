@@ -5,7 +5,7 @@ import {
   GetNodeRewardsResponse,
   GetNodeStatsParams,
   GetNodeStatsResponse,
-  GetUserNodesResponse,
+  GetUserNodesResponse
 } from './type'
 
 export const nodeAvailApi = {
@@ -17,14 +17,14 @@ export const nodeAvailApi = {
   },
   getNodeStats(nodeId: string, params: GetNodeStatsParams) {
     return apiClient.get<GetNodeStatsResponse>(`/node-avail/nodes/${nodeId}`, {
-      params,
+      params
     })
   },
   getNodeRewards(params?: GetNodeRewardsParams) {
     return apiClient.get<GetNodeRewardsResponse>(`/node-avail/ips/rewards`, {
-      params,
+      params
     })
-  },
+  }
 }
 
 export * from './type'

@@ -5,12 +5,7 @@ import type {
   MiningStatsResponse,
   WorkerPreferences
 } from '@main/node/types'
-import {
-  GetMiningAssignmentsParams,
-  StartAssignmentResponse,
-  SubmitAssignmentRequest,
-  SubmitAssignmentResponse
-} from './type'
+import type { GetMiningAssignmentsParams } from './type'
 
 export const miningApi = {
   getStats() {
@@ -24,20 +19,8 @@ export const miningApi = {
   getAssignmentDetail(assignmentId: string) {
     return minerClient.get<MiningAssignment>(`/mining/assignments/${assignmentId}`)
   },
-  startAssignment(assignmentId: string) {
-    return minerClient.post<StartAssignmentResponse>(`/mining/assignments/${assignmentId}/start`)
-  },
-  submitAssignment(assignmentId: string, request: SubmitAssignmentRequest) {
-    return minerClient.post<SubmitAssignmentResponse>(
-      `/mining/assignments/${assignmentId}/submit`,
-      request
-    )
-  },
   getWorkerPreferences() {
     return minerClient.get<WorkerPreferences>('/workers/preferences')
-  },
-  updateWorkerPreferences(preferences: WorkerPreferences) {
-    return minerClient.put<WorkerPreferences>('/workers/preferences', preferences)
   }
 }
 

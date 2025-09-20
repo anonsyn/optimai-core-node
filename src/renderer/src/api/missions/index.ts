@@ -8,7 +8,7 @@ import {
   GetNetworkMissionsResponse,
   GetStatsResponse,
   NetworkMission,
-  VerifyEngagementMissionRequest,
+  VerifyEngagementMissionRequest
 } from './type'
 
 export const missionApi = {
@@ -47,7 +47,7 @@ export const missionApi = {
   },
   getDashboardMissions() {
     return apiClient.get<GetDashboardMissionsResponse>('/missions/tasks-in-dash')
-  },
+  }
 }
 
 export * from './type'

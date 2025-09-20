@@ -12,7 +12,7 @@ import {
   GetProxyRewardsResponse,
   GetProxyStatsResponse,
   SubmitAssignmentRequest,
-  UpdateAssignmentStatusRequest,
+  UpdateAssignmentStatusRequest
 } from './type'
 
 export const proxyApi = {
@@ -37,7 +37,7 @@ export const proxyApi = {
     }
     return apiClient.get<GetAssignmentsResponse>(`/proxies/assignments?${queryString}`, {
       params: { ...restParams },
-      ...config,
+      ...config
     })
   },
   getAssignmentById(id: string) {
@@ -51,9 +51,9 @@ export const proxyApi = {
   },
   getProxyRewards(params?: GetProxyRewardsParams) {
     return apiClient.get<GetProxyRewardsResponse>('/proxies/rewards', {
-      params,
+      params
     })
-  },
+  }
 }
 
 export * from './type'

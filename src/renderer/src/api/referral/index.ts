@@ -5,7 +5,7 @@ import {
   GetAllTiersResponse,
   GetReferralListParams,
   GetReferralListResponse,
-  GetReferralStatsResponse,
+  GetReferralStatsResponse
 } from './type'
 
 export const referralApi = {
@@ -23,7 +23,7 @@ export const referralApi = {
   },
   claimReferralTier(request: ClaimReferralTierRequest) {
     return apiClient.post('/referrals/claim-tier', request)
-  },
+  }
 }
 
 export * from './type'
