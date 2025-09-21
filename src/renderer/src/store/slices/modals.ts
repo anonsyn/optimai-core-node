@@ -7,7 +7,9 @@ export enum Modals {
   VERIFY_TWITTER_TASK = 'VERIFY_TWITTER_TASK',
   DASHBOARD_MISSION = 'DASHBOARD_MISSION',
   ON_BOARDING = 'ON_BOARDING',
-  LOGIN = 'LOGIN'
+  LOGIN = 'LOGIN',
+  DOCKER_NOT_INSTALLED = 'DOCKER_NOT_INSTALLED',
+  DOCKER_NOT_RUNNING = 'DOCKER_NOT_RUNNING'
 }
 
 export type ModalState<T = undefined> = {
@@ -35,6 +37,12 @@ export interface ModalSliceState {
   [Modals.ON_BOARDING]?: ModalState
   [Modals.LOGIN]?: ModalState<{
     onSuccess: () => void
+  }>
+  [Modals.DOCKER_NOT_INSTALLED]?: ModalState<{
+    onRetry: () => void
+  }>
+  [Modals.DOCKER_NOT_RUNNING]?: ModalState<{
+    onRetry: () => void
   }>
 }
 

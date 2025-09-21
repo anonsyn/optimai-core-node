@@ -1,4 +1,5 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
+import type { VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 
 import { buttonVariants } from '@/components/ui/button'
@@ -34,7 +35,7 @@ const AlertDialogContent = React.forwardRef<
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        'bg-secondary data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-bottom-[100%] data-[state=open]:slide-in-from-bottom-[100%] fixed top-1/2 left-1/2 z-50 grid max-h-[98svh] w-full max-w-[92dvw] -translate-x-1/2 -translate-y-1/2 rounded-xl border p-4 shadow-lg duration-200 sm:max-w-[440px] xl:p-5',
+        'bg-secondary data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-1/2 left-1/2 z-50 grid max-h-[98svh] w-full max-w-[92dvw] -translate-x-1/2 -translate-y-1/2 rounded-xl border p-4 shadow-lg duration-200 sm:max-w-[440px] xl:p-5',
         className
       )}
       {...props}
@@ -44,12 +45,12 @@ const AlertDialogContent = React.forwardRef<
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
 
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('relative z-10 flex flex-col items-start gap-0', className)} {...props} />
+  <div className={cn('relative z-10 flex flex-col items-center gap-0', className)} {...props} />
 )
 AlertDialogHeader.displayName = 'AlertDialogHeader'
 
 const AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('mt-4 flex gap-3 md:mt-8', className)} {...props} />
+  <div className={cn('mt-4 flex flex-col gap-3 md:mt-8', className)} {...props} />
 )
 AlertDialogFooter.displayName = 'AlertDialogFooter'
 
@@ -60,7 +61,7 @@ const AlertDialogTitle = React.forwardRef<
   <AlertDialogPrimitive.Title
     ref={ref}
     className={cn(
-      'text-24 text-foreground leading-relaxed font-semibold tracking-tight',
+      'text-24 text-foreground text-center leading-relaxed font-semibold tracking-tight',
       className
     )}
     {...props}
@@ -75,7 +76,7 @@ const AlertDialogDescription = React.forwardRef<
   <AlertDialogPrimitive.Description
     ref={ref}
     className={cn(
-      'text-14 text-foreground/80 xl:text-16 leading-relaxed tracking-tight',
+      'text-14 text-foreground/80 xl:text-16 text-center leading-relaxed tracking-tight',
       className
     )}
     {...props}
@@ -83,25 +84,33 @@ const AlertDialogDescription = React.forwardRef<
 ))
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName
 
+interface AlertDialogActionProps
+  extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>,
+    VariantProps<typeof buttonVariants> {}
+
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
->(({ className, ...props }, ref) => (
+  AlertDialogActionProps
+>(({ className, variant, size, ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
-    className={cn(buttonVariants(), 'flex-1', className)}
+    className={cn(buttonVariants({ variant, size }), 'w-full', className)}
     {...props}
   />
 ))
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
 
+interface AlertDialogCancelProps
+  extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>,
+    VariantProps<typeof buttonVariants> {}
+
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
->(({ className, ...props }, ref) => (
+  AlertDialogCancelProps
+>(({ className, variant = 'secondary', size, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonVariants({ variant: 'secondary' }), 'flex-1', className)}
+    className={cn(buttonVariants({ variant, size }), className)}
     {...props}
   />
 ))

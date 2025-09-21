@@ -187,14 +187,16 @@ const CanvasGlow = ({ className }: CanvasGlowProps) => {
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={`pointer-events-none ${className || ''}`}
-      style={{
-        width: '100%',
-        height: '100%'
-      }}
-    />
+    <div className="absolute inset-0">
+      <canvas
+        ref={canvasRef}
+        className={`pointer-events-none ${className || ''}`}
+        style={{
+          width: '100%',
+          height: '100%'
+        }}
+      />
+    </div>
   )
 }
 
