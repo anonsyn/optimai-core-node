@@ -41,3 +41,4 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
     throw new Error('Failed to decode device registration response')
   }
 }
+

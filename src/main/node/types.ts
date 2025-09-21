@@ -4,6 +4,7 @@
 
 export enum NodeStatus {
   Idle = 'idle',
+  Starting = 'starting',
   Running = 'running',
   Restarting = 'restarting',
   Stopping = 'stopping'
@@ -63,7 +64,7 @@ export interface MiningAssignment {
   task: {
     id: string
     platform: 'google' | 'twitter'
-    source_url?: 'https://www.justice.gov/archives/opa/pr/binance-and-ceo-plead-guilty-federal-charges-4b-resolution'
+    source_url?: string
     status: string
     reward_amount?: number
     metadata: {

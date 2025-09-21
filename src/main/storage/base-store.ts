@@ -4,14 +4,23 @@ import Store from 'electron-store'
 import path from 'path'
 import type { StoreOptions } from './types'
 
+export type PersistentStore<T extends Record<string, any>> = {
+  get<K extends keyof T>(key: K): T[K] | undefined
+  set<K extends keyof T>(key: K, value: T[K]): void
+  has(key: keyof T): boolean
+  clear(): void
+  onDidAnyChange(callback: () => void): () => void
+  onDidChange<K extends keyof T>(key: K, callback: (value: T[K]) => void): () => void
+}
+
 /**
  * Create an encrypted store instance
  */
-export function createStore<T extends Record<string, any>>(options: StoreOptions<T>) {
+export function createStore<T extends Record<string, any>>(options: StoreOptions<T>): PersistentStore<T> {
   // Generate or use provided encryption key
   const encryptionKey = options.encryptionKey || generateEncryptionKey(options.name)
 
-  return new Store<T>({
+  const store = new Store<T>({
     name: options.name,
     encryptionKey,
     defaults: options.defaults || ({} as T),
@@ -19,6 +28,8 @@ export function createStore<T extends Record<string, any>>(options: StoreOptions
     clearInvalidConfig: true,
     accessPropertiesByDotNotation: true
   })
+
+  return store as unknown as PersistentStore<T>
 }
 
 /**

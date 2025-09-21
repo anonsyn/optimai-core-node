@@ -26,7 +26,6 @@ export interface StatusMessage {
 export enum StartupPhase {
   INITIALIZING = 'initializing',
   CHECKING_UPDATES = 'checking_updates',
-  WAITING_SERVER = 'waiting_server',
   CHECKING_AUTH = 'checking_auth',
   STARTING_NODE = 'starting_node',
   COMPLETED = 'completed',
@@ -107,46 +106,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     })
   }, [addStatus])
 
-  // Wait for CLI server to be ready
-  const waitForServer = useCallback(async (): Promise<boolean> => {
-    setPhase(StartupPhase.WAITING_SERVER)
-    addStatus('Setting up your workspace...')
-
-    const maxRetries = 30
-    const delayMs = 1000
-
-    for (let i = 0; i < maxRetries; i++) {
-      try {
-        const serverStatus = await window.nodeIPC.getServerStatus()
-
-        if (serverStatus.isReady) {
-          addStatus('Server is ready')
-          return true
-        }
-
-        if (i === 0) {
-          addStatus(`Server starting on port ${serverStatus.port || 'auto'}...`)
-        }
-
-        await sleep(delayMs)
-      } catch (error) {
-        console.error('Error checking server status:', error)
-
-        if (i === maxRetries - 1) {
-          addStatus('Failed to connect to server', true)
-          setError('Server failed to start')
-          return false
-        }
-
-        await sleep(delayMs)
-      }
-    }
-
-    addStatus('Server startup timeout', true)
-    setError('Server took too long to start')
-    return false
-  }, [addStatus])
-
   // Check authentication
   const checkAuth = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.CHECKING_AUTH)
@@ -164,7 +123,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       })
 
       const user = res.data?.user
-      console.log({ user })
 
       if (!user) {
         throw new Error('No user found')
@@ -196,7 +154,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       await sleep(1000)
 
       // Check node status to confirm it's running
-      const nodeStatus = await window.nodeIPC.getNodeStatus()
+      const nodeStatus = await window.nodeIPC.getStatus()
 
       if (nodeStatus?.running) {
         addStatus('Node is running')
@@ -232,15 +190,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         return
       }
 
-      // 2. Wait for CLI server to be ready
-      const serverReady = await waitForServer()
-      if (!serverReady) {
-        setPhase(StartupPhase.ERROR)
-        setIsLoading(false)
-        return
-      }
-
-      // 3. Check authentication
+      // 2. Check authentication
       const isAuthenticated = await checkAuth()
 
       if (!isAuthenticated) {
@@ -258,7 +208,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         return
       }
 
-      // 4. Start node
+      // 3. Start node
       const nodeStarted = await startNode()
 
       if (nodeStarted) {
@@ -274,7 +224,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     } finally {
       setIsLoading(false)
     }
-  }, [checkForUpdates, waitForServer, checkAuth, startNode, openLoginModal, navigate, addStatus])
+  }, [checkForUpdates, checkAuth, startNode, openLoginModal, navigate, addStatus])
 
   // Retry functionality
   const retry = useCallback(() => {

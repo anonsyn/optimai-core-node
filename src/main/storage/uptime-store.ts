@@ -28,16 +28,17 @@ export const uptimeStore = {
     const data = store.get('uptime_data')
 
     if (!data) {
-      // Create new cycle if none exists
-      return this.createCycle()
-    }
-
-    // Check if cycle expired and create new one if needed
-    if (this.isExpired()) {
       return this.createCycle()
     }
 
     return data
+  },
+
+  /**
+   * Get the current cycle without creating a new one
+   */
+  getCurrentCycle(): UptimeData | undefined {
+    return store.get('uptime_data')
   },
 
   /**

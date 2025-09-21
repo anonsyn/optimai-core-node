@@ -11,12 +11,14 @@ import { Icon } from '@/components/ui/icon'
 import { InputCustomize, Password } from '@/components/ui/input'
 import { toastError, toastSuccess } from '@/components/ui/toast'
 import { EXTERNAL_LINKS } from '@/configs/links'
+import { authApi } from '@/api/auth'
 import { useCloseModal, useIsModalOpen, useModalData } from '@/hooks/modal'
 import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { authActions } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
 import { getErrorMessage } from '@/utils/get-error-message'
+import { sessionManager } from '@/utils/session-manager'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
@@ -77,14 +79,29 @@ const LoginForm = () => {
 
   const { mutateAsync: signIn, isPending } = useMutation({
     mutationFn: async (formValue: FormValue) => {
-      // Use IPC to handle login through the API server
-      const tokens = await window.nodeIPC.loginApi(formValue.email, formValue.password)
+      const { verifier, challenge } = await generatePkceChallenge()
 
-      if (!tokens || !tokens.access_token) {
-        throw new Error('Login failed - no tokens received')
+      const signInResponse = await authApi.signInV2({
+        email: formValue.email,
+        password: formValue.password,
+        code_challenge: challenge,
+        code_challenge_method: 'S256'
+      })
+
+      const tokenResponse = await authApi.exchangeToken({
+        grant_type: 'authorization_code',
+        code: signInResponse.data.authorization_code,
+        code_verifier: verifier
+      })
+
+      const { access_token: accessToken, refresh_token: refreshToken } = tokenResponse.data
+
+      if (!accessToken || !refreshToken) {
+        throw new Error('No tokens received from server')
       }
 
-      // After successful login, get the user data
+      await sessionManager.setTokens(accessToken, refreshToken)
+
       const res = await getCurrentUserQuery.refetch({
         throwOnError: true
       })
@@ -182,3 +199,24 @@ const LoginForm = () => {
 }
 
 export default LoginModal
+
+const base64UrlEncode = (bytes: Uint8Array) => {
+  let binary = ''
+  bytes.forEach((b) => {
+    binary += String.fromCharCode(b)
+  })
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+const generatePkceChallenge = async () => {
+  const verifierBytes = new Uint8Array(32)
+  crypto.getRandomValues(verifierBytes)
+  const verifier = base64UrlEncode(verifierBytes)
+
+  const encoder = new TextEncoder()
+  const data = encoder.encode(verifier)
+  const digest = await crypto.subtle.digest('SHA-256', data)
+  const challenge = base64UrlEncode(new Uint8Array(digest))
+
+  return { verifier, challenge }
+}

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
-import { tokenStore } from '../../storage'
+import { tokenStore, userStore } from '../../storage'
 import { AuthEvents } from './events'
 
 class AuthIpcHandler {
@@ -79,6 +79,7 @@ class AuthIpcHandler {
     ipcMain.handle(AuthEvents.Logout, async () => {
       try {
         tokenStore.removeTokens()
+        userStore.removeUser()
         log.info('Tokens removed successfully')
         return { success: true }
       } catch (error: unknown) {

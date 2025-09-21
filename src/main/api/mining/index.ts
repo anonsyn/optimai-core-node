@@ -44,6 +44,27 @@ export const miningApi = {
 
   updateWorkerPreferences(preferences: WorkerPreferences) {
     return minerClient.put<WorkerPreferences>('/workers/preferences', preferences)
+  },
+
+  setWorkerPreferences(platforms: string[]) {
+    return minerClient.put('/workers/preferences', {
+      platforms
+    })
+  },
+
+  sendHeartbeat(agentInfo: Record<string, unknown>) {
+    return minerClient.post('/workers/heartbeat', {
+      agent_info: agentInfo
+    })
+  },
+
+  getEventsUrl(): string | null {
+    const baseURL = minerClient.defaults.baseURL
+    if (!baseURL) {
+      return null
+    }
+
+    return new URL('/workers/events', baseURL).toString()
   }
 }
 
