@@ -1,5 +1,5 @@
 import log from 'electron-log/main'
-import { dockerManager } from './docker-manager'
+import { crawl4AiService } from './crawl4ai-service'
 
 export interface CrawlOptions {
   url: string
@@ -29,12 +29,13 @@ export interface CrawlResult {
 }
 
 class CrawlerService {
-  private baseUrl: string
+  private baseUrl: string | null = null
   private initialized: boolean = false
   private initializationPromise: Promise<boolean> | null = null
+  private servicePort: number | null = null
 
-  constructor(port: number = 8080) {
-    this.baseUrl = `http://localhost:${port}`
+  constructor() {
+    // Port will be set dynamically during initialization
   }
 
   /**
@@ -62,10 +63,30 @@ class CrawlerService {
     try {
       log.info('[crawler] Initializing crawler service...')
 
-      // Initialize Docker environment
-      const dockerReady = await dockerManager.initialize()
-      if (!dockerReady) {
-        log.error('[crawler] Failed to initialize Docker environment')
+      // Initialize Crawl4AI service
+      const crawl4AiReady = await crawl4AiService.initialize()
+      if (!crawl4AiReady) {
+        log.error('[crawler] Failed to initialize Crawl4AI service')
+        return false
+      }
+
+      // Get the base URL from Crawl4AI service
+      const baseUrl = crawl4AiService.getBaseUrl()
+      const port = crawl4AiService.getPort()
+
+      if (!baseUrl || !port) {
+        log.error('[crawler] Crawl4AI service URL or port not available')
+        return false
+      }
+
+      this.servicePort = port
+      this.baseUrl = baseUrl
+      log.info(`[crawler] Crawler service using ${baseUrl}`)
+
+      // Verify the service is accessible
+      const isHealthy = await this.waitForHealth()
+      if (!isHealthy) {
+        log.error('[crawler] Crawler service health check failed')
         return false
       }
 
@@ -87,6 +108,11 @@ class CrawlerService {
     // Ensure initialized
     if (!(await this.initialize())) {
       log.error('[crawler] Service not initialized, cannot crawl')
+      return null
+    }
+
+    if (!this.baseUrl) {
+      log.error('[crawler] Base URL not set')
       return null
     }
 
@@ -178,9 +204,10 @@ class CrawlerService {
     } catch (error) {
       log.error('[crawler] Crawl failed:', error)
 
-      // Check if Docker is still available
-      if (!(await dockerManager.isDockerRunning())) {
-        log.error('[crawler] Docker is not running')
+      // Check if Crawl4AI service is still healthy
+      const isHealthy = await crawl4AiService.checkHealth()
+      if (!isHealthy) {
+        log.error('[crawler] Crawl4AI service is not healthy')
         this.initialized = false
       }
 
@@ -194,10 +221,31 @@ class CrawlerService {
   }
 
   /**
+   * Wait for the crawler service to become healthy
+   */
+  private async waitForHealth(maxRetries: number = 30, delayMs: number = 2000): Promise<boolean> {
+    for (let i = 0; i < maxRetries; i++) {
+      const healthy = await this.isHealthy()
+      if (healthy) {
+        return true
+      }
+      if (i < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs))
+      }
+    }
+    return false
+  }
+
+  /**
    * Create a new session for persistent crawling
    */
   async createSession(): Promise<string | null> {
     if (!(await this.initialize())) {
+      return null
+    }
+
+    if (!this.baseUrl) {
+      log.error('[crawler] Base URL not set')
       return null
     }
 
@@ -227,6 +275,10 @@ class CrawlerService {
    * Destroy a session
    */
   async destroySession(sessionId: string): Promise<boolean> {
+    if (!this.baseUrl) {
+      return false
+    }
+
     try {
       const response = await fetch(`${this.baseUrl}/session/${sessionId}`, {
         method: 'DELETE'
@@ -243,6 +295,10 @@ class CrawlerService {
    * Check if the crawler service is healthy
    */
   async isHealthy(): Promise<boolean> {
+    if (!this.baseUrl) {
+      return false
+    }
+
     try {
       const response = await fetch(`${this.baseUrl}/health`, {
         signal: AbortSignal.timeout(2000)
@@ -261,27 +317,26 @@ class CrawlerService {
     try {
       if (this.initialized) {
         log.info('[crawler] Closing crawler service...')
-        // Don't stop container, keep it running for future use
-        // await dockerManager.stopContainer()
+        // Cleanup Crawl4AI service (keeps container running)
+        await crawl4AiService.cleanup()
         this.initialized = false
+        this.baseUrl = null
+        this.servicePort = null
       }
     } catch (error) {
       log.error('[crawler] Error closing crawler service:', error)
     }
   }
-}
 
-// Singleton instance
-let crawlerServiceInstance: CrawlerService | null = null
-
-/**
- * Get or create the crawler service instance
- */
-export async function getCrawlerService(): Promise<CrawlerService> {
-  if (!crawlerServiceInstance) {
-    crawlerServiceInstance = new CrawlerService()
+  /**
+   * Get the current service port
+   */
+  getServicePort(): number | null {
+    return this.servicePort
   }
-  return crawlerServiceInstance
 }
+
+// Export singleton instance
+export const crawlerService = new CrawlerService()
 
 export { CrawlerService }

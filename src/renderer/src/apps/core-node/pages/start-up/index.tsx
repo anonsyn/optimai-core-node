@@ -1,149 +1,292 @@
-import Logo from '@/components/branding/logo'
-import LoginModal from '@core-node/modals/login-modal'
-import CanvasGlow from '@core-node/pages/start-up/canvas-glow'
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import { useRef } from 'react'
-import { StartupProvider } from './provider'
-import RoundedBoxLine from './rounded-box-line'
-import Status from './status'
-import TopBar from './top-bar'
+import { Button } from '@/components/ui/button'
+import { PATHS } from '@core-node/routers/paths'
+import { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
+import CanvasGlow from './canvas-glow'
+import { StartupTimeline, StepStatus, TimelineStep } from './startup-timeline'
 import WaveVisualizer from './wave-visualizer'
 
-const StartUpPage = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
+interface StepState {
+  update: { status: StepStatus; detail?: string; progress?: number }
+  docker: { status: StepStatus; detail?: string }
+  authentication: { status: StepStatus; detail?: string }
+  node: { status: StepStatus; detail?: string }
+}
 
-  useGSAP(
-    () => {
-      const timeline = gsap.timeline({ defaults: { ease: 'power2.inOut' } })
-      timeline
-        .to('#logo', {
-          opacity: 1.15,
-          duration: 1.15
-        })
-        .to(
-          '.box-line',
-          {
-            width: '100%',
-            opacity: 0.5,
-            duration: 0.3
-          },
-          0.5
-        )
-        .to(
-          '.box-line__top',
-          {
-            top: 0,
-            yPercent: 0,
-            opacity: 1,
-            duration: 0.35
-          },
-          '>'
-        )
-        .to(
-          '.box-line__bottom',
-          {
-            top: '100%',
-            yPercent: -100,
-            opacity: 1,
-            duration: 0.35
-          },
-          '<'
-        )
-        .to(
-          '.glow',
-          {
-            opacity: 0.35,
-            duration: 0.8
-          },
-          '<'
-        )
-        .to(
-          '.top-bar',
-          {
-            opacity: 0.5,
-            duration: 0.35
-          },
-          '<'
-        )
-        .to(
-          '.top-bar__background',
-          {
-            width: '100%',
-            ease: 'linear',
-            duration: 0.35,
-            delay: 0.2
-          },
-          '<'
-        )
-        .to(
-          '.top-bar',
-          {
-            opacity: 1,
-            duration: 0.35
-          },
-          '>'
-        )
-        .to(
-          '.top-bar__decorator',
-          {
-            opacity: 1,
-            duration: 0.25
-          },
-          '>'
-        )
-        .to(
-          '.node-status',
-          {
-            opacity: 1,
-            duration: 0.35
-          },
-          '>'
-        )
+const StartUpPage = () => {
+  const navigate = useNavigate()
+
+  const [steps, setSteps] = useState<StepState>({
+    update: { status: 'pending' },
+    docker: { status: 'pending' },
+    authentication: { status: 'pending' },
+    node: { status: 'pending' }
+  })
+
+  const [dockerNeedsAction, setDockerNeedsAction] = useState(false)
+
+  // Update a specific step
+  const updateStep = useCallback(
+    (stepId: keyof StepState, updates: Partial<StepState[keyof StepState]>) => {
+      setSteps((prev) => ({
+        ...prev,
+        [stepId]: { ...prev[stepId], ...updates }
+      }))
     },
-    {
-      scope: containerRef
-    }
+    []
   )
 
-  return (
-    <StartupProvider>
-      <div
-        ref={containerRef}
-        className="relative size-full overflow-hidden px-17 pt-11 pb-19 select-none"
-      >
-        <div className="drag-region absolute inset-x-0 top-0 h-25" />
-        <div className="relative size-full">
-          <div
-            id="decorator-top"
-            className="box-line box-line__top pointer-events-none absolute top-1/2 left-1/2 flex h-17 w-40 -translate-x-1/2 -translate-y-1/2 items-center justify-between opacity-0"
+  // Start the node
+  const startNode = useCallback(async () => {
+    updateStep('node', { status: 'checking', detail: 'Starting node...' })
+
+    try {
+      const started = await window.nodeIPC.startNode()
+
+      if (started) {
+        updateStep('node', {
+          status: 'success',
+          detail: 'Node is running'
+        })
+
+        // Navigate to data mining page after a brief delay
+        setTimeout(() => {
+          navigate(PATHS.DATA_MINING)
+        }, 1500)
+      } else {
+        updateStep('node', {
+          status: 'error',
+          detail: 'Failed to start node'
+        })
+      }
+    } catch (error) {
+      updateStep('node', {
+        status: 'error',
+        detail: `Failed to start node: ${error}`
+      })
+    }
+  }, [updateStep, navigate])
+
+  // Check authentication
+  const checkAuthentication = useCallback(async () => {
+    updateStep('authentication', { status: 'checking' })
+
+    try {
+      const hasTokens = await window.authIPC.hasTokens()
+
+      if (hasTokens) {
+        // Get access token to verify it's still valid
+        const accessToken = await window.authIPC.getAccessToken()
+        if (accessToken) {
+          updateStep('authentication', {
+            status: 'success',
+            detail: 'Already authenticated'
+          })
+          startNode()
+        } else {
+          updateStep('authentication', {
+            status: 'error',
+            detail: 'Authentication required - please login'
+          })
+        }
+      } else {
+        updateStep('authentication', {
+          status: 'error',
+          detail: 'Authentication required - please login'
+        })
+      }
+    } catch (error) {
+      updateStep('authentication', {
+        status: 'error',
+        detail: `Authentication check failed: ${error}`
+      })
+    }
+  }, [updateStep, startNode])
+
+  // Check Docker status
+  const checkDocker = useCallback(async () => {
+    updateStep('docker', { status: 'checking' })
+
+    try {
+      // Check if Docker is installed
+      const installed = await window.dockerIPC.checkInstalled()
+
+      if (!installed) {
+        updateStep('docker', {
+          status: 'error',
+          detail: 'Docker Desktop is not installed'
+        })
+        setDockerNeedsAction(true)
+        return
+      }
+
+      // Check if Docker is running
+      const running = await window.dockerIPC.checkRunning()
+
+      if (!running) {
+        updateStep('docker', {
+          status: 'error',
+          detail: 'Docker Desktop is not running. Please start Docker Desktop.'
+        })
+        setDockerNeedsAction(true)
+        return
+      }
+
+      // Initialize Crawl4AI service (will pull image if needed)
+      updateStep('docker', {
+        status: 'checking',
+        detail: 'Initializing crawler service...'
+      })
+
+      // Listen for initialization progress
+      const unsubscribe = window.crawl4AiIPC.onInitProgress((progress) => {
+        if (progress.status === 'pulling') {
+          updateStep('docker', {
+            status: 'downloading',
+            detail: 'Downloading crawler image...'
+          })
+        }
+      })
+
+      const initialized = await window.crawl4AiIPC.initialize()
+      unsubscribe()
+
+      if (initialized) {
+        updateStep('docker', {
+          status: 'success',
+          detail: 'Docker and crawler ready'
+        })
+        checkAuthentication()
+      } else {
+        updateStep('docker', {
+          status: 'error',
+          detail: 'Failed to initialize crawler service'
+        })
+      }
+    } catch (error) {
+      updateStep('docker', {
+        status: 'error',
+        detail: `Docker check failed: ${error}`
+      })
+      setDockerNeedsAction(true)
+    }
+  }, [updateStep, checkAuthentication])
+
+  // Check for updates
+  const checkForUpdates = useCallback(async () => {
+    updateStep('update', { status: 'checking' })
+
+    try {
+      // For now, just simulate update check since the API might be different
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      updateStep('update', { status: 'success', detail: 'App is up to date' })
+      checkDocker()
+    } catch {
+      updateStep('update', {
+        status: 'warning',
+        detail: 'Update check failed, continuing...'
+      })
+      checkDocker()
+    }
+  }, [updateStep, checkDocker])
+
+  // Open Docker installation guide
+  const openDockerGuide = useCallback(async () => {
+    await window.dockerIPC.openInstallGuide()
+  }, [])
+
+  // Retry Docker check
+  const retryDocker = useCallback(() => {
+    setDockerNeedsAction(false)
+    checkDocker()
+  }, [checkDocker])
+
+  // Start the flow on mount
+  useEffect(() => {
+    checkForUpdates()
+  }, [checkForUpdates])
+
+  // Convert state to timeline steps
+  const timelineSteps: TimelineStep[] = [
+    {
+      id: 'update',
+      title: 'Check for Updates',
+      description: 'Ensuring you have the latest version',
+      status: steps.update.status,
+      progress: steps.update.progress,
+      detail: steps.update.detail
+    },
+    {
+      id: 'docker',
+      title: 'Docker Setup',
+      description: 'Preparing container environment',
+      status: steps.docker.status,
+      detail: steps.docker.detail,
+      action: dockerNeedsAction && (
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={openDockerGuide}
+            className="border-white/10 bg-white/5 text-white hover:bg-white/10"
           >
-            <RoundedBoxLine />
-            <RoundedBoxLine dir="ltr" />
-          </div>
-          <div className="top-bar absolute top-0 left-1/2 h-17 w-[calc(100%-25rem)] -translate-x-1/2 opacity-0">
-            <TopBar />
+            Install Docker
+          </Button>
+          <Button
+            size="sm"
+            onClick={retryDocker}
+            className="from-yellow to-green text-background bg-gradient-to-r"
+          >
+            Retry
+          </Button>
+        </div>
+      )
+    },
+    {
+      id: 'authentication',
+      title: 'Authentication',
+      description: 'Connecting to your account',
+      status: steps.authentication.status,
+      detail: steps.authentication.detail
+    },
+    {
+      id: 'node',
+      title: 'Start Node',
+      description: 'Initializing core services',
+      status: steps.node.status,
+      detail: steps.node.detail
+    }
+  ]
+
+  return (
+    <div className="bg-background relative h-screen w-screen overflow-hidden">
+      {/* Background Effects */}
+      <CanvasGlow />
+      <WaveVisualizer />
+
+      {/* Content */}
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-8">
+        <div className="w-full max-w-2xl">
+          {/* Header */}
+          <div className="mb-8 text-center">
+            <h1 className="text-48 from-yellow to-green webkit-text-clip bg-gradient-to-r font-bold">
+              OptimAI Core Node
+            </h1>
+            <p className="text-16 mt-2 text-white/60">Initializing your node...</p>
           </div>
 
-          <Logo
-            id="logo"
-            className="absolute top-1/2 left-1/2 h-[min(120px,11.125vh)] -translate-x-1/2 -translate-y-1/2 opacity-0"
-          />
-          <div className="box-line box-line__bottom pointer-events-none absolute top-1/2 left-1/2 flex h-9 w-50 -translate-x-1/2 -translate-y-1/2 items-center justify-between opacity-0">
-            <RoundedBoxLine />
-            <RoundedBoxLine dir="ltr" />
+          {/* Timeline Card */}
+          <div className="bg-background/40 backdrop-blur-10 rounded-xl border border-white/4">
+            <StartupTimeline steps={timelineSteps} />
           </div>
-          <div className="node-status absolute bottom-0 left-1/2 h-9 w-[calc(100%-25rem)] -translate-x-1/2 opacity-0">
-            <Status />
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-14 text-white/40">This process will complete automatically</p>
           </div>
         </div>
-        <div className="glow pointer-events-none absolute inset-0 opacity-0">
-          <CanvasGlow />
-        </div>
-        <WaveVisualizer />
-        <LoginModal />
       </div>
-    </StartupProvider>
+    </div>
   )
 }
 

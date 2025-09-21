@@ -3,6 +3,8 @@ import { app, Menu, nativeImage, nativeTheme, Tray } from 'electron'
 import log from 'electron-log/main'
 import icon from '../../resources/icon.png?asset'
 import authIpcHandler from './ipc/auth'
+import crawl4AiIpcHandler from './ipc/crawl4ai'
+import dockerIpcHandler from './ipc/docker'
 import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
@@ -87,6 +89,8 @@ if (!gotTheLock) {
     windowIpcHandler.initialize()
     updaterIpcHandler.initialize()
     authIpcHandler.initialize() // Initialize auth IPC handler for token management
+    dockerIpcHandler.initialize() // Initialize generic Docker IPC handler
+    crawl4AiIpcHandler.initialize() // Initialize Crawl4AI-specific IPC handler
     nodeIpcHandler.initialize() // Initialize node IPC handler which starts the API server
 
     const window = createWindow(DEFAULT_WINDOW)

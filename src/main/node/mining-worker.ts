@@ -2,8 +2,8 @@ import log from 'electron-log/main'
 import EventEmitter from 'eventemitter3'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/type'
-import { getCrawlerService } from '../services/crawler-service'
-import { dockerManager } from '../services/docker-manager'
+import { crawlerService } from '../services/crawler-service'
+import { dockerService } from '../services/docker-service'
 import { tokenStore } from '../storage'
 import type { MiningAssignment } from './types'
 
@@ -30,7 +30,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private processingAssignments = new Set<string>()
   private sseBackoff = SSE_RETRY_BASE_MS
   private dockerAvailable = false
-  private crawlerService: Awaited<ReturnType<typeof getCrawlerService>> | null = null
+  private crawlerServiceInitialized = false
 
   async start() {
     if (this.running) {
@@ -51,8 +51,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } else {
       // Initialize crawler service
       try {
-        this.crawlerService = await getCrawlerService()
-        await this.crawlerService.initialize()
+        const initialized = await crawlerService.initialize()
+        if (initialized) {
+          this.crawlerServiceInitialized = true
+        }
         log.info('[mining] Crawler service initialized successfully')
       } catch (error) {
         log.error('[mining] Failed to initialize crawler service:', error)
@@ -90,20 +92,20 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     }
 
     // Close crawler service
-    if (this.crawlerService) {
-      await this.crawlerService.close()
-      this.crawlerService = null
+    if (this.crawlerServiceInitialized) {
+      await crawlerService.close()
+      this.crawlerServiceInitialized = false
     }
   }
 
   private async checkDockerAvailability(): Promise<boolean> {
     try {
-      const available = await dockerManager.isDockerAvailable()
-      if (!available) {
+      const installed = await dockerService.isInstalled()
+      if (!installed) {
         return false
       }
 
-      const running = await dockerManager.isDockerRunning()
+      const running = await dockerService.isRunning()
       return running
     } catch (error) {
       log.error('[mining] Error checking Docker availability:', error)
@@ -329,7 +331,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         this.emit('assignment', assignment)
 
         // Process assignment if Docker is available
-        if (this.dockerAvailable && this.crawlerService) {
+        if (this.dockerAvailable && this.crawlerServiceInitialized) {
           // Process assignment in background
           void this.processAssignment(assignment)
         } else {
@@ -380,7 +382,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       log.info(`[mining] Crawling content from ${url} for assignment ${assignmentId}`)
       const startTime = Date.now()
 
-      const crawlResult = await this.crawlerService!.crawl({
+      const crawlResult = await crawlerService.crawl({
         url,
         useLightMode: true, // Better performance
         cacheMode: 'smart'
