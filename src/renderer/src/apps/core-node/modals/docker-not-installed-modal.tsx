@@ -18,8 +18,10 @@ export function DockerNotInstalledModal() {
   const data = useModalData(Modals.DOCKER_NOT_INSTALLED)
   const [isInstalling, setIsInstalling] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
+  const [retryError, setRetryError] = useState<string | null>(null)
 
   const handleInstallDocker = async () => {
+    setRetryError(null)
     setIsInstalling(true)
     try {
       await window.dockerIPC.openInstallGuide()
@@ -34,9 +36,15 @@ export function DockerNotInstalledModal() {
       return
     }
 
+    setRetryError(null)
     setIsChecking(true)
     try {
-      await data.onRetry()
+      const success = await data.onRetry()
+      if (!success) {
+        setRetryError('Docker Desktop is still not detected. Complete the installation and try again.')
+      } else {
+        setRetryError(null)
+      }
     } catch (error) {
       console.error('Failed to retry Docker installation check:', error)
     } finally {
@@ -52,6 +60,7 @@ export function DockerNotInstalledModal() {
     if (!open) {
       setIsInstalling(false)
       setIsChecking(false)
+      setRetryError(null)
     }
   }
 
@@ -68,6 +77,11 @@ export function DockerNotInstalledModal() {
             Docker Desktop is required to run the OptimAI Core Node. Please install Docker Desktop
             to continue.
           </DialogDescription>
+          {retryError && (
+            <p className="mt-2 text-sm text-destructive" role="alert" aria-live="assertive">
+              {retryError}
+            </p>
+          )}
         </DialogHeader>
         <DialogFooter className="mt-8 sm:justify-between">
           {!isInstalling ? (

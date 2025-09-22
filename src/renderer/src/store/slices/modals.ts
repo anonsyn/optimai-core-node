@@ -39,10 +39,10 @@ export interface ModalSliceState {
     onSuccess: () => void
   }>
   [Modals.DOCKER_NOT_INSTALLED]?: ModalState<{
-    onRetry: () => Promise<void>
+    onRetry: () => Promise<boolean>
   }>
   [Modals.DOCKER_NOT_RUNNING]?: ModalState<{
-    onRetry: () => Promise<void>
+    onRetry: () => Promise<boolean>
   }>
 }
 

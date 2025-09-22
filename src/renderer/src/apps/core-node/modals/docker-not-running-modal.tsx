@@ -17,15 +17,22 @@ export function DockerNotRunningModal() {
   const open = useIsModalOpen(Modals.DOCKER_NOT_RUNNING)
   const data = useModalData(Modals.DOCKER_NOT_RUNNING)
   const [isChecking, setIsChecking] = useState(false)
+  const [retryError, setRetryError] = useState<string | null>(null)
 
   const handleRetry = async () => {
     if (!data?.onRetry) {
       return
     }
 
+    setRetryError(null)
     setIsChecking(true)
     try {
-      await data.onRetry()
+      const success = await data.onRetry()
+      if (!success) {
+        setRetryError('Docker Desktop is still starting. Wait for Docker to finish launching and retry.')
+      } else {
+        setRetryError(null)
+      }
     } catch (error) {
       console.error('Failed to retry Docker runtime check:', error)
     } finally {
@@ -40,6 +47,7 @@ export function DockerNotRunningModal() {
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       setIsChecking(false)
+      setRetryError(null)
     }
   }
 
@@ -58,6 +66,11 @@ export function DockerNotRunningModal() {
               </ol>
             </div>
           </DialogDescription>
+          {retryError && (
+            <p className="mt-2 text-sm text-destructive" role="alert" aria-live="assertive">
+              {retryError}
+            </p>
+          )}
         </DialogHeader>
         <DialogFooter className="mt-8 sm:justify-between">
           <Button onClick={handleRetry} disabled={isChecking}>

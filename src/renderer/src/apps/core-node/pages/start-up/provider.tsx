@@ -126,18 +126,45 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         openModal({
           onRetry: async () => {
-            if (resolved) {
-              return
-            }
+            addStatus('Rechecking Docker requirements...')
 
-            resolved = true
-            closeModal()
-            resolve()
+            try {
+              if (type === 'installed') {
+                const dockerInstalled = await window.dockerIPC.checkInstalled()
+                if (dockerInstalled) {
+                  if (!resolved) {
+                    resolved = true
+                    closeModal()
+                    resolve()
+                  }
+                  return true
+                }
+
+                addStatus('Docker Desktop is still not installed', true)
+                return false
+              }
+
+              const dockerRunning = await window.dockerIPC.checkRunning()
+              if (dockerRunning) {
+                if (!resolved) {
+                  resolved = true
+                  closeModal()
+                  resolve()
+                }
+                return true
+              }
+
+              addStatus('Docker Desktop is still not running', true)
+              return false
+            } catch (retryError) {
+              console.error('Docker retry check failed:', retryError)
+              addStatus('Docker check failed', true)
+              setError('Failed to check Docker status')
+              return false
+            }
           }
         })
       })
-
-      addStatus('Rechecking Docker requirements...')
     }
 
     try {
@@ -179,7 +206,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     closeDockerNotInstalledModal,
     closeDockerNotRunningModal,
     openDockerNotInstalledModal,
-    openDockerNotRunningModal
+    openDockerNotRunningModal,
+    setError
   ])
 
   // Initialize Crawl4AI service
