@@ -53,10 +53,7 @@ const DialogHeader = ({ className, ...props }: DialogHeaderProps) => {
 DialogHeader.displayName = 'DialogHeader'
 
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn('flex flex-col sm:flex-row sm:justify-end sm:space-x-2', className)}
-    {...props}
-  />
+  <div className={cn('flex flex-col gap-2', className)} {...props} />
 )
 DialogFooter.displayName = 'DialogFooter'
 
@@ -82,7 +79,7 @@ const DialogDescription = React.forwardRef<
   <DialogPrimitive.Description
     ref={ref}
     className={cn(
-      'text-14 text-foreground/80 xl:text-16 text-center leading-relaxed tracking-tight',
+      'text-14 text-foreground/80 xl:text-16 text-start leading-relaxed tracking-tight',
       className
     )}
     {...props}
