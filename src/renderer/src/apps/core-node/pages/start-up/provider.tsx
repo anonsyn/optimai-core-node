@@ -13,6 +13,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react'
 import { useNavigate } from 'react-router'
@@ -63,7 +64,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const getCurrentUserQuery = useGetCurrentUserQuery({
+  const { refetch: refetchCurrentUser } = useGetCurrentUserQuery({
     enabled: false,
     retry: false
   })
@@ -71,6 +72,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const openLoginModal = useOpenModal(Modals.LOGIN)
   const openDockerNotInstalledModal = useOpenModal(Modals.DOCKER_NOT_INSTALLED)
   const openDockerNotRunningModal = useOpenModal(Modals.DOCKER_NOT_RUNNING)
+  const isStartingRef = useRef(false)
 
   // Add a status message
   const addStatus = useCallback((message: string, isError = false) => {
@@ -83,24 +85,21 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       setPhase(StartupPhase.CHECKING_UPDATES)
       addStatus('Looking for new updates...')
 
-      window.updaterIPC.onStateChange((state) => {
-        if (state.status === 'checking') {
-          addStatus('Looking for new updates...')
-          return
-        }
-
+      const { unsubscribe } = window.updaterIPC.onStateChange((state) => {
         if (state.status === 'downloading') {
           addStatus('Downloading the latest version...')
           return
         }
 
         if (state.status === 'idle' || state.status === 'error') {
+          unsubscribe()
           resolve(false)
           return
         }
 
         if (state.status === 'downloaded') {
           addStatus('Installing update and restarting...')
+          unsubscribe()
           resolve(true)
           return
         }
@@ -196,7 +195,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         throw new Error('No access token found')
       }
 
-      const res = await getCurrentUserQuery.refetch({
+      const res = await refetchCurrentUser({
         throwOnError: true
       })
 
@@ -215,7 +214,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       addStatus('Please sign in to continue')
       return false
     }
-  }, [addStatus, dispatch, getCurrentUserQuery])
+  }, [addStatus, dispatch, refetchCurrentUser])
 
   // Start the node
   const startNode = useCallback(async (): Promise<boolean> => {
@@ -253,6 +252,11 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
   // Main startup sequence
   const startApplication = useCallback(async () => {
+    if (isStartingRef.current) {
+      return
+    }
+
+    isStartingRef.current = true
     setIsLoading(true)
     setError(null)
 
@@ -273,7 +277,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       const dockerReady = await checkDockerRequirements()
       if (!dockerReady) {
         setPhase(StartupPhase.ERROR)
-        setIsLoading(false)
         return
       }
 
@@ -281,7 +284,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       const crawlerReady = await initializeCrawler()
       if (!crawlerReady) {
         setPhase(StartupPhase.ERROR)
-        setIsLoading(false)
         return
       }
 
@@ -299,7 +301,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
             }
           }
         })
-        setIsLoading(false)
         return
       }
 
@@ -318,8 +319,18 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       addStatus('Startup failed', true)
     } finally {
       setIsLoading(false)
+      isStartingRef.current = false
     }
-  }, [checkForUpdates, checkDockerRequirements, initializeCrawler, checkAuth, startNode, openLoginModal, navigate, addStatus])
+  }, [
+    checkForUpdates,
+    checkDockerRequirements,
+    initializeCrawler,
+    checkAuth,
+    startNode,
+    openLoginModal,
+    navigate,
+    addStatus
+  ])
 
   // Retry functionality
   const retry = useCallback(() => {

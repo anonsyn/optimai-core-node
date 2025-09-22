@@ -9,9 +9,9 @@ export interface Crawl4AiConfig {
 }
 
 const DEFAULT_CONFIG: Required<Crawl4AiConfig> = {
-  containerName: 'crawl4ai',
+  containerName: 'optimai_crawl4ai',
   imageName: 'unclecode/crawl4ai:basic',
-  port: 8080
+  port: 11235
 }
 
 /**
@@ -136,7 +136,7 @@ export class Crawl4AiService {
       image: imageName,
       port: {
         host: this.containerPort!,
-        container: 80
+        container: 11235
       },
       restart: 'unless-stopped',
       detached: true

@@ -78,6 +78,23 @@ function getTimezone(): string {
   return 'UTC'
 }
 
+function normalizeOsName(osType: string): string {
+  const normalized = osType.toLowerCase()
+
+  // Map Node.js os.type() values to server-expected values
+  switch (normalized) {
+    case 'darwin':
+      return 'mac'
+    case 'win32':
+    case 'windows_nt':
+      return 'win'
+    case 'linux':
+      return 'linux'
+    default:
+      return normalized
+  }
+}
+
 function hashMachineId(machineId: string): string {
   return crypto.createHash('sha256').update(machineId).digest('hex')
 }
@@ -96,7 +113,7 @@ export async function getFullDeviceInfo(): Promise<{
     device_type: DeviceType.PC,
     language: getLanguage(),
     timezone: getTimezone(),
-    os_name: os.type().toLowerCase(),
+    os_name: normalizeOsName(os.type()),
     os_version: os.release()
   }
 

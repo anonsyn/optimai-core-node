@@ -99,7 +99,7 @@ class Crawl4AiIpcHandler {
             initialized: true,
             baseUrl: crawl4AiService.getBaseUrl(),
             port: crawl4AiService.getPort(),
-            containerName: 'crawl4ai',
+            containerName: 'optimai_crawl4ai',
             imageName: 'unclecode/crawl4ai:basic'
           } as ServiceInfo)
         }
@@ -135,7 +135,7 @@ class Crawl4AiIpcHandler {
         // Broadcast status change
         this.broadcast(Crawl4AiEvents.OnStatusChange, {
           initialized: false,
-          containerName: 'crawl4ai',
+          containerName: 'optimai_crawl4ai',
           imageName: 'unclecode/crawl4ai:basic'
         } as ServiceInfo)
 
