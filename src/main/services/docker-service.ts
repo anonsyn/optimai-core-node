@@ -42,10 +42,7 @@ export class DockerService {
       log.info('[docker] Docker version:', stdout.trim())
       return true
     } catch (error) {
-      log.error(
-        '[docker] Docker not installed:',
-        getErrorMessage(error, 'Docker not installed')
-      )
+      log.error('[docker] Docker not installed:', getErrorMessage(error, 'Docker not installed'))
       return false
     }
   }
@@ -312,7 +309,10 @@ export class DockerService {
   /**
    * Execute a command in a running container
    */
-  async exec(container: string, command: string[]): Promise<{ stdout: string; stderr: string } | null> {
+  async exec(
+    container: string,
+    command: string[]
+  ): Promise<{ stdout: string; stderr: string } | null> {
     try {
       const result = await execa('docker', ['exec', container, ...command])
       return {

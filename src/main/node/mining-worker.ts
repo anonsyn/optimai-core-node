@@ -1,5 +1,6 @@
 import log from 'electron-log/main'
 import EventEmitter from 'eventemitter3'
+import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/type'
 import { crawlerService } from '../services/crawler-service'
@@ -32,6 +33,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private sseBackoff = SSE_RETRY_BASE_MS
   private dockerAvailable = false
   private crawlerServiceInitialized = false
+  private assignmentQueue: PQueue | null = null
 
   async start() {
     if (this.running) {
@@ -99,6 +101,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     if (this.crawlerServiceInitialized) {
       await crawlerService.close()
       this.crawlerServiceInitialized = false
+    }
+
+    if (this.assignmentQueue) {
+      this.assignmentQueue.clear()
+      this.assignmentQueue = null
     }
   }
 
@@ -330,6 +337,8 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       log.info(`[mining] Fetched ${googleAssignments.length} Google assignments`)
 
       // Process each assignment
+      const queue = await this.getAssignmentQueue()
+
       for (const assignment of googleAssignments) {
         if (!this.running) {
           break
@@ -343,10 +352,17 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         // Emit assignment event for UI
         this.emit('assignment', assignment)
 
-        // Process assignment if Docker is available
         if (this.dockerAvailable && this.crawlerServiceInitialized) {
-          // Process assignment in background
-          void this.processAssignment(assignment)
+          this.processingAssignments.add(assignment.id)
+          queue
+            .add(() => this.processAssignment(assignment))
+            .catch((error) => {
+              log.error(
+                `[mining] Queue task for assignment ${assignment.id} failed:`,
+                getErrorMessage(error, `Failed to process assignment ${assignment.id}`)
+              )
+              this.processingAssignments.delete(assignment.id)
+            })
         } else {
           log.warn(
             `[mining] Cannot process assignment ${assignment.id} - Docker/crawler not available`
@@ -366,9 +382,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
   private async processAssignment(assignment: MiningAssignment) {
     const { id: assignmentId, status, task } = assignment
-
-    // Mark as processing
-    this.processingAssignments.add(assignmentId)
 
     try {
       // Start assignment if needed
@@ -456,6 +469,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       // Remove from processing set
       this.processingAssignments.delete(assignmentId)
     }
+  }
+
+  private async getAssignmentQueue(): Promise<PQueue> {
+    if (this.assignmentQueue) {
+      return this.assignmentQueue
+    }
+
+    const { default: PQueueCtor } = await import('p-queue')
+    this.assignmentQueue = new PQueueCtor({ concurrency: 1 })
+    return this.assignmentQueue
   }
 
   /**
