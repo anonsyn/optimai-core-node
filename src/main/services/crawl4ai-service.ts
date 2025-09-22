@@ -11,7 +11,7 @@ export interface Crawl4AiConfig {
 
 const DEFAULT_CONFIG: Required<Crawl4AiConfig> = {
   containerName: 'optimai_crawl4ai',
-  imageName: 'unclecode/crawl4ai:basic',
+  imageName: 'unclecode/crawl4ai:0.7.3',
   port: 11235
 }
 
@@ -143,7 +143,8 @@ export class Crawl4AiService {
         container: 11235
       },
       restart: 'unless-stopped',
-      detached: true
+      detached: true,
+      shmSize: '1g'
     })
 
     return containerId !== null

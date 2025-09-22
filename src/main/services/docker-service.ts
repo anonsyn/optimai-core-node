@@ -12,6 +12,7 @@ export interface ContainerConfig {
   command?: string[]
   network?: string
   detached?: boolean
+  shmSize?: string
 }
 
 export interface DockerInfo {
@@ -173,6 +174,10 @@ export class DockerService {
 
       if (config.network) {
         args.push('--network', config.network)
+      }
+
+      if (config.shmSize) {
+        args.push('--shm-size', config.shmSize)
       }
 
       args.push(config.image)
