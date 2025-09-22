@@ -2,6 +2,7 @@ import { app } from 'electron'
 import electronLog from 'electron-log'
 import fs from 'fs'
 import path from 'path'
+import { getErrorMessage } from '../utils/get-error-message'
 
 // Configure the logger
 const setupLogger = () => {
@@ -39,7 +40,10 @@ const setupLogger = () => {
   const cleanupOldLogs = () => {
     fs.readdir(logDir, (err, files) => {
       if (err) {
-        console.error('Error reading log directory:', err)
+        console.error(
+          'Error reading log directory:',
+          getErrorMessage(err, 'Error reading log directory')
+        )
         return
       }
 
@@ -55,7 +59,10 @@ const setupLogger = () => {
         const filePath = path.join(logDir, file)
         fs.stat(filePath, (statErr, stats) => {
           if (statErr) {
-            console.error(`Error getting stats for ${filePath}:`, statErr)
+            console.error(
+              `Error getting stats for ${filePath}:`,
+              getErrorMessage(statErr, 'Error getting stats for log file')
+            )
             return
           }
 
@@ -63,7 +70,10 @@ const setupLogger = () => {
           if (fileAge > fourteenDaysInMs) {
             fs.unlink(filePath, (unlinkErr) => {
               if (unlinkErr) {
-                console.error(`Error deleting old log file ${filePath}:`, unlinkErr)
+                console.error(
+                  `Error deleting old log file ${filePath}:`,
+                  getErrorMessage(unlinkErr, 'Error deleting old log file')
+                )
               }
             })
           }

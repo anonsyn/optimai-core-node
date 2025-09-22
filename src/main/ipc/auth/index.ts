@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import log from 'electron-log/main'
 import { tokenStore, userStore } from '../../storage'
 import type { User } from '../../storage'
+import { getErrorMessage } from '../../utils/get-error-message'
 import { AuthEvents } from './events'
 
 class AuthIpcHandler {
@@ -13,8 +14,8 @@ class AuthIpcHandler {
         log.info('Tokens stored successfully')
         return { success: true }
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error)
-        log.error('Failed to store tokens:', error)
+        const message = getErrorMessage(error, 'Failed to store tokens')
+        log.error('Failed to store tokens:', message)
         return { success: false, error: message }
       }
     })
@@ -25,7 +26,7 @@ class AuthIpcHandler {
         const token = tokenStore.getAccessToken()
         return token || null
       } catch (error: unknown) {
-        log.error('Failed to get access token:', error)
+        log.error('Failed to get access token:', getErrorMessage(error, 'Failed to get access token'))
         return null
       }
     })
@@ -36,7 +37,10 @@ class AuthIpcHandler {
         const token = tokenStore.getRefreshToken()
         return token || null
       } catch (error: unknown) {
-        log.error('Failed to get refresh token:', error)
+        log.error(
+          'Failed to get refresh token:',
+          getErrorMessage(error, 'Failed to get refresh token')
+        )
         return null
       }
     })
@@ -48,8 +52,8 @@ class AuthIpcHandler {
         log.info('Access token updated successfully')
         return { success: true }
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error)
-        log.error('Failed to update access token:', error)
+        const message = getErrorMessage(error, 'Failed to update access token')
+        log.error('Failed to update access token:', message)
         return { success: false, error: message }
       }
     })
@@ -70,8 +74,8 @@ class AuthIpcHandler {
         log.info('Refresh token updated successfully')
         return { success: true }
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error)
-        log.error('Failed to update refresh token:', error)
+        const message = getErrorMessage(error, 'Failed to update refresh token')
+        log.error('Failed to update refresh token:', message)
         return { success: false, error: message }
       }
     })
@@ -84,8 +88,8 @@ class AuthIpcHandler {
         log.info('Tokens removed successfully')
         return { success: true }
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error)
-        log.error('Failed to remove tokens:', error)
+        const message = getErrorMessage(error, 'Failed to remove tokens')
+        log.error('Failed to remove tokens:', message)
         return { success: false, error: message }
       }
     })
@@ -95,7 +99,7 @@ class AuthIpcHandler {
       try {
         return tokenStore.hasTokens()
       } catch (error) {
-        log.error('Failed to check tokens:', error)
+        log.error('Failed to check tokens:', getErrorMessage(error, 'Failed to check tokens'))
         return false
       }
     })
@@ -111,8 +115,8 @@ class AuthIpcHandler {
         log.info('User profile stored successfully')
         return { success: true }
       } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error)
-        log.error('Failed to store user profile:', error)
+        const message = getErrorMessage(error, 'Failed to store user profile')
+        log.error('Failed to store user profile:', message)
         return { success: false, error: message }
       }
     })

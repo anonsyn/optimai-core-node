@@ -2,6 +2,7 @@ import * as chokidar from 'chokidar'
 import { EventEmitter } from 'eventemitter3'
 import { promises as fs } from 'fs'
 import { PANCAKESWAP_INJECTION_SCRIPT_PATH } from '../../configs/injection-paths'
+import { getErrorMessage } from '../../utils/get-error-message'
 
 export interface PancakeSwapInjectionLoaderEvents {
   change: () => void
@@ -61,17 +62,26 @@ export class PancakeSwapInjectionLoader extends EventEmitter<PancakeSwapInjectio
           console.log('[PancakeSwapLoader] File reloaded, emitting change event')
           this.emit('change')
         } catch (error) {
-          console.error('[PancakeSwapLoader] Error reading injection script after change:', error)
+          console.error(
+            '[PancakeSwapLoader] Error reading injection script after change:',
+            getErrorMessage(error, 'PancakeSwap loader file reload failed')
+          )
         }
       })
 
       this._watcher.on('error', (error) => {
-        console.error('[PancakeSwapLoader] Watcher error:', error)
+        console.error(
+          '[PancakeSwapLoader] Watcher error:',
+          getErrorMessage(error, 'PancakeSwap loader watcher error')
+        )
       })
 
       console.log('[PancakeSwapLoader] Started watching:', PANCAKESWAP_INJECTION_SCRIPT_PATH)
     } catch (error) {
-      console.error('Error setting up file watcher:', error)
+      console.error(
+        'Error setting up file watcher:',
+        getErrorMessage(error, 'Failed to set up PancakeSwap file watcher')
+      )
     }
   }
 

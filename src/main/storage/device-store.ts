@@ -3,6 +3,7 @@ import { machineIdSync } from 'node-machine-id'
 import os from 'os'
 import { createStore } from './base-store'
 import type { DeviceData } from './types'
+import { getErrorMessage } from '../utils/get-error-message'
 
 /**
  * Device store for managing device identification
@@ -28,7 +29,7 @@ function generateDeviceId(): string {
     return crypto.createHash('sha256').update(machineId).digest('hex')
   } catch (error) {
     // Fallback to random ID if machine ID fails
-    console.error('Failed to get machine ID:', error)
+    console.error('Failed to get machine ID:', getErrorMessage(error, 'Failed to get machine ID'))
     return crypto.randomBytes(32).toString('hex')
   }
 }

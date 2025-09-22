@@ -2,6 +2,7 @@ import * as chokidar from 'chokidar'
 import { EventEmitter } from 'eventemitter3'
 import { promises as fs } from 'fs'
 import { GOOGLE_INJECTION_SCRIPT_PATH } from '../../configs/injection-paths'
+import { getErrorMessage } from '../../utils/get-error-message'
 
 export interface GoogleInjectionLoaderEvents {
   change: () => void
@@ -61,17 +62,23 @@ export class GoogleInjectionLoader extends EventEmitter<GoogleInjectionLoaderEve
           console.log('[GoogleLoader] File reloaded, emitting change event')
           this.emit('change')
         } catch (error) {
-          console.error('[GoogleLoader] Error reading injection script after change:', error)
+          console.error(
+            '[GoogleLoader] Error reading injection script after change:',
+            getErrorMessage(error, 'Google loader file reload failed')
+          )
         }
       })
 
       this._watcher.on('error', (error) => {
-        console.error('[GoogleLoader] Watcher error:', error)
+        console.error('[GoogleLoader] Watcher error:', getErrorMessage(error, 'Google loader watcher error'))
       })
 
       console.log('[GoogleLoader] Started watching:', GOOGLE_INJECTION_SCRIPT_PATH)
     } catch (error) {
-      console.error('Error setting up file watcher:', error)
+      console.error(
+        'Error setting up file watcher:',
+        getErrorMessage(error, 'Failed to set up Google file watcher')
+      )
     }
   }
 

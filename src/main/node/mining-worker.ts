@@ -5,6 +5,7 @@ import type { SubmitAssignmentRequest } from '../api/mining/type'
 import { crawlerService } from '../services/crawler-service'
 import { dockerService } from '../services/docker-service'
 import { tokenStore } from '../storage'
+import { getErrorMessage } from '../utils/get-error-message'
 import type { MiningAssignment } from './types'
 
 interface MiningWorkerEvents {
@@ -57,7 +58,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         }
         log.info('[mining] Crawler service initialized successfully')
       } catch (error) {
-        log.error('[mining] Failed to initialize crawler service:', error)
+        log.error(
+          '[mining] Failed to initialize crawler service:',
+          getErrorMessage(error, 'Failed to initialize crawler service')
+        )
         this.dockerAvailable = false
       }
     }
@@ -108,7 +112,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       const running = await dockerService.isRunning()
       return running
     } catch (error) {
-      log.error('[mining] Error checking Docker availability:', error)
+      log.error(
+        '[mining] Error checking Docker availability:',
+        getErrorMessage(error, 'Error checking Docker availability')
+      )
       return false
     }
   }
@@ -122,7 +129,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         '[mining] Worker preferences set to receive all platforms (will process Google only)'
       )
     } catch (error) {
-      log.error('[mining] Failed to set worker preferences:', error)
+      log.error(
+        '[mining] Failed to set worker preferences:',
+        getErrorMessage(error, 'Failed to set worker preferences')
+      )
     }
   }
 
@@ -138,7 +148,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         await miningApi.sendHeartbeat(agentInfo)
         log.debug('[mining] Heartbeat sent')
       } catch (error) {
-        log.error('[mining] Heartbeat failed:', error)
+        log.error(
+          '[mining] Heartbeat failed:',
+          getErrorMessage(error, 'Heartbeat failed')
+        )
         this.emit('error', error instanceof Error ? error : new Error(String(error)))
       }
     }
@@ -215,7 +228,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         log.warn('[mining] SSE connection closed')
       } catch (error) {
         if (!controller.signal.aborted) {
-          log.error('[mining] SSE error:', error)
+          log.error(
+            '[mining] SSE error:',
+            getErrorMessage(error, 'SSE error')
+          )
           this.emit('error', error instanceof Error ? error : new Error(String(error)))
         }
       } finally {
@@ -256,7 +272,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         // Trigger assignment processing
         void this.processAssignments()
       } catch (error) {
-        log.error('[mining] Failed to parse assignment event data:', error)
+        log.error(
+          '[mining] Failed to parse assignment event data:',
+          getErrorMessage(error, 'Failed to parse assignment event data')
+        )
         // Still try to process assignments even if parsing fails
         void this.processAssignments()
       }
@@ -341,7 +360,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         }
       }
     } catch (error) {
-      log.error('[mining] Error fetching assignments:', error)
+      log.error(
+        '[mining] Error fetching assignments:',
+        getErrorMessage(error, 'Error fetching assignments')
+      )
       this.emit('error', error instanceof Error ? error : new Error(String(error)))
     } finally {
       this.processing = false
@@ -421,7 +443,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       log.info(`[mining] ✓ Assignment ${assignmentId} submitted successfully`)
       this.emit('assignmentCompleted', assignmentId)
     } catch (error) {
-      log.error(`[mining] Failed to process assignment ${assignmentId}:`, error)
+      log.error(
+        `[mining] Failed to process assignment ${assignmentId}:`,
+        getErrorMessage(error, `Failed to process assignment ${assignmentId}`)
+      )
       this.emit(
         'assignmentFailed',
         assignmentId,

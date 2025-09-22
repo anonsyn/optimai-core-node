@@ -2,6 +2,7 @@ import log from 'electron-log/main'
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/type'
 import { deviceStore, userStore } from '../storage'
+import { getErrorMessage } from '../utils/get-error-message'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'
 
@@ -48,7 +49,10 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
     deviceStore.saveDeviceId(deviceId)
     return deviceId
   } catch (error) {
-    console.error('Failed to decode device registration response:', error)
+    console.error(
+      'Failed to decode device registration response:',
+      getErrorMessage(error, 'Failed to decode device registration response')
+    )
     throw new Error('Failed to decode device registration response')
   }
 }

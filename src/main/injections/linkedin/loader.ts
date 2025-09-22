@@ -2,6 +2,7 @@ import * as chokidar from 'chokidar'
 import { EventEmitter } from 'eventemitter3'
 import { promises as fs } from 'fs'
 import { LINKEDIN_INJECTION_SCRIPT_PATH } from '../../configs/injection-paths'
+import { getErrorMessage } from '../../utils/get-error-message'
 
 export interface LinkedInInjectionLoaderEvents {
   change: () => void
@@ -61,17 +62,26 @@ export class LinkedInInjectionLoader extends EventEmitter<LinkedInInjectionLoade
           console.log('[LinkedInLoader] File reloaded, emitting change event')
           this.emit('change')
         } catch (error) {
-          console.error('[LinkedInLoader] Error reading injection script after change:', error)
+          console.error(
+            '[LinkedInLoader] Error reading injection script after change:',
+            getErrorMessage(error, 'LinkedIn loader file reload failed')
+          )
         }
       })
 
       this._watcher.on('error', (error) => {
-        console.error('[LinkedInLoader] Watcher error:', error)
+        console.error(
+          '[LinkedInLoader] Watcher error:',
+          getErrorMessage(error, 'LinkedIn loader watcher error')
+        )
       })
 
       console.log('[LinkedInLoader] Started watching:', LINKEDIN_INJECTION_SCRIPT_PATH)
     } catch (error) {
-      console.error('Error setting up file watcher:', error)
+      console.error(
+        'Error setting up file watcher:',
+        getErrorMessage(error, 'Failed to set up LinkedIn file watcher')
+      )
     }
   }
 

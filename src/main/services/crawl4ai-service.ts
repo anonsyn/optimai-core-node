@@ -1,4 +1,5 @@
 import log from 'electron-log/main'
+import { getErrorMessage } from '../utils/get-error-message'
 import { getPort } from '../utils/get-port'
 import { dockerService } from './docker-service'
 
@@ -106,7 +107,10 @@ export class Crawl4AiService {
       log.info('[crawl4ai] Service initialized successfully')
       return true
     } catch (error) {
-      log.error('[crawl4ai] Failed to initialize:', error)
+      log.error(
+        '[crawl4ai] Failed to initialize:',
+        getErrorMessage(error, 'Failed to initialize Crawl4AI')
+      )
       return false
     }
   }
@@ -198,7 +202,10 @@ export class Crawl4AiService {
       }
       return stopped
     } catch (error) {
-      log.error('[crawl4ai] Failed to stop container:', error)
+      log.error(
+        '[crawl4ai] Failed to stop container:',
+        getErrorMessage(error, 'Failed to stop Crawl4AI container')
+      )
       return false
     }
   }
@@ -216,7 +223,10 @@ export class Crawl4AiService {
       const removed = await dockerService.removeContainer(this.config.containerName, true)
       return removed
     } catch (error) {
-      log.error('[crawl4ai] Failed to remove container:', error)
+      log.error(
+        '[crawl4ai] Failed to remove container:',
+        getErrorMessage(error, 'Failed to remove Crawl4AI container')
+      )
       return false
     }
   }

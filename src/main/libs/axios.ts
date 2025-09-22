@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { tokenStore } from '../storage'
+import { getErrorMessage } from '../utils/get-error-message'
 
 // Get environment variables with defaults
 const BASE_API_URL = process.env.VITE_API_URL || 'https://api.optimai.network'
@@ -146,7 +147,10 @@ function createAuthenticatedClient(
         tokenStore.removeTokens()
 
         // Log error
-        console.error('Token refresh failed:', refreshError)
+        console.error(
+          'Token refresh failed:',
+          getErrorMessage(refreshError, 'Token refresh failed')
+        )
 
         return Promise.reject(refreshError)
       } finally {

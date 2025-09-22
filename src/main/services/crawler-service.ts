@@ -1,4 +1,5 @@
 import log from 'electron-log/main'
+import { getErrorMessage } from '../utils/get-error-message'
 import { crawl4AiService } from './crawl4ai-service'
 
 export interface CrawlOptions {
@@ -94,7 +95,10 @@ class CrawlerService {
       log.info('[crawler] Crawler service initialized successfully')
       return true
     } catch (error) {
-      log.error('[crawler] Failed to initialize crawler service:', error)
+      log.error(
+        '[crawler] Failed to initialize crawler service:',
+        getErrorMessage(error, 'Failed to initialize crawler service')
+      )
       return false
     }
   }
@@ -202,7 +206,7 @@ class CrawlerService {
 
       return crawlResult
     } catch (error) {
-      log.error('[crawler] Crawl failed:', error)
+      log.error('[crawler] Crawl failed:', getErrorMessage(error, 'Crawl failed'))
 
       // Check if Crawl4AI service is still healthy
       const isHealthy = await crawl4AiService.checkHealth()
@@ -266,7 +270,10 @@ class CrawlerService {
       const result = await response.json()
       return result.session_id || null
     } catch (error) {
-      log.error('[crawler] Failed to create session:', error)
+      log.error(
+        '[crawler] Failed to create session:',
+        getErrorMessage(error, 'Failed to create crawler session')
+      )
       return null
     }
   }
@@ -286,7 +293,10 @@ class CrawlerService {
 
       return response.ok
     } catch (error) {
-      log.error('[crawler] Failed to destroy session:', error)
+      log.error(
+        '[crawler] Failed to destroy session:',
+        getErrorMessage(error, 'Failed to destroy crawler session')
+      )
       return false
     }
   }
@@ -324,7 +334,10 @@ class CrawlerService {
         this.servicePort = null
       }
     } catch (error) {
-      log.error('[crawler] Error closing crawler service:', error)
+      log.error(
+        '[crawler] Error closing crawler service:',
+        getErrorMessage(error, 'Error closing crawler service')
+      )
     }
   }
 

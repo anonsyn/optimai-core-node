@@ -1,6 +1,7 @@
 import { ipcMain, shell } from 'electron'
 import log from 'electron-log/main'
 import { dockerService } from '../../services/docker-service'
+import { getErrorMessage } from '../../utils/get-error-message'
 import { DockerEvents } from './events'
 import type { ContainerStatus, DockerInfo } from './types'
 
@@ -14,7 +15,10 @@ class DockerIpcHandler {
       try {
         return await dockerService.isInstalled()
       } catch (error) {
-        log.error('Docker installation check failed:', error)
+        log.error(
+          'Docker installation check failed:',
+          getErrorMessage(error, 'Docker installation check failed')
+        )
         return false
       }
     })
@@ -24,7 +28,10 @@ class DockerIpcHandler {
       try {
         return await dockerService.isRunning()
       } catch (error) {
-        log.error('Docker running check failed:', error)
+        log.error(
+          'Docker running check failed:',
+          getErrorMessage(error, 'Docker running check failed')
+        )
         return false
       }
     })
@@ -34,7 +41,7 @@ class DockerIpcHandler {
       try {
         return await dockerService.getInfo()
       } catch (error) {
-        log.error('Failed to get Docker info:', error)
+        log.error('Failed to get Docker info:', getErrorMessage(error, 'Failed to get Docker info'))
         return null
       }
     })
@@ -46,7 +53,10 @@ class DockerIpcHandler {
         try {
           return await dockerService.isContainerRunning(containerName)
         } catch (error) {
-          log.error(`Container check failed for ${containerName}:`, error)
+          log.error(
+            `Container check failed for ${containerName}:`,
+            getErrorMessage(error, `Container check failed for ${containerName}`)
+          )
           return false
         }
       }
@@ -59,7 +69,10 @@ class DockerIpcHandler {
         try {
           return await dockerService.getContainerStatus(containerName)
         } catch (error) {
-          log.error(`Failed to get status for container ${containerName}:`, error)
+          log.error(
+            `Failed to get status for container ${containerName}:`,
+            getErrorMessage(error, `Failed to get status for container ${containerName}`)
+          )
           return null
         }
       }
@@ -72,7 +85,10 @@ class DockerIpcHandler {
         try {
           return await dockerService.getLogs(containerName, { tail: lines })
         } catch (error) {
-          log.error(`Failed to get logs for container ${containerName}:`, error)
+          log.error(
+            `Failed to get logs for container ${containerName}:`,
+            getErrorMessage(error, `Failed to get logs for container ${containerName}`)
+          )
           return ''
         }
       }
@@ -85,7 +101,10 @@ class DockerIpcHandler {
         try {
           return await dockerService.listContainers(all)
         } catch (error) {
-          log.error('Failed to list containers:', error)
+          log.error(
+            'Failed to list containers:',
+            getErrorMessage(error, 'Failed to list containers')
+          )
           return []
         }
       }

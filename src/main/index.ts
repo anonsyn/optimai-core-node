@@ -8,6 +8,7 @@ import dockerIpcHandler from './ipc/docker'
 import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
+import { getErrorMessage } from './utils/get-error-message'
 import { isMac } from './utils/os'
 import { createWindow } from './window/factory'
 import windowManager from './window/manager'
@@ -133,7 +134,7 @@ if (!gotTheLock) {
         tray?.destroy()
         await nodeIpcHandler.cleanup()
       } catch (error) {
-        console.error('destroy error', error)
+        console.error('destroy error', getErrorMessage(error, 'destroy error'))
       }
     })
   })

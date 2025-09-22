@@ -2,6 +2,7 @@ import { BrowserWindow, ipcMain, shell } from 'electron'
 import log from 'electron-log/main'
 import { crawl4AiService } from '../../services/crawl4ai-service'
 import { dockerService } from '../../services/docker-service'
+import { getErrorMessage } from '../../utils/get-error-message'
 import { Crawl4AiEvents } from './events'
 import type { Crawl4AiStatus, InitProgress, ServiceInfo } from './types'
 
@@ -24,7 +25,10 @@ class Crawl4AiIpcHandler {
           port: port || undefined
         }
       } catch (error) {
-        log.error('Crawl4AI availability check failed:', error)
+        log.error(
+          'Crawl4AI availability check failed:',
+          getErrorMessage(error, 'Crawl4AI availability check failed')
+        )
         return {
           dockerInstalled: false,
           dockerRunning: false,
@@ -44,7 +48,10 @@ class Crawl4AiIpcHandler {
           const running = installed ? await dockerService.isRunning() : false
           return { installed, running }
         } catch (error) {
-          log.error('Docker status check failed:', error)
+          log.error(
+            'Docker status check failed:',
+            getErrorMessage(error, 'Docker status check failed')
+          )
           return { installed: false, running: false }
         }
       }
@@ -106,7 +113,10 @@ class Crawl4AiIpcHandler {
 
         return success
       } catch (error) {
-        log.error('Crawl4AI initialization failed:', error)
+        log.error(
+          'Crawl4AI initialization failed:',
+          getErrorMessage(error, 'Crawl4AI initialization failed')
+        )
 
         this.broadcast(Crawl4AiEvents.OnInitProgress, {
           status: 'error',
@@ -122,7 +132,7 @@ class Crawl4AiIpcHandler {
       try {
         return await crawl4AiService.checkHealth()
       } catch (error) {
-        log.error('Health check failed:', error)
+        log.error('Health check failed:', getErrorMessage(error, 'Health check failed'))
         return false
       }
     })
@@ -141,7 +151,7 @@ class Crawl4AiIpcHandler {
 
         return success
       } catch (error) {
-        log.error('Failed to stop Crawl4AI:', error)
+        log.error('Failed to stop Crawl4AI:', getErrorMessage(error, 'Failed to stop Crawl4AI'))
         return false
       }
     })
@@ -151,7 +161,10 @@ class Crawl4AiIpcHandler {
       try {
         return await crawl4AiService.getLogs(lines)
       } catch (error) {
-        log.error('Failed to get Crawl4AI logs:', error)
+        log.error(
+          'Failed to get Crawl4AI logs:',
+          getErrorMessage(error, 'Failed to get Crawl4AI logs')
+        )
         return ''
       }
     })

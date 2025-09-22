@@ -3,6 +3,7 @@ import log from 'electron-log/main'
 
 import type { SubmitAssignmentRequest } from '../../api/mining/type'
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
+import { getErrorMessage } from '../../utils/get-error-message'
 import { NodeEvents } from './events'
 
 class NodeIpcHandler {
@@ -28,16 +29,18 @@ class NodeIpcHandler {
     })
 
     nodeRuntime.on(NodeRuntimeEvent.MiningError, (error) => {
-      log.error('Mining worker error:', error)
+      const message = getErrorMessage(error, 'Mining worker error')
+      log.error('Mining worker error:', message)
       this.broadcast(NodeEvents.OnMiningError, {
-        message: error.message
+        message
       })
     })
 
     nodeRuntime.on(NodeRuntimeEvent.Error, (error) => {
-      log.error('Node runtime error:', error)
+      const message = getErrorMessage(error, 'Node runtime error')
+      log.error('Node runtime error:', message)
       this.broadcast(NodeEvents.OnNodeError, {
-        message: error.message
+        message
       })
     })
   }

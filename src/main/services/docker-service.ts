@@ -1,5 +1,6 @@
 import log from 'electron-log/main'
 import execa from 'execa'
+import { getErrorMessage } from '../utils/get-error-message'
 
 export interface ContainerConfig {
   name: string
@@ -40,7 +41,10 @@ export class DockerService {
       log.info('[docker] Docker version:', stdout.trim())
       return true
     } catch (error) {
-      log.error('[docker] Docker not installed:', error)
+      log.error(
+        '[docker] Docker not installed:',
+        getErrorMessage(error, 'Docker not installed')
+      )
       return false
     }
   }
@@ -53,7 +57,10 @@ export class DockerService {
       await execa('docker', ['info'])
       return true
     } catch (error) {
-      log.error('[docker] Docker daemon not running:', error)
+      log.error(
+        '[docker] Docker daemon not running:',
+        getErrorMessage(error, 'Docker daemon not running')
+      )
       return false
     }
   }
@@ -71,7 +78,10 @@ export class DockerService {
         apiVersion: info.Server?.ApiVersion
       }
     } catch (error) {
-      log.error('[docker] Failed to get Docker info:', error)
+      log.error(
+        '[docker] Failed to get Docker info:',
+        getErrorMessage(error, 'Failed to get Docker info')
+      )
       return null
     }
   }
@@ -108,7 +118,10 @@ export class DockerService {
       onProgress?.('Pull complete')
       return true
     } catch (error) {
-      log.error(`[docker] Failed to pull image ${image}:`, error)
+      log.error(
+        `[docker] Failed to pull image ${image}:`,
+        getErrorMessage(error, `Failed to pull image ${image}`)
+      )
       return false
     }
   }
@@ -174,7 +187,10 @@ export class DockerService {
       log.info(`[docker] Container ${config.name} started with ID: ${containerId}`)
       return containerId
     } catch (error) {
-      log.error(`[docker] Failed to run container ${config.name}:`, error)
+      log.error(
+        `[docker] Failed to run container ${config.name}:`,
+        getErrorMessage(error, `Failed to run container ${config.name}`)
+      )
       return null
     }
   }
@@ -189,7 +205,10 @@ export class DockerService {
       log.info(`[docker] Container ${name} started`)
       return true
     } catch (error) {
-      log.error(`[docker] Failed to start container ${name}:`, error)
+      log.error(
+        `[docker] Failed to start container ${name}:`,
+        getErrorMessage(error, `Failed to start container ${name}`)
+      )
       return false
     }
   }
@@ -210,7 +229,10 @@ export class DockerService {
       log.info(`[docker] Container ${name} stopped`)
       return true
     } catch (error) {
-      log.error(`[docker] Failed to stop container ${name}:`, error)
+      log.error(
+        `[docker] Failed to stop container ${name}:`,
+        getErrorMessage(error, `Failed to stop container ${name}`)
+      )
       return false
     }
   }
@@ -231,7 +253,10 @@ export class DockerService {
       log.info(`[docker] Container ${name} removed`)
       return true
     } catch (error) {
-      log.error(`[docker] Failed to remove container ${name}:`, error)
+      log.error(
+        `[docker] Failed to remove container ${name}:`,
+        getErrorMessage(error, `Failed to remove container ${name}`)
+      )
       return false
     }
   }
@@ -263,7 +288,10 @@ export class DockerService {
         ports: info.Ports ? [info.Ports] : []
       }
     } catch (error) {
-      log.error(`[docker] Failed to get container status for ${name}:`, error)
+      log.error(
+        `[docker] Failed to get container status for ${name}:`,
+        getErrorMessage(error, `Failed to get container status for ${name}`)
+      )
       return null
     }
   }
@@ -287,7 +315,10 @@ export class DockerService {
         stderr: result.stderr
       }
     } catch (error) {
-      log.error(`[docker] Failed to exec in container ${container}:`, error)
+      log.error(
+        `[docker] Failed to exec in container ${container}:`,
+        getErrorMessage(error, `Failed to exec in container ${container}`)
+      )
       return null
     }
   }
@@ -309,7 +340,10 @@ export class DockerService {
       const { stdout } = await execa('docker', args)
       return stdout
     } catch (error) {
-      log.error(`[docker] Failed to get logs for ${name}:`, error)
+      log.error(
+        `[docker] Failed to get logs for ${name}:`,
+        getErrorMessage(error, `Failed to get logs for ${name}`)
+      )
       return ''
     }
   }
@@ -341,7 +375,10 @@ export class DockerService {
         }
       })
     } catch (error) {
-      log.error('[docker] Failed to list containers:', error)
+      log.error(
+        '[docker] Failed to list containers:',
+        getErrorMessage(error, 'Failed to list containers')
+      )
       return []
     }
   }

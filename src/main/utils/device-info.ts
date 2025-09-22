@@ -4,6 +4,7 @@ import { machineIdSync } from 'node-machine-id'
 import os from 'os'
 
 import { DeviceType, type DeviceInfo } from '../api/device/type'
+import { getErrorMessage } from './get-error-message'
 
 function getScreenInfo(): {
   screen_width_px: number
@@ -20,7 +21,10 @@ function getScreenInfo(): {
       scale_factor: primaryDisplay.scaleFactor ?? 1
     }
   } catch (error) {
-    console.error('Failed to read screen info, using defaults:', error)
+    console.error(
+      'Failed to read screen info, using defaults:',
+      getErrorMessage(error, 'Failed to read screen info')
+    )
     return {
       screen_width_px: 1920,
       screen_height_px: 1080,
@@ -47,7 +51,7 @@ function getMachineId(): string | undefined {
   try {
     return machineIdSync(true)
   } catch (error) {
-    console.error('Failed to read machine id:', error)
+    console.error('Failed to read machine id:', getErrorMessage(error, 'Failed to read machine id'))
     return undefined
   }
 }
@@ -59,7 +63,7 @@ function getLanguage(): string {
       return locale
     }
   } catch (error) {
-    console.error('Failed to resolve locale:', error)
+    console.error('Failed to resolve locale:', getErrorMessage(error, 'Failed to resolve locale'))
   }
 
   return process.env.LANG?.split('.')[0] || 'en-US'
@@ -72,7 +76,7 @@ function getTimezone(): string {
       return timezone
     }
   } catch (error) {
-    console.error('Failed to resolve timezone:', error)
+    console.error('Failed to resolve timezone:', getErrorMessage(error, 'Failed to resolve timezone'))
   }
 
   return 'UTC'

@@ -2,6 +2,7 @@ import * as chokidar from 'chokidar'
 import { EventEmitter } from 'eventemitter3'
 import { promises as fs } from 'fs'
 import { X_INJECTION_SCRIPT_PATH } from '../../configs/injection-paths'
+import { getErrorMessage } from '../../utils/get-error-message'
 export interface InjectionLoaderEvents {
   change: () => void
 }
@@ -60,17 +61,23 @@ export class InjectionLoader extends EventEmitter<InjectionLoaderEvents> {
           console.log('[XLoader] File reloaded, emitting change event')
           this.emit('change')
         } catch (error) {
-          console.error('[XLoader] Error reading injection script after change:', error)
+          console.error(
+            '[XLoader] Error reading injection script after change:',
+            getErrorMessage(error, 'X loader file reload failed')
+          )
         }
       })
 
       this._watcher.on('error', (error) => {
-        console.error('[XLoader] Watcher error:', error)
+        console.error('[XLoader] Watcher error:', getErrorMessage(error, 'X loader watcher error'))
       })
 
       console.log('[XLoader] Started watching:', X_INJECTION_SCRIPT_PATH)
     } catch (error) {
-      console.error('Error setting up file watcher:', error)
+      console.error(
+        'Error setting up file watcher:',
+        getErrorMessage(error, 'Failed to set up X loader file watcher')
+      )
     }
   }
 
