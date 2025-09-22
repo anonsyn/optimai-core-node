@@ -4,6 +4,7 @@ import type { SubmitAssignmentRequest } from '../api/mining/type'
 import { apiClient } from '../libs/axios'
 import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
+import { getErrorMessage } from '../utils/get-error-message'
 import { MiningWorker } from './mining-worker'
 import { registerDevice } from './register-device'
 import type { MiningAssignment, NodeStatusResponse } from './types'
@@ -91,11 +92,13 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       this.setStatus(NodeStatus.Running)
       return true
     } catch (error) {
+      const message = getErrorMessage(error, 'Node runtime error')
+      const lastError = new Error(message)
       this.running = false
-      this.lastError = error instanceof Error ? error.message : String(error)
+      this.lastError = message
       this.setStatus(NodeStatus.Idle)
-      this.emit(NodeRuntimeEvent.Error, error instanceof Error ? error : new Error(String(error)))
-      throw error
+      this.emit(NodeRuntimeEvent.Error, lastError)
+      throw lastError
     }
   }
 

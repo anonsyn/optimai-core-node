@@ -148,10 +148,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         await miningApi.sendHeartbeat(agentInfo)
         log.debug('[mining] Heartbeat sent')
       } catch (error) {
-        log.error(
-          '[mining] Heartbeat failed:',
-          getErrorMessage(error, 'Heartbeat failed')
-        )
+        log.error('[mining] Heartbeat failed:', getErrorMessage(error, 'Heartbeat failed'))
         this.emit('error', error instanceof Error ? error : new Error(String(error)))
       }
     }
@@ -228,10 +225,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         log.warn('[mining] SSE connection closed')
       } catch (error) {
         if (!controller.signal.aborted) {
-          log.error(
-            '[mining] SSE error:',
-            getErrorMessage(error, 'SSE error')
-          )
+          log.error('[mining] SSE error:', getErrorMessage(error, 'SSE error'))
           this.emit('error', error instanceof Error ? error : new Error(String(error)))
         }
       } finally {

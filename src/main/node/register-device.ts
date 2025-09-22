@@ -2,14 +2,20 @@ import log from 'electron-log/main'
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/type'
 import { deviceStore, userStore } from '../storage'
-import { getErrorMessage } from '../utils/get-error-message'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'
+import { getErrorMessage } from '../utils/get-error-message'
 
 export async function registerDevice(signal?: AbortSignal): Promise<string> {
   const user = userStore.getUser()
   if (!user) {
     throw new Error('Cannot register device without an authenticated user')
+  }
+
+  if (deviceStore.isRegistered()) {
+    const existingDeviceId = deviceStore.getDeviceId()
+    log.info('[register-device] Device already registered, reusing ID:', existingDeviceId)
+    return existingDeviceId
   }
 
   log.info('[register-device] User info:', { id: user.id, email: user.email })

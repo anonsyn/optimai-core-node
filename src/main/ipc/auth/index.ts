@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
-import { tokenStore, userStore } from '../../storage'
+import { deviceStore, tokenStore, userStore } from '../../storage'
 import type { User } from '../../storage'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { AuthEvents } from './events'
@@ -85,6 +85,7 @@ class AuthIpcHandler {
       try {
         tokenStore.removeTokens()
         userStore.removeUser()
+        deviceStore.removeDeviceId()
         log.info('Tokens removed successfully')
         return { success: true }
       } catch (error: unknown) {
