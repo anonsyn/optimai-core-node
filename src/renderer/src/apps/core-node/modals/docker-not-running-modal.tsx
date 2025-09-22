@@ -8,17 +8,29 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
-import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
+import { useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
+import { cn } from '@/utils/tw'
 import { useState } from 'react'
 
 export function DockerNotRunningModal() {
   const open = useIsModalOpen(Modals.DOCKER_NOT_RUNNING)
+  const data = useModalData(Modals.DOCKER_NOT_RUNNING)
   const [isChecking, setIsChecking] = useState(false)
-  const closeModal = useCloseModal(Modals.DOCKER_NOT_RUNNING)
 
   const handleRetry = async () => {
+    if (!data?.onRetry) {
+      return
+    }
+
     setIsChecking(true)
+    try {
+      await data.onRetry()
+    } catch (error) {
+      console.error('Failed to retry Docker runtime check:', error)
+    } finally {
+      setIsChecking(false)
+    }
   }
 
   const handleQuit = () => {
@@ -26,7 +38,9 @@ export function DockerNotRunningModal() {
   }
 
   const handleOpenChange = (open: boolean) => {
-    if (!open) return
+    if (!open) {
+      setIsChecking(false)
+    }
   }
 
   return (
@@ -47,7 +61,10 @@ export function DockerNotRunningModal() {
         </DialogHeader>
         <DialogFooter className="mt-8 sm:justify-between">
           <Button onClick={handleRetry} disabled={isChecking}>
-            <Icon icon="RotateCcw" className="mr-2 h-4 w-4" />
+            <Icon
+              icon="RotateCcw"
+              className={cn('mr-2 h-4 w-4', isChecking && 'animate-spin duration-500')}
+            />
             <span>Retry</span>
           </Button>
           <Button variant="outline" onClick={handleQuit}>

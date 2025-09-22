@@ -8,17 +8,16 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
-import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
+import { useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { cn } from '@/utils/tw'
 import { useState } from 'react'
 
 export function DockerNotInstalledModal() {
   const open = useIsModalOpen(Modals.DOCKER_NOT_INSTALLED)
+  const data = useModalData(Modals.DOCKER_NOT_INSTALLED)
   const [isInstalling, setIsInstalling] = useState(false)
   const [isChecking, setIsChecking] = useState(false)
-
-  const closeModal = useCloseModal(Modals.DOCKER_NOT_INSTALLED)
 
   const handleInstallDocker = async () => {
     setIsInstalling(true)
@@ -31,7 +30,18 @@ export function DockerNotInstalledModal() {
   }
 
   const handleRetry = async () => {
+    if (!data?.onRetry) {
+      return
+    }
+
     setIsChecking(true)
+    try {
+      await data.onRetry()
+    } catch (error) {
+      console.error('Failed to retry Docker installation check:', error)
+    } finally {
+      setIsChecking(false)
+    }
   }
 
   const handleQuit = () => {
@@ -39,7 +49,10 @@ export function DockerNotInstalledModal() {
   }
 
   const handleOpenChange = (open: boolean) => {
-    if (!open) return
+    if (!open) {
+      setIsInstalling(false)
+      setIsChecking(false)
+    }
   }
 
   return (

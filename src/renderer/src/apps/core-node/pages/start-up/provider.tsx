@@ -1,4 +1,4 @@
-import { useOpenModal } from '@/hooks/modal'
+import { useCloseModal, useOpenModal } from '@/hooks/modal'
 import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { authActions } from '@/store/slices/auth'
@@ -72,6 +72,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const openLoginModal = useOpenModal(Modals.LOGIN)
   const openDockerNotInstalledModal = useOpenModal(Modals.DOCKER_NOT_INSTALLED)
   const openDockerNotRunningModal = useOpenModal(Modals.DOCKER_NOT_RUNNING)
+  const closeDockerNotInstalledModal = useCloseModal(Modals.DOCKER_NOT_INSTALLED)
+  const closeDockerNotRunningModal = useCloseModal(Modals.DOCKER_NOT_RUNNING)
   const isStartingRef = useRef(false)
 
   // Add a status message
@@ -114,36 +116,71 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     setPhase(StartupPhase.CHECKING_DOCKER)
     addStatus('Checking Docker requirements...')
 
+    const waitForRetry = async (type: 'installed' | 'running') => {
+      await new Promise<void>((resolve) => {
+        let resolved = false
+        const openModal =
+          type === 'installed' ? openDockerNotInstalledModal : openDockerNotRunningModal
+        const closeModal =
+          type === 'installed' ? closeDockerNotInstalledModal : closeDockerNotRunningModal
+
+        openModal({
+          onRetry: async () => {
+            if (resolved) {
+              return
+            }
+
+            resolved = true
+            closeModal()
+            resolve()
+          }
+        })
+      })
+
+      addStatus('Rechecking Docker requirements...')
+    }
+
     try {
-      // Check if Docker is installed
-      const dockerInstalled = await window.dockerIPC.checkInstalled()
-      if (!dockerInstalled) {
-        addStatus('Docker Desktop is not installed', true)
-        openDockerNotInstalledModal({
-          onRetry: () => checkDockerRequirements()
-        })
-        return false
-      }
+      let hasRetried = false
 
-      // Check if Docker is running
-      const dockerRunning = await window.dockerIPC.checkRunning()
-      if (!dockerRunning) {
-        addStatus('Docker Desktop is not running', true)
-        openDockerNotRunningModal({
-          onRetry: () => checkDockerRequirements()
-        })
-        return false
-      }
+      while (true) {
+        if (hasRetried) {
+          // Allow a brief pause so the status list visibly updates before rechecking
+          await sleep(300)
+        }
 
-      addStatus('Docker requirements satisfied')
-      return true
+        const dockerInstalled = await window.dockerIPC.checkInstalled()
+        if (!dockerInstalled) {
+          addStatus('Docker Desktop is not installed', true)
+          hasRetried = true
+          await waitForRetry('installed')
+          continue
+        }
+
+        const dockerRunning = await window.dockerIPC.checkRunning()
+        if (!dockerRunning) {
+          addStatus('Docker Desktop is not running', true)
+          hasRetried = true
+          await waitForRetry('running')
+          continue
+        }
+
+        addStatus('Docker requirements satisfied')
+        return true
+      }
     } catch (error) {
       console.error('Docker check failed:', error)
       addStatus('Docker check failed', true)
       setError('Failed to check Docker status')
       return false
     }
-  }, [addStatus, openDockerNotInstalledModal, openDockerNotRunningModal])
+  }, [
+    addStatus,
+    closeDockerNotInstalledModal,
+    closeDockerNotRunningModal,
+    openDockerNotInstalledModal,
+    openDockerNotRunningModal
+  ])
 
   // Initialize Crawl4AI service
   const initializeCrawler = useCallback(async (): Promise<boolean> => {
