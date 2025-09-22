@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
 import { tokenStore, userStore } from '../../storage'
+import type { User } from '../../storage'
 import { AuthEvents } from './events'
 
 class AuthIpcHandler {
@@ -96,6 +97,23 @@ class AuthIpcHandler {
       } catch (error) {
         log.error('Failed to check tokens:', error)
         return false
+      }
+    })
+
+    // Save user profile data
+    ipcMain.handle(AuthEvents.SaveUser, async (_event, user: User) => {
+      try {
+        if (!user || typeof user !== 'object') {
+          throw new Error('Invalid user payload')
+        }
+
+        userStore.saveUser(user)
+        log.info('User profile stored successfully')
+        return { success: true }
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
+        log.error('Failed to store user profile:', error)
+        return { success: false, error: message }
       }
     })
   }

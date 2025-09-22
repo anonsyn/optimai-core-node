@@ -48,6 +48,16 @@ export class SessionManager {
   }
 
   /**
+   * Persist user profile information in the main process store
+   */
+  async setUser(user: unknown): Promise<void> {
+    const result = await window.authIPC.saveUser(user)
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to store user profile')
+    }
+  }
+
+  /**
    * Check if user is authenticated (has tokens)
    */
   async isAuthenticated(): Promise<boolean> {

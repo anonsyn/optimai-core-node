@@ -1,9 +1,9 @@
+import log from 'electron-log/main'
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/type'
 import { deviceStore, userStore } from '../storage'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'
-import log from 'electron-log/main'
 
 export async function registerDevice(signal?: AbortSignal): Promise<string> {
   const user = userStore.getUser()
@@ -52,4 +52,3 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
     throw new Error('Failed to decode device registration response')
   }
 }
-

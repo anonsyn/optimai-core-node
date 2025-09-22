@@ -42,7 +42,13 @@ export const authIPC = {
    * Check if tokens exist
    */
   hasTokens: (): Promise<boolean> =>
-    ipcRenderer.invoke(AuthEvents.HasTokens)
+    ipcRenderer.invoke(AuthEvents.HasTokens),
+
+  /**
+   * Persist user profile data in the secure store
+   */
+  saveUser: (user: unknown): Promise<{ success: boolean; error?: string }> =>
+    ipcRenderer.invoke(AuthEvents.SaveUser, user)
 }
 
 export type AuthIPC = typeof authIPC

@@ -111,6 +111,8 @@ const LoginForm = () => {
         throw new Error('No user found')
       }
 
+      await sessionManager.setUser(user)
+
       return user
     }
   })

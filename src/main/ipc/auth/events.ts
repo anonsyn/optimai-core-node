@@ -6,5 +6,6 @@ export const AuthEvents = {
   UpdateAccessToken: 'auth:update-access-token',
   UpdateRefreshToken: 'auth:update-refresh-token',
   Logout: 'auth:logout',
-  HasTokens: 'auth:has-tokens'
+  HasTokens: 'auth:has-tokens',
+  SaveUser: 'auth:save-user'
 } as const
