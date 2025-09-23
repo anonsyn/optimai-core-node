@@ -10,12 +10,34 @@ import { tokenStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
 import type { MiningAssignment } from './types'
 
+export enum MiningStatus {
+  Idle = 'idle',
+  Initializing = 'initializing',
+  CheckingDocker = 'checking_docker',
+  InitializingCrawler = 'initializing_crawler',
+  Ready = 'ready',
+  Processing = 'processing',
+  Degraded = 'degraded', // Docker not available but still fetching
+  Error = 'error',
+  Stopped = 'stopped'
+}
+
+export interface MiningWorkerStatus {
+  status: MiningStatus
+  dockerAvailable: boolean
+  crawlerInitialized: boolean
+  isProcessing: boolean
+  assignmentCount: number
+  lastError?: string
+}
+
 interface MiningWorkerEvents {
   assignment: (assignment: MiningAssignment) => void
   assignmentStarted: (assignmentId: string) => void
   assignmentCompleted: (assignmentId: string) => void
   assignmentFailed: (assignmentId: string, error: Error) => void
   error: (error: Error) => void
+  statusChanged: (status: MiningWorkerStatus) => void
 }
 
 const HEARTBEAT_INTERVAL_MS = 30_000
@@ -35,6 +57,27 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private dockerAvailable = false
   private crawlerServiceInitialized = false
   private assignmentQueue: PQueue | null = null
+  private status: MiningStatus = MiningStatus.Idle
+  private lastError?: string
+
+  private setStatus(status: MiningStatus, error?: string) {
+    if (this.status !== status || error !== this.lastError) {
+      this.status = status
+      this.lastError = error
+      this.emit('statusChanged', this.getStatus())
+    }
+  }
+
+  getStatus(): MiningWorkerStatus {
+    return {
+      status: this.status,
+      dockerAvailable: this.dockerAvailable,
+      crawlerInitialized: this.crawlerServiceInitialized,
+      isProcessing: this.processingAssignments.size > 0,
+      assignmentCount: this.processingAssignments.size,
+      lastError: this.lastError
+    }
+  }
 
   async start() {
     if (this.running) {
@@ -44,20 +87,27 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     log.info('[mining] Starting mining worker...')
     this.running = true
     this.sseBackoff = SSE_RETRY_BASE_MS
+    this.setStatus(MiningStatus.Initializing)
 
     // Check Docker availability
+    this.setStatus(MiningStatus.CheckingDocker)
     this.dockerAvailable = await this.checkDockerAvailability()
     if (!this.dockerAvailable) {
       log.warn(
         '[mining] Docker is not available - mining service will fetch but not process assignments'
       )
       log.warn('[mining] Please install and start Docker from https://docker.com to enable mining')
+      this.setStatus(MiningStatus.Degraded, 'Docker not available')
     } else {
+      this.setStatus(MiningStatus.InitializingCrawler)
       // Initialize crawler service
       try {
         const initialized = await crawlerService.initialize()
         if (initialized) {
           this.crawlerServiceInitialized = true
+          this.setStatus(MiningStatus.Ready)
+        } else {
+          this.setStatus(MiningStatus.Degraded, 'Crawler initialization failed')
         }
         log.info('[mining] Crawler service initialized successfully')
       } catch (error) {
@@ -66,6 +116,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
           getErrorMessage(error, 'Failed to initialize crawler service')
         )
         this.dockerAvailable = false
+        this.setStatus(MiningStatus.Degraded, 'Crawler initialization failed')
       }
     }
 
@@ -357,6 +408,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
         if (this.dockerAvailable && this.crawlerServiceInitialized) {
           this.processingAssignments.add(assignment.id)
+          this.setStatus(MiningStatus.Processing)
           queue
             .add(() => this.processAssignment(assignment))
             .catch((error) => {
@@ -365,6 +417,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
                 getErrorMessage(error, `Failed to process assignment ${assignment.id}`)
               )
               this.processingAssignments.delete(assignment.id)
+              if (this.processingAssignments.size === 0) {
+                this.setStatus(MiningStatus.Ready)
+              }
             })
         } else {
           log.warn(
@@ -373,10 +428,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         }
       }
     } catch (error) {
-      log.error(
-        '[mining] Error fetching assignments:',
-        getErrorMessage(error, 'Error fetching assignments')
-      )
+      const errorMsg = getErrorMessage(error, 'Error fetching assignments')
+      log.error('[mining] Error fetching assignments:', errorMsg)
+      this.setStatus(MiningStatus.Error, errorMsg)
       this.emit('error', error instanceof Error ? error : new Error(String(error)))
     } finally {
       this.processing = false
@@ -468,6 +522,13 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } finally {
       // Remove from processing set
       this.processingAssignments.delete(assignmentId)
+      if (this.processingAssignments.size === 0) {
+        this.setStatus(
+          this.dockerAvailable && this.crawlerServiceInitialized
+            ? MiningStatus.Ready
+            : MiningStatus.Degraded
+        )
+      }
     }
   }
 

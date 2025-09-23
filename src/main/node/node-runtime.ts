@@ -5,7 +5,7 @@ import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
 import { sleep } from '../utils/sleep'
-import { MiningWorker } from './mining-worker'
+import { MiningWorker, type MiningWorkerStatus } from './mining-worker'
 import { registerDevice } from './register-device'
 import type { MiningAssignment, NodeStatusResponse } from './types'
 import { NodeStatus } from './types'
@@ -18,6 +18,7 @@ export enum NodeRuntimeEvent {
   MiningAssignment = 'mining-assignment',
   MiningAssignmentCompleted = 'mining-assignment-completed',
   MiningError = 'mining-error',
+  MiningStatusChanged = 'mining-status-changed',
   Error = 'error'
 }
 
@@ -28,6 +29,7 @@ type NodeRuntimeEventMap = {
   [NodeRuntimeEvent.MiningAssignment]: (assignment: MiningAssignment) => void
   [NodeRuntimeEvent.MiningAssignmentCompleted]: (assignmentId: string) => void
   [NodeRuntimeEvent.MiningError]: (error: Error) => void
+  [NodeRuntimeEvent.MiningStatusChanged]: (status: MiningWorkerStatus) => void
   [NodeRuntimeEvent.Error]: (error: Error) => void
 }
 
@@ -66,6 +68,10 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
 
     this.miningWorker.on('error', (error: Error) => {
       this.emit(NodeRuntimeEvent.MiningError, error)
+    })
+
+    this.miningWorker.on('statusChanged', (status: MiningWorkerStatus) => {
+      this.emit(NodeRuntimeEvent.MiningStatusChanged, status)
     })
   }
 
@@ -125,6 +131,10 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       running: this.running,
       last_error: this.lastError
     }
+  }
+
+  getMiningStatus(): MiningWorkerStatus {
+    return this.miningWorker.getStatus()
   }
 
   private setStatus(status: NodeStatus) {

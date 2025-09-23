@@ -27,6 +27,10 @@ class NodeIpcHandler {
       this.broadcast(NodeEvents.OnMiningAssignmentCompleted, assignmentId)
     })
 
+    nodeRuntime.on(NodeRuntimeEvent.MiningStatusChanged, (status) => {
+      this.broadcast(NodeEvents.OnMiningStatusChanged, status)
+    })
+
     nodeRuntime.on(NodeRuntimeEvent.MiningError, (error) => {
       const message = getErrorMessage(error, 'Mining worker error')
       log.error('Mining worker error:', message)
@@ -55,6 +59,10 @@ class NodeIpcHandler {
 
     ipcMain.handle(NodeEvents.GetStatus, async () => {
       return nodeRuntime.getStatus()
+    })
+
+    ipcMain.handle(NodeEvents.GetMiningStatus, async () => {
+      return nodeRuntime.getMiningStatus()
     })
 
     ipcMain.handle(NodeEvents.CompleteMiningAssignment, async () => {
