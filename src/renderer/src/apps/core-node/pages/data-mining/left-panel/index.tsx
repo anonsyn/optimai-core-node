@@ -1,49 +1,19 @@
 import Token from '@/components/branding/token'
-import { Badge } from '@/components/ui/badge'
-import { Button, SecondaryText } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningStatsQuery } from '@/queries/mining'
-import { formatNumber, withSign } from '@/utils/number'
+import { formatNumber } from '@/utils/number'
 import { Card, CardContent, CardTitle } from '@core-node/pages/data-mining/card'
 import { motion } from 'framer-motion'
-import { TrendingUp } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 
 export const LeftPanel = () => {
   const { data: stats } = useGetMiningStatsQuery()
-  console.log({ stats })
 
-  const firstRow = [
-    {
-      title: 'Total Rewards',
-      value: formatNumber(stats?.total_rewards.amount || 0, { minimumFractionDigits: 2 }),
-      change: stats?.total_rewards.percentage_change,
-      changeDisplay: `${Number(stats?.total_rewards.percentage_change) > 0 ? '+' : ''} ${formatNumber(
-        stats?.total_rewards.percentage_change || 0,
-        {
-          maximumFractionDigits: 2,
-          minimumFractionDigits: 2
-        }
-      )}`,
-      token: true
-    },
-    {
-      title: 'Weekly Rank',
-      value: stats?.weekly_rank.current,
-      change: Number(stats?.weekly_rank.current) - Number(stats?.weekly_rank.previous),
-      changeDisplay: `${Number(stats?.weekly_rank.current) - Number(stats?.weekly_rank.previous)} rank`
-    }
-  ]
-
-  const secondRow = [
-    {
-      title: 'Data Points',
-      value: formatNumber(stats?.data_points, { minimumFractionDigits: 2 })
-    },
-    {
-      title: 'Data Storage',
-      value: formatNumber(stats?.data_storage, { minimumFractionDigits: 2 })
-    }
-  ]
+  // Data distribution values are already percentages from the backend
+  const dataDistribution = stats?.data_distribution || { video: 0, text: 0, image: 0, audio: 0 }
+  const hasAnyData = Object.values(dataDistribution).some((value) => value > 0)
 
   const supportedLLMs = [
     'LLama 3.2 Vision',
@@ -54,7 +24,9 @@ export const LeftPanel = () => {
     'Gemma 2'
   ]
 
-  const supportedPlatforms = ['Twitter', 'Facebook', 'Telegram', 'Google', 'Discord', 'Instagram']
+  const handleDashboardClick = () => {
+    window.open('https://app.optimai.xyz/dashboard', '_blank')
+  }
 
   return (
     <motion.div
@@ -66,136 +38,192 @@ export const LeftPanel = () => {
       <ScrollArea className="h-full w-full">
         <div className="p-6 pb-8">
           <div className="mb-8">
-            <div className="mb-1 flex items-center gap-2">
-              <div className="bg-main h-1 w-12 rounded-full" />
-              <span className="text-sm text-white/50">Mining Hub</span>
+            <div className="mb-2 flex items-center gap-2">
+              <Icon icon="Pickaxe" className="size-4 text-white/50" />
+              <span className="text-12 font-medium text-white/50">Mining Hub</span>
             </div>
-            <h1 className="bg-main text-32 bg-clip-text leading-tight font-bold text-transparent">
-              Data Mining DAO
-            </h1>
-            <p className="text-14 mt-3 leading-relaxed text-white">
-              AI-powered agents continuously crawl, analyze, and validate data streams for real-time
-              insights and rewards.
+            <h1 className="text-28 font-bold text-white">Mining Statistics</h1>
+            <p className="text-13 mt-2 leading-relaxed text-white/60">
+              Track your mining performance, rewards, and data contribution across the OptimAI
+              network.
             </p>
             <Button
-              className="bg-gradient-secondary-button group mt-4 w-full border border-white/10 transition-all hover:border-white/20"
-              variant="secondary"
+              onClick={handleDashboardClick}
+              className="bg-main group mt-4 w-full transition-all"
+              variant="primary"
             >
-              <SecondaryText className="group-hover:text-white">
-                View Subscribed Data DAO
-              </SecondaryText>
+              <span className="flex items-center gap-2 font-semibold text-black">
+                Go to Dashboard
+                <ExternalLink className="size-4" />
+              </span>
             </Button>
           </div>
 
           <div className="space-y-4">
+            {/* Stats Cards */}
             <div className="grid grid-cols-2 gap-3">
-              {firstRow.map((item, index) => {
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 * index, duration: 0.5 }}
-                  >
-                    <Card className="group relative overflow-hidden border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent transition-all hover:border-white/10">
-                      <div className="from-yellow/5 to-green/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                      <CardTitle className="text-12 text-white/50">{item.title}</CardTitle>
-                      <CardContent className="items-start">
-                        <Badge className="text-10 mb-2 gap-1" autoVariant={item.change}>
-                          {!item.token && <TrendingUp className="size-3" />}{' '}
-                          {item.changeDisplay || withSign(item.change)}
-                        </Badge>
-                        <div className="flex items-center gap-2">
-                          {item.token && <Token className="size-6" />}
-                          <span className="bg-main text-28 bg-clip-text font-bold text-transparent">
-                            {item.value}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                )
-              })}
+              {/* Total Rewards Card */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+              >
+                <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+                  <CardTitle>Total Rewards</CardTitle>
+                  <CardContent className="items-start">
+                    <div className="flex items-center gap-2">
+                      <Token className="size-5" />
+                      <span className="text-24 font-bold text-white">
+                        {formatNumber(stats?.total_rewards.amount || 0, {
+                          minimumFractionDigits: 2
+                        })}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* Weekly Rank Card */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+                  <CardTitle>Weekly Rank</CardTitle>
+                  <CardContent className="items-start">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-24 font-bold text-white">
+                        #{stats?.weekly_rank.current || 0}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
 
+            {/* Data Points and Storage */}
             <div className="grid grid-cols-2 gap-3">
-              {secondRow.map((item, index) => {
-                return (
-                  <motion.div
-                    key={index}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 + 0.1 * index, duration: 0.5 }}
-                  >
-                    <Card className="group relative overflow-hidden border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent transition-all hover:border-white/10">
-                      <div className="from-green/5 to-yellow/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                      <CardTitle className="text-12 text-white/50">{item.title}</CardTitle>
-                      <CardContent>
-                        <span className="text-28 font-bold text-white">{item.value}</span>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                )
-              })}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
+                <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+                  <CardTitle>Data Points</CardTitle>
+                  <CardContent>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-24 font-bold text-white">
+                        {formatNumber(stats?.data_points || 0)}
+                      </span>
+                      <span className="text-11 text-white/30">collected</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+                  <CardTitle>Data Storage</CardTitle>
+                  <CardContent>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-24 font-bold text-white">
+                        {formatNumber(stats?.data_storage || 0)}
+                      </span>
+                      <span className="text-11 text-white/30">MB</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </div>
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              <Card className="group relative overflow-hidden border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent transition-all hover:border-white/10">
-                <div className="from-yellow/5 to-green/5 absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity group-hover:opacity-100" />
-                <CardTitle className="flex items-center justify-between">
-                  <span className="text-12 text-white/50">Supported LLMs</span>
-                  <span className="bg-main text-10 rounded-full bg-clip-text px-2 py-0.5 font-bold text-transparent">
-                    {supportedLLMs.length}
-                  </span>
-                </CardTitle>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {supportedLLMs.map((llm, index) => (
-                      <motion.div
-                        key={llm}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.5 + index * 0.05 }}
-                        className="group/chip text-12 relative overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-3 py-1.5 font-medium text-white/70 transition-all hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
-                      >
-                        <div className="bg-main absolute inset-0 opacity-0 transition-opacity group-hover/chip:opacity-10" />
-                        {llm}
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
+            {/* Data Distribution */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
             >
-              <Card className="group relative overflow-hidden border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent transition-all hover:border-white/10">
-                <div className="from-green/5 to-yellow/5 absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity group-hover:opacity-100" />
+              <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+                <CardTitle>Data Distribution</CardTitle>
+                <CardContent>
+                  <div className="space-y-2">
+                    {hasAnyData ? (
+                      <>
+                        {/* Video */}
+                        {dataDistribution.video > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-12 text-white/60">Video</span>
+                            <span className="text-12 font-medium text-white">
+                              {Math.round(dataDistribution.video)}%
+                            </span>
+                          </div>
+                        )}
+                        {/* Text */}
+                        {dataDistribution.text > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-12 text-white/60">Text</span>
+                            <span className="text-12 font-medium text-white">
+                              {Math.round(dataDistribution.text)}%
+                            </span>
+                          </div>
+                        )}
+                        {/* Image */}
+                        {dataDistribution.image > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-12 text-white/60">Image</span>
+                            <span className="text-12 font-medium text-white">
+                              {Math.round(dataDistribution.image)}%
+                            </span>
+                          </div>
+                        )}
+                        {/* Audio */}
+                        {dataDistribution.audio > 0 && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-12 text-white/60">Audio</span>
+                            <span className="text-12 font-medium text-white">
+                              {Math.round(dataDistribution.audio)}%
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="py-2 text-center">
+                        <span className="text-11 text-white/40">No data collected yet</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Supported LLMs */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
                 <CardTitle className="flex items-center justify-between">
-                  <span className="text-12 text-white/50">Supported Platforms</span>
-                  <span className="bg-main text-10 rounded-full bg-clip-text px-2 py-0.5 font-bold text-transparent">
-                    {supportedPlatforms.length}
+                  <span className="text-11 font-medium text-white/40">Supported LLMs</span>
+                  <span className="text-10 rounded-full bg-white/10 px-2 py-0.5 font-medium text-white/60">
+                    {supportedLLMs.length} models
                   </span>
                 </CardTitle>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {supportedPlatforms.map((platform, index) => (
+                  <div className="flex flex-wrap gap-1.5">
+                    {supportedLLMs.map((llm, index) => (
                       <motion.div
-                        key={platform}
+                        key={llm}
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        transition={{ delay: 0.6 + index * 0.05 }}
-                        className="group/chip text-12 relative overflow-hidden rounded-full border border-white/10 bg-white/[0.02] px-3 py-1.5 font-medium text-white/70 transition-all hover:border-white/20 hover:bg-white/[0.05] hover:text-white"
+                        transition={{ delay: 0.7 + index * 0.03 }}
+                        className="text-11 rounded-md border border-white/10 bg-white/[0.02] px-2.5 py-1 text-white/70"
                       >
-                        <div className="bg-main absolute inset-0 opacity-0 transition-opacity group-hover/chip:opacity-10" />
-                        {platform}
+                        {llm}
                       </motion.div>
                     ))}
                   </div>
