@@ -6,7 +6,11 @@ const windowIPC = {
   close: () => ipcRenderer.send(WindowEvents.Close),
   minimize: () => ipcRenderer.send(WindowEvents.Minimize),
   maximize: () => ipcRenderer.send(WindowEvents.Maximize),
-  hide: () => ipcRenderer.send(WindowEvents.Hide)
+  hide: () => ipcRenderer.send(WindowEvents.Hide),
+  showTrafficLights: () => ipcRenderer.send(WindowEvents.ShowTrafficLights),
+  hideTrafficLights: () => ipcRenderer.send(WindowEvents.HideTrafficLights),
+  setTrafficLightPosition: (position: { x: number; y: number }) =>
+    ipcRenderer.send(WindowEvents.SetTrafficLightPosition, position)
 }
 
 type WindowIPC = typeof windowIPC

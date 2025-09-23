@@ -37,6 +37,28 @@ class WindowIpcHandler {
         }
       }
     })
+
+    // Native traffic light controls (macOS only)
+    ipcMain.on(WindowEvents.ShowTrafficLights, (e) => {
+      const window = BrowserWindow.fromWebContents(e.sender)
+      if (window && isMac) {
+        window.setWindowButtonVisibility(true)
+      }
+    })
+
+    ipcMain.on(WindowEvents.HideTrafficLights, (e) => {
+      const window = BrowserWindow.fromWebContents(e.sender)
+      if (window && isMac) {
+        window.setWindowButtonVisibility(false)
+      }
+    })
+
+    ipcMain.on(WindowEvents.SetTrafficLightPosition, (e, position: { x: number; y: number }) => {
+      const window = BrowserWindow.fromWebContents(e.sender)
+      if (window && isMac) {
+        window.setWindowButtonPosition(position)
+      }
+    })
   }
 }
 
