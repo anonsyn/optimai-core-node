@@ -20,6 +20,6 @@ export const useGetCheckInHistoryQuery = (
           return res
         }),
     refetchInterval: 60000,
-    enabled,
+    enabled
   })
 }

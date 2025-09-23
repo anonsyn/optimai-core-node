@@ -54,13 +54,13 @@ export const LogEntryComponent = ({ log }: LogEntryProps) => {
   return (
     <div
       className={cn(
-        'flex gap-3 py-2 items-start',
-        'border-l-2 border-transparent pl-3 -ml-2',
+        'flex items-start gap-3 py-2',
+        '-ml-2 border-l-2 border-transparent pl-3',
         'transition-all duration-200',
         log.animated && 'waiting-animation'
       )}
     >
-      <span className="text-[10px] text-white/60 min-w-[55px] mt-1 font-mono tracking-wider">
+      <span className="mt-1 min-w-[55px] font-mono text-[10px] tracking-wider text-white/60">
         {log.timestamp.toLocaleTimeString('en-US', {
           hour12: false,
           hour: '2-digit',
@@ -70,17 +70,17 @@ export const LogEntryComponent = ({ log }: LogEntryProps) => {
       </span>
       <span
         className={cn(
-          'text-[9px] px-2 py-0.5 mt-[2px] rounded font-bold tracking-wider border',
+          'mt-[2px] rounded border px-2 py-0.5 text-[9px] font-bold tracking-wider',
           'min-w-[60px] text-center',
           getLevelStyles()
         )}
       >
         {getLevelText()}
       </span>
-      <span className={cn('flex-1 break-words text-[13px] leading-[20px]', getMessageColor())}>
+      <span className={cn('flex-1 text-[13px] leading-[20px] break-words', getMessageColor())}>
         {log.message}
         {log.animated && (
-          <span className="waiting-dots inline-flex ml-1 text-warning/60">
+          <span className="waiting-dots text-warning/60 ml-1 inline-flex">
             <span className="dot-1">.</span>
             <span className="dot-2">.</span>
             <span className="dot-3">.</span>

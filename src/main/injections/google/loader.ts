@@ -70,7 +70,10 @@ export class GoogleInjectionLoader extends EventEmitter<GoogleInjectionLoaderEve
       })
 
       this._watcher.on('error', (error) => {
-        console.error('[GoogleLoader] Watcher error:', getErrorMessage(error, 'Google loader watcher error'))
+        console.error(
+          '[GoogleLoader] Watcher error:',
+          getErrorMessage(error, 'Google loader watcher error')
+        )
       })
 
       console.log('[GoogleLoader] Started watching:', GOOGLE_INJECTION_SCRIPT_PATH)

@@ -5,7 +5,7 @@ export const useGetProxyRewardsQuery = (params?: GetProxyRewardsParams) => {
   return useQuery({
     queryKey: ['proxy-rewards', params],
     queryFn: () => proxyApi.getProxyRewards(params).then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }
 
@@ -23,9 +23,7 @@ export const useGetInfiniteProxyRewardsQuery = (
       return lastOffset >= total || offset >= 100 ? null : offset
     },
     queryFn: ({ pageParam }) =>
-      proxyApi
-        .getProxyRewards({ limit: 20, ...params, offset: pageParam })
-        .then((res) => res.data),
-    refetchInterval: 60000,
+      proxyApi.getProxyRewards({ limit: 20, ...params, offset: pageParam }).then((res) => res.data),
+    refetchInterval: 60000
   })
 }

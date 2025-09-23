@@ -37,9 +37,9 @@ export const homeNodeDisableLottieData = {
                 { i: { x: [0.364], y: [1] }, o: { x: [0.333], y: [0] }, t: 32.032, s: [0] },
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 48.849, s: [-48] },
                 { i: { x: [0.348], y: [1] }, o: { x: [0.333], y: [0] }, t: 134.535, s: [-48] },
-                { t: 146.546546546547, s: [0] },
+                { t: 146.546546546547, s: [0] }
               ],
-              ix: 10,
+              ix: 10
             },
             p: {
               a: 1,
@@ -50,7 +50,7 @@ export const homeNodeDisableLottieData = {
                   t: 24.024,
                   s: [743.181, 519.247, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -58,7 +58,7 @@ export const homeNodeDisableLottieData = {
                   t: 32.032,
                   s: [743.181, 519.247, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 0.667 },
@@ -66,7 +66,7 @@ export const homeNodeDisableLottieData = {
                   t: 48.849,
                   s: [547.431, 1144.997, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -74,12 +74,12 @@ export const homeNodeDisableLottieData = {
                   t: 134.535,
                   s: [547.431, 1144.997, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
-                { t: 140.940940940941, s: [743.181, 519.247, 0] },
+                { t: 140.940940940941, s: [743.181, 519.247, 0] }
               ],
               ix: 2,
-              l: 2,
+              l: 2
             },
             a: { a: 0, k: [491.951, 85.225, 0], ix: 1, l: 2 },
             s: {
@@ -89,31 +89,31 @@ export const homeNodeDisableLottieData = {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 24.024,
-                  s: [141.534, 141.534, 100],
+                  s: [141.534, 141.534, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 32.032,
-                  s: [141.534, 141.534, 100],
+                  s: [141.534, 141.534, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 48.849,
-                  s: [141.915, 141.915, 100],
+                  s: [141.915, 141.915, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 134.535,
-                  s: [141.915, 141.915, 100],
+                  s: [141.915, 141.915, 100]
                 },
-                { t: 146.546546546547, s: [141.534, 141.534, 100] },
+                { t: 146.546546546547, s: [141.534, 141.534, 100] }
               ],
               ix: 6,
-              l: 2,
-            },
+              l: 2
+            }
           },
           ao: 0,
           shapes: [
@@ -133,7 +133,7 @@ export const homeNodeDisableLottieData = {
                         [-32.084, 0],
                         [0, 0],
                         [0, 0],
-                        [35.219, 0],
+                        [35.219, 0]
                       ],
                       o: [
                         [0, 0],
@@ -141,7 +141,7 @@ export const homeNodeDisableLottieData = {
                         [0, 0],
                         [0, 0],
                         [-23.564, -26.176],
-                        [0, 0],
+                        [0, 0]
                       ],
                       v: [
                         [-491.701, -84.975],
@@ -149,15 +149,15 @@ export const homeNodeDisableLottieData = {
                         [-288.742, 84.975],
                         [491.701, 84.975],
                         [375.729, -43.853],
-                        [283.381, -84.975],
+                        [283.381, -84.975]
                       ],
-                      c: true,
+                      c: true
                     },
-                    ix: 2,
+                    ix: 2
                   },
                   nm: 'Path 1',
                   mn: 'ADBE Vector Shape - Group',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'fl',
@@ -167,7 +167,7 @@ export const homeNodeDisableLottieData = {
                   bm: 0,
                   nm: 'Fill 1',
                   mn: 'ADBE Vector Graphic - Fill',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -178,8 +178,8 @@ export const homeNodeDisableLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Group 1',
               np: 2,
@@ -187,14 +187,14 @@ export const homeNodeDisableLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 1008,
           st: 0,
           ct: 1,
-          bm: 0,
+          bm: 0
         },
         {
           ddd: 0,
@@ -209,9 +209,9 @@ export const homeNodeDisableLottieData = {
               k: [
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 24.024, s: [0] },
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 32.032, s: [0] },
-                { t: 143.343343343343, s: [0] },
+                { t: 143.343343343343, s: [0] }
               ],
-              ix: 10,
+              ix: 10
             },
             p: {
               a: 1,
@@ -222,7 +222,7 @@ export const homeNodeDisableLottieData = {
                   t: 24.024,
                   s: [697.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -230,7 +230,7 @@ export const homeNodeDisableLottieData = {
                   t: 32.032,
                   s: [697.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 0.667 },
@@ -238,7 +238,7 @@ export const homeNodeDisableLottieData = {
                   t: 48.849,
                   s: [1009.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -246,15 +246,15 @@ export const homeNodeDisableLottieData = {
                   t: 134.535,
                   s: [1009.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
-                { t: 143.343343343343, s: [697.52, 997.252, 0] },
+                { t: 143.343343343343, s: [697.52, 997.252, 0] }
               ],
               ix: 2,
-              l: 2,
+              l: 2
             },
             a: { a: 0, k: [219.801, 314.12, 0], ix: 1, l: 2 },
-            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 },
+            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 }
           },
           ao: 0,
           shapes: [
@@ -275,7 +275,7 @@ export const homeNodeDisableLottieData = {
                         [0, 0],
                         [0, 0],
                         [31.888, -6.865],
-                        [0, 0],
+                        [0, 0]
                       ],
                       o: [
                         [0, 0],
@@ -284,7 +284,7 @@ export const homeNodeDisableLottieData = {
                         [0, 0],
                         [-10.241, 25.247],
                         [0, 0],
-                        [0, 0],
+                        [0, 0]
                       ],
                       v: [
                         [-219.434, 313.754],
@@ -293,15 +293,15 @@ export const homeNodeDisableLottieData = {
                         [219.551, -313.87],
                         [-16.857, 271.592],
                         [-67.093, 313.87],
-                        [-219.551, 313.87],
+                        [-219.551, 313.87]
                       ],
-                      c: true,
+                      c: true
                     },
-                    ix: 2,
+                    ix: 2
                   },
                   nm: 'Path 1',
                   mn: 'ADBE Vector Shape - Group',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'fl',
@@ -311,7 +311,7 @@ export const homeNodeDisableLottieData = {
                   bm: 0,
                   nm: 'Fill 1',
                   mn: 'ADBE Vector Graphic - Fill',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -322,8 +322,8 @@ export const homeNodeDisableLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Group 1',
               np: 2,
@@ -331,14 +331,14 @@ export const homeNodeDisableLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 1008,
           st: 0,
           ct: 1,
-          bm: 0,
+          bm: 0
         },
         {
           ddd: 0,
@@ -353,9 +353,9 @@ export const homeNodeDisableLottieData = {
               k: [
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 24.024, s: [0] },
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 32.032, s: [0] },
-                { t: 100.900900900901, s: [0] },
+                { t: 100.900900900901, s: [0] }
               ],
-              ix: 10,
+              ix: 10
             },
             p: {
               a: 1,
@@ -366,7 +366,7 @@ export const homeNodeDisableLottieData = {
                   t: 24.024,
                   s: [1143.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -374,7 +374,7 @@ export const homeNodeDisableLottieData = {
                   t: 32.032,
                   s: [1143.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 0.667 },
@@ -382,7 +382,7 @@ export const homeNodeDisableLottieData = {
                   t: 52.853,
                   s: [1455.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -390,15 +390,15 @@ export const homeNodeDisableLottieData = {
                   t: 134.535,
                   s: [1455.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
-                { t: 144.144144144144, s: [1143.52, 997.252, 0] },
+                { t: 144.144144144144, s: [1143.52, 997.252, 0] }
               ],
               ix: 2,
-              l: 2,
+              l: 2
             },
             a: { a: 0, k: [219.801, 314.12, 0], ix: 1, l: 2 },
-            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 },
+            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 }
           },
           ao: 0,
           shapes: [
@@ -419,7 +419,7 @@ export const homeNodeDisableLottieData = {
                         [0, 0],
                         [0, 0],
                         [31.888, -6.865],
-                        [0, 0],
+                        [0, 0]
                       ],
                       o: [
                         [0, 0],
@@ -428,7 +428,7 @@ export const homeNodeDisableLottieData = {
                         [0, 0],
                         [-10.241, 25.247],
                         [0, 0],
-                        [0, 0],
+                        [0, 0]
                       ],
                       v: [
                         [-219.434, 313.754],
@@ -437,15 +437,15 @@ export const homeNodeDisableLottieData = {
                         [219.551, -313.87],
                         [-16.857, 271.592],
                         [-67.093, 313.87],
-                        [-219.551, 313.87],
+                        [-219.551, 313.87]
                       ],
-                      c: true,
+                      c: true
                     },
-                    ix: 2,
+                    ix: 2
                   },
                   nm: 'Path 1',
                   mn: 'ADBE Vector Shape - Group',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'fl',
@@ -455,7 +455,7 @@ export const homeNodeDisableLottieData = {
                   bm: 0,
                   nm: 'Fill 1',
                   mn: 'ADBE Vector Graphic - Fill',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -466,8 +466,8 @@ export const homeNodeDisableLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Group 1',
               np: 2,
@@ -475,17 +475,17 @@ export const homeNodeDisableLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 1008,
           st: 0,
           ct: 1,
-          bm: 0,
-        },
-      ],
-    },
+          bm: 0
+        }
+      ]
+    }
   ],
   layers: [
     {
@@ -501,13 +501,13 @@ export const homeNodeDisableLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [490, 392, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [199.711, 199.711, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [199.711, 199.711, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 719.91991991992,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -521,7 +521,7 @@ export const homeNodeDisableLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [992, 972, 0], ix: 2, l: 2 },
         a: { a: 0, k: [960, 960, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [37.167, 37.167, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [37.167, 37.167, 100], ix: 6, l: 2 }
       },
       ao: 0,
       sy: [
@@ -535,8 +535,8 @@ export const homeNodeDisableLottieData = {
           bm: { a: 0, k: 5, ix: 1 },
           no: { a: 0, k: 10, ix: 9 },
           ty: 2,
-          nm: 'Inner Shadow',
-        },
+          nm: 'Inner Shadow'
+        }
       ],
       tm: { a: 0, k: 0.3, ix: 2 },
       w: 1920,
@@ -544,7 +544,7 @@ export const homeNodeDisableLottieData = {
       ip: -7.20720720720721,
       op: 305.105105105105,
       st: -7.20720720720721,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -559,13 +559,13 @@ export const homeNodeDisableLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [600, 600, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 1008,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -580,13 +580,13 @@ export const homeNodeDisableLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [424, 424, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 1008,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -601,15 +601,15 @@ export const homeNodeDisableLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [592.5, 592.5, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [155.359, 155.359, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [155.359, 155.359, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 1008,
       st: 0,
-      bm: 0,
-    },
+      bm: 0
+    }
   ],
   markers: [],
-  props: {},
+  props: {}
 }

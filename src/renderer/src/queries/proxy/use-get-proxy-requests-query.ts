@@ -10,6 +10,6 @@ export const useGetProxyRequestsQuery = (
     queryFn: () => proxyApi.getRequests(params).then((res) => res.data),
     enabled: true,
     refetchInterval: 60000,
-    ...options,
+    ...options
   })
 }

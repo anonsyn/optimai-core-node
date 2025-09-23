@@ -11,7 +11,10 @@ const nodeIPC = {
   startNode: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.StartNode),
   stopNode: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.StopNode),
   getStatus: (): Promise<NodeStatusResponse> => ipcRenderer.invoke(NodeEvents.GetStatus),
-  completeMiningAssignment: (assignmentId: string, payload: SubmitAssignmentRequest): Promise<void> =>
+  completeMiningAssignment: (
+    assignmentId: string,
+    payload: SubmitAssignmentRequest
+  ): Promise<void> =>
     ipcRenderer.invoke(NodeEvents.CompleteMiningAssignment, assignmentId, payload),
 
   onStatusChanged: (callback: (status: NodeStatusResponse) => void) =>

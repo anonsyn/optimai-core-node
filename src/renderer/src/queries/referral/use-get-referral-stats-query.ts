@@ -5,7 +5,7 @@ export const useGetReferralStatsQuery = () => {
   return useQuery({
     queryKey: ['referral-stats'],
     queryFn: () => referralApi.getStats().then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }
 
@@ -13,6 +13,6 @@ export const useGetReferralStatsSuspenseQuery = () => {
   return useSuspenseQuery({
     queryKey: ['referral-stats'],
     queryFn: () => referralApi.getStats().then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }

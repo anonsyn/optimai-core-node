@@ -43,7 +43,7 @@ const ProgressDots = () => {
             {/* Connection Line */}
             {index < phases.length - 1 && (
               <motion.div
-                className="absolute left-full top-1/2 h-[1px] w-2 -translate-y-1/2"
+                className="absolute top-1/2 left-full h-[1px] w-2 -translate-y-1/2"
                 initial={{ scaleX: 0, opacity: 0 }}
                 animate={{
                   scaleX: isPast ? 1 : 0.3,
@@ -60,16 +60,16 @@ const ProgressDots = () => {
             {/* Dot */}
             <div
               className={cn(
-                "relative size-2 rounded-full transition-all duration-300",
-                isActive && "size-2.5"
+                'relative size-2 rounded-full transition-all duration-300',
+                isActive && 'size-2.5'
               )}
             >
               <motion.div
                 className={cn(
-                  "absolute inset-0 rounded-full",
-                  isActive && "bg-gradient-to-r from-yellow to-green",
-                  isPast && "bg-green",
-                  isFuture && "bg-white/20"
+                  'absolute inset-0 rounded-full',
+                  isActive && 'from-yellow to-green bg-gradient-to-r',
+                  isPast && 'bg-green',
+                  isFuture && 'bg-white/20'
                 )}
                 animate={{
                   scale: isActive ? [1, 1.2, 1] : 1
@@ -84,7 +84,7 @@ const ProgressDots = () => {
               {/* Glow Effect for Active Dot */}
               {isActive && (
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-green/60 blur-md"
+                  className="bg-green/60 absolute inset-0 rounded-full blur-md"
                   animate={{
                     scale: [1, 1.8, 1],
                     opacity: [0.8, 0.3, 0.8]
@@ -98,9 +98,7 @@ const ProgressDots = () => {
               )}
 
               {/* Inner Dot for Future States */}
-              {isFuture && (
-                <div className="absolute inset-0.5 rounded-full bg-background" />
-              )}
+              {isFuture && <div className="bg-background absolute inset-0.5 rounded-full" />}
             </div>
           </motion.div>
         )

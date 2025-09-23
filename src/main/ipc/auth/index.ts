@@ -26,7 +26,10 @@ class AuthIpcHandler {
         const token = tokenStore.getAccessToken()
         return token || null
       } catch (error: unknown) {
-        log.error('Failed to get access token:', getErrorMessage(error, 'Failed to get access token'))
+        log.error(
+          'Failed to get access token:',
+          getErrorMessage(error, 'Failed to get access token')
+        )
         return null
       }
     })

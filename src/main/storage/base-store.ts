@@ -16,7 +16,9 @@ export type PersistentStore<T extends Record<string, any>> = {
 /**
  * Create an encrypted store instance
  */
-export function createStore<T extends Record<string, any>>(options: StoreOptions<T>): PersistentStore<T> {
+export function createStore<T extends Record<string, any>>(
+  options: StoreOptions<T>
+): PersistentStore<T> {
   // Generate or use provided encryption key
   const encryptionKey = options.encryptionKey || generateEncryptionKey(options.name)
 

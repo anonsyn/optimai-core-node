@@ -5,20 +5,21 @@ export const authIPC = {
   /**
    * Store access and refresh tokens
    */
-  login: (accessToken: string, refreshToken: string): Promise<{ success: boolean; error?: string }> =>
+  login: (
+    accessToken: string,
+    refreshToken: string
+  ): Promise<{ success: boolean; error?: string }> =>
     ipcRenderer.invoke(AuthEvents.Login, accessToken, refreshToken),
 
   /**
    * Get the stored access token
    */
-  getAccessToken: (): Promise<string | null> =>
-    ipcRenderer.invoke(AuthEvents.GetAccessToken),
+  getAccessToken: (): Promise<string | null> => ipcRenderer.invoke(AuthEvents.GetAccessToken),
 
   /**
    * Get the stored refresh token
    */
-  getRefreshToken: (): Promise<string | null> =>
-    ipcRenderer.invoke(AuthEvents.GetRefreshToken),
+  getRefreshToken: (): Promise<string | null> => ipcRenderer.invoke(AuthEvents.GetRefreshToken),
 
   /**
    * Update only the access token
@@ -41,8 +42,7 @@ export const authIPC = {
   /**
    * Check if tokens exist
    */
-  hasTokens: (): Promise<boolean> =>
-    ipcRenderer.invoke(AuthEvents.HasTokens),
+  hasTokens: (): Promise<boolean> => ipcRenderer.invoke(AuthEvents.HasTokens),
 
   /**
    * Persist user profile data in the secure store

@@ -9,6 +9,6 @@ export const useGetMissionsStatsQuery = () => {
     queryKey: RQUERY(),
     queryFn: async () => {
       return missionApi.getStats().then((res) => res.data)
-    },
+    }
   })
 }

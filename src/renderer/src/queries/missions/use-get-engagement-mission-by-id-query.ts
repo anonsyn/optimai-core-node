@@ -9,6 +9,6 @@ export const useGetEngagementMissionByIdQuery = (id: string) => {
     queryKey: RQUERY(id),
     queryFn: async () => {
       return missionApi.getEngagementMissionById(id).then((res) => res.data)
-    },
+    }
   })
 }

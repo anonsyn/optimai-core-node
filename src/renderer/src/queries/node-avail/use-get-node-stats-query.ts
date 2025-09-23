@@ -7,13 +7,13 @@ const getQueryOptions = (userIpId: string | undefined, params: GetNodeStatsParam
     queryFn: () => nodeAvailApi.getNodeStats(userIpId!, params).then((res) => res.data),
     enabled: !!userIpId,
     placeholderData: keepPreviousData,
-    refetchInterval: 60000,
+    refetchInterval: 60000
   }
 }
 
 export const useGetNodeStatsQuery = (userIpId: string | undefined, params: GetNodeStatsParams) => {
   return useQuery({
-    ...getQueryOptions(userIpId, params),
+    ...getQueryOptions(userIpId, params)
   })
 }
 

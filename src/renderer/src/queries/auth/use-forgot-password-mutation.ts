@@ -5,6 +5,6 @@ import { useMutation } from '@tanstack/react-query'
 export const useForgotPasswordMutation = (options: AppMutationOptions = {}) => {
   return useMutation({
     mutationFn: authApi.forgotPassword,
-    ...options,
+    ...options
   })
 }

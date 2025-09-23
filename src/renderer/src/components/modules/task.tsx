@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { Pi } from '@/components/branding/pi'
 import Token from '@/components/branding/token'
 import { definedGradient, getSvgDefs } from '@/components/svgs/defined-gradient'

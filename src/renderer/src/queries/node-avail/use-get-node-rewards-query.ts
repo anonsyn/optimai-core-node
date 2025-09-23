@@ -7,17 +7,19 @@ const getQueryOptions = (params?: GetNodeRewardsParams) => {
     queryFn: () => nodeAvailApi.getNodeRewards(params).then((res) => res.data),
     placeholderData: keepPreviousData,
     refetchInterval: 60000,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5
   }
 }
 
 export const useGetNodeRewardsQuery = (params?: GetNodeRewardsParams) => {
   return useQuery({
-    ...getQueryOptions(params),
+    ...getQueryOptions(params)
   })
 }
 
-export const useGetInfiniteNodeRewardsQuery = (params: Omit<GetNodeRewardsParams, 'offset'> = {}) => {
+export const useGetInfiniteNodeRewardsQuery = (
+  params: Omit<GetNodeRewardsParams, 'offset'> = {}
+) => {
   return useInfiniteQuery({
     queryKey: ['node-avail-node-rewards', params],
     initialPageParam: 0,
@@ -29,6 +31,8 @@ export const useGetInfiniteNodeRewardsQuery = (params: Omit<GetNodeRewardsParams
       return lastOffset >= total || offset >= 100 ? null : offset
     },
     queryFn: ({ pageParam }) =>
-      nodeAvailApi.getNodeRewards({ limit: 20, ...params, offset: pageParam }).then((res) => res.data),
+      nodeAvailApi
+        .getNodeRewards({ limit: 20, ...params, offset: pageParam })
+        .then((res) => res.data)
   })
 }

@@ -1,9 +1,4 @@
-import {
-  Mission,
-  missionApi,
-  MissionType,
-  VerifyEngagementMissionRequest,
-} from '@/api/missions'
+import { Mission, missionApi, MissionType, VerifyEngagementMissionRequest } from '@/api/missions'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { RQUERY as COMMUNITY_MISSIONS_QUERY } from './use-get-community-missions-query'
 import { RQUERY as ENGAGEMENT_MISSIONS_QUERY } from './use-get-engagement-missions-query'
@@ -44,6 +39,6 @@ export const useVerifyTaskMutation = (task: Mission, taskType: MissionType) => {
 
   return useMutation({
     mutationKey: ['verify-task', task.id],
-    mutationFn,
+    mutationFn
   })
 }

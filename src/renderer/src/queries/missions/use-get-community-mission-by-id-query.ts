@@ -9,6 +9,6 @@ export const useGetCommunityMissionByIdQuery = (id: string) => {
     queryKey: RQUERY(id),
     queryFn: async () => {
       return missionApi.getCommunityMissionById(id).then((res) => res.data)
-    },
+    }
   })
 }

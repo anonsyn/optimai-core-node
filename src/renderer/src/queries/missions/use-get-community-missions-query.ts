@@ -19,6 +19,6 @@ export const useGetCommunityMissionsQuery = () => {
         }
       }
       return 1000 * 60 * 10
-    },
+    }
   })
 }

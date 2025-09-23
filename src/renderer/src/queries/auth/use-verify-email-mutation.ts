@@ -5,6 +5,6 @@ import { useMutation } from '@tanstack/react-query'
 export const useVerifyEmailMutation = (options: AppMutationOptions = {}) => {
   return useMutation({
     mutationFn: authApi.verifyEmail,
-    ...options,
+    ...options
   })
 }

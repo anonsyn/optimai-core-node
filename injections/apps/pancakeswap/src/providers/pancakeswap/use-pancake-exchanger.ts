@@ -90,7 +90,9 @@ export const usePancakeExchanger = () => {
 
       const fromButton = swapInputContainer?.querySelector('.open-currency-select-button')
       const toButton = swapOutputContainer?.querySelector('.open-currency-select-button')
-      const tokenAmountInput = swapContainer.querySelector('.token-amount-input') as HTMLInputElement
+      const tokenAmountInput = swapContainer.querySelector(
+        '.token-amount-input'
+      ) as HTMLInputElement
 
       if (!fromButton || !toButton) {
         throw new Error('Currency select button not found')
@@ -117,7 +119,9 @@ export const usePancakeExchanger = () => {
       await doubleFocus(tokenAmountInput)
       await sleep(3000)
 
-      const swapButton = (await waitForElement('#swap-button, #confirm-swap-or-send')) as HTMLButtonElement
+      const swapButton = (await waitForElement(
+        '#swap-button, #confirm-swap-or-send'
+      )) as HTMLButtonElement
 
       if (!swapButton) {
         throw new Error('Swap button not found')
@@ -135,7 +139,10 @@ export const usePancakeExchanger = () => {
       clickElement(swapButton)
       await sleep(1000)
 
-      const confirmSwapButton = (await waitForElement('#confirm-swap-button', 10000)) as HTMLButtonElement
+      const confirmSwapButton = (await waitForElement(
+        '#confirm-swap-button',
+        10000
+      )) as HTMLButtonElement
 
       if (!confirmSwapButton) {
         throw new Error('Confirm swap button not found')

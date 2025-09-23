@@ -19,7 +19,7 @@ export const useGetNetworkMissionsQuery = () => {
         }
       }
       return 1000 * 60 * 10
-    },
+    }
   })
 }
 
@@ -28,6 +28,6 @@ export const useGetNetworkMissionSuspenseQuery = () => {
     queryKey: RQUERY(),
     queryFn: async () => {
       return missionApi.getNetworkMissions().then((res) => res.data)
-    },
+    }
   })
 }

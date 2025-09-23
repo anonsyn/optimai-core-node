@@ -51,7 +51,7 @@ const WaveVisualizer = ({ phase, className }: WaveVisualizerProps) => {
           `.wave-bar__${i}`,
           {
             height: targetHeight,
-            opacity: 0.3 + (heightMultiplier * 0.7),
+            opacity: 0.3 + heightMultiplier * 0.7,
             duration: config.duration,
             ease: 'power2.inOut',
             yoyo: true,
@@ -79,7 +79,7 @@ const WaveVisualizer = ({ phase, className }: WaveVisualizerProps) => {
     <div
       ref={containerRef}
       className={cn(
-        "absolute bottom-0 left-1/2 flex -translate-x-1/2 items-end gap-1.5",
+        'absolute bottom-0 left-1/2 flex -translate-x-1/2 items-end gap-1.5',
         className
       )}
     >
@@ -87,7 +87,7 @@ const WaveVisualizer = ({ phase, className }: WaveVisualizerProps) => {
         <div
           key={index}
           className={cn(
-            'wave-bar w-1 rounded-t-full bg-gradient-to-t from-yellow to-green opacity-0',
+            'wave-bar from-yellow to-green w-1 rounded-t-full bg-gradient-to-t opacity-0',
             `wave-bar__${index}`
           )}
           style={{ height: '2px' }}

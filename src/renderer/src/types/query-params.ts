@@ -1,6 +1,6 @@
 export enum OrderParam {
   Desc = 'desc',
-  Asc = 'asc',
+  Asc = 'asc'
 }
 
 export type BaseApiQueryParams<T = string> = {
@@ -14,7 +14,7 @@ export enum SearchParams {
   Page = 'page',
   Limit = 'per_page',
   Sort = 'sort_by',
-  Order = 'order_by',
+  Order = 'order_by'
 }
 
 export type PageParams = {

@@ -5,6 +5,6 @@ import { useMutation } from '@tanstack/react-query'
 export const useSignUpMutation = (options: AppMutationOptions = {}) => {
   return useMutation({
     mutationFn: authApi.signUp,
-    ...options,
+    ...options
   })
 }

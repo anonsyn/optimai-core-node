@@ -6,6 +6,6 @@ export const useGetProxyNetworksQuery = (params: GetProxyNetworkParams = {}) => 
     queryKey: ['proxy-networks', params],
     queryFn: () => proxyApi.getNetworks(params).then((res) => res.data),
     placeholderData: keepPreviousData,
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }

@@ -8,7 +8,7 @@ export const useGetReferralTiersQuery = () => {
   return useQuery({
     queryKey: RQUERY(),
     queryFn: () => referralApi.getAllTiers().then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }
 
@@ -16,6 +16,6 @@ export const useGetReferralTiersSuspenseQuery = () => {
   return useSuspenseQuery({
     queryKey: RQUERY(),
     queryFn: () => referralApi.getAllTiers().then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }

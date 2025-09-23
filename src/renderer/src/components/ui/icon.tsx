@@ -42,6 +42,7 @@ import RefOutlined from '@assets/icons/ref-outlined.svg?react'
 import RotateCcw from '@assets/icons/rotate-ccw.svg?react'
 import Sad from '@assets/icons/sad.svg?react'
 import Search from '@assets/icons/search.svg?react'
+import Square from '@assets/icons/square.svg?react'
 import SquarePen from '@assets/icons/square-pen.svg?react'
 import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
@@ -108,6 +109,7 @@ export const Icons = {
   Plus,
   Profile,
   Search,
+  Square,
   Google
 } as const
 

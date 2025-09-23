@@ -1,12 +1,12 @@
-import img_0 from './images/img_0.png';
-import img_1 from './images/img_1.png';
-import img_2 from './images/img_2.png';
-import img_3 from './images/img_3.png';
-import img_4 from './images/img_4.png';
-import img_5 from './images/img_5.png';
-import img_6 from './images/img_6.png';
-import img_7 from './images/img_7.png';
-import img_8 from './images/img_8.png';
+import img_0 from './images/img_0.png'
+import img_1 from './images/img_1.png'
+import img_2 from './images/img_2.png'
+import img_3 from './images/img_3.png'
+import img_4 from './images/img_4.png'
+import img_5 from './images/img_5.png'
+import img_6 from './images/img_6.png'
+import img_7 from './images/img_7.png'
+import img_8 from './images/img_8.png'
 
 const dataScrappingLottieData = {
   v: '5.12.1',
@@ -46,17 +46,17 @@ const dataScrappingLottieData = {
                   i: { x: [0.667], y: [0.534] },
                   o: { x: [0.333], y: [0] },
                   t: 75,
-                  s: [0],
+                  s: [0]
                 },
                 {
                   i: { x: [0.667], y: [1] },
                   o: { x: [0.333], y: [-1.282] },
                   t: 83,
-                  s: [60],
+                  s: [60]
                 },
-                { t: 105.000004276738, s: [0] },
+                { t: 105.000004276738, s: [0] }
               ],
-              ix: 11,
+              ix: 11
             },
             r: { a: 0, k: 0, ix: 10 },
             p: { a: 0, k: [507.465, 511.854, 0], ix: 2, l: 2 },
@@ -68,19 +68,19 @@ const dataScrappingLottieData = {
                   i: { x: [0, 0, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 75,
-                  s: [96.923, 96.923, 100],
+                  s: [96.923, 96.923, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [1, 1, 0.333], y: [-0.027, -0.027, 0] },
                   t: 86,
-                  s: [371, 371, 100],
+                  s: [371, 371, 100]
                 },
-                { t: 101.000004113814, s: [0, 0, 100] },
+                { t: 101.000004113814, s: [0, 0, 100] }
               ],
               ix: 6,
-              l: 2,
-            },
+              l: 2
+            }
           },
           ao: 0,
           shapes: [
@@ -94,7 +94,7 @@ const dataScrappingLottieData = {
                   p: { a: 0, k: [0, 0], ix: 3 },
                   nm: 'Ellipse Path 1',
                   mn: 'ADBE Vector Shape - Ellipse',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'gs',
@@ -105,11 +105,12 @@ const dataScrappingLottieData = {
                     k: {
                       a: 0,
                       k: [
-                        0, 0.957, 0.949, 0.373, 0.25, 0.957, 0.949, 0.373, 0.5, 0.957, 0.949, 0.373, 0.75, 0.706, 0.941,
-                        0.437, 1, 0.455, 0.933, 0.502, 0, 0, 0.246, 0.5, 0.493, 1, 0.746, 0.5, 1, 0,
+                        0, 0.957, 0.949, 0.373, 0.25, 0.957, 0.949, 0.373, 0.5, 0.957, 0.949, 0.373,
+                        0.75, 0.706, 0.941, 0.437, 1, 0.455, 0.933, 0.502, 0, 0, 0.246, 0.5, 0.493,
+                        1, 0.746, 0.5, 1, 0
                       ],
-                      ix: 8,
-                    },
+                      ix: 8
+                    }
                   },
                   s: { a: 0, k: [-41.57, 3.371], ix: 4 },
                   e: { a: 0, k: [41.577, 8.988], ix: 5 },
@@ -121,7 +122,7 @@ const dataScrappingLottieData = {
                   bm: 0,
                   nm: 'Gradient Stroke 1',
                   mn: 'ADBE Vector Graphic - G-Stroke',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -132,8 +133,8 @@ const dataScrappingLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Ellipse 1',
               np: 3,
@@ -141,14 +142,14 @@ const dataScrappingLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 4495.0001830851,
           st: 0,
           ct: 1,
-          bm: 0,
+          bm: 0
         },
         {
           ddd: 0,
@@ -164,23 +165,23 @@ const dataScrappingLottieData = {
                   i: { x: [0.667], y: [0.524] },
                   o: { x: [0.333], y: [0] },
                   t: 78,
-                  s: [0],
+                  s: [0]
                 },
                 {
                   i: { x: [0.667], y: [1] },
                   o: { x: [0.333], y: [36.701] },
                   t: 85,
-                  s: [60],
+                  s: [60]
                 },
                 {
                   i: { x: [0.667], y: [1] },
                   o: { x: [0.333], y: [0] },
                   t: 94,
-                  s: [60],
+                  s: [60]
                 },
-                { t: 112.000004561854, s: [0] },
+                { t: 112.000004561854, s: [0] }
               ],
-              ix: 11,
+              ix: 11
             },
             r: { a: 0, k: 0, ix: 10 },
             p: { a: 0, k: [507.465, 511.854, 0], ix: 2, l: 2 },
@@ -192,19 +193,19 @@ const dataScrappingLottieData = {
                   i: { x: [0, 0, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 78,
-                  s: [96.923, 96.923, 100],
+                  s: [96.923, 96.923, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [1, 1, 0.333], y: [-0.018, -0.018, 0] },
                   t: 89,
-                  s: [495.923, 495.923, 100],
+                  s: [495.923, 495.923, 100]
                 },
-                { t: 102.000004154545, s: [0, 0, 100] },
+                { t: 102.000004154545, s: [0, 0, 100] }
               ],
               ix: 6,
-              l: 2,
-            },
+              l: 2
+            }
           },
           ao: 0,
           shapes: [
@@ -218,7 +219,7 @@ const dataScrappingLottieData = {
                   p: { a: 0, k: [0, 0], ix: 3 },
                   nm: 'Ellipse Path 1',
                   mn: 'ADBE Vector Shape - Ellipse',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'gs',
@@ -229,11 +230,12 @@ const dataScrappingLottieData = {
                     k: {
                       a: 0,
                       k: [
-                        0, 0.957, 0.949, 0.373, 0.249, 0.706, 0.941, 0.437, 0.497, 0.455, 0.933, 0.502, 0.749, 0.706,
-                        0.941, 0.437, 1, 0.957, 0.949, 0.373, 0, 0, 0.246, 0.5, 0.493, 1, 0.746, 0.5, 1, 0,
+                        0, 0.957, 0.949, 0.373, 0.249, 0.706, 0.941, 0.437, 0.497, 0.455, 0.933,
+                        0.502, 0.749, 0.706, 0.941, 0.437, 1, 0.957, 0.949, 0.373, 0, 0, 0.246, 0.5,
+                        0.493, 1, 0.746, 0.5, 1, 0
                       ],
-                      ix: 8,
-                    },
+                      ix: 8
+                    }
                   },
                   s: { a: 0, k: [28.167, -20.426], ix: 4 },
                   e: { a: 0, k: [-18.847, 32.174], ix: 5 },
@@ -245,7 +247,7 @@ const dataScrappingLottieData = {
                   bm: 0,
                   nm: 'Gradient Stroke 1',
                   mn: 'ADBE Vector Graphic - G-Stroke',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -256,8 +258,8 @@ const dataScrappingLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Ellipse 1',
               np: 3,
@@ -265,14 +267,14 @@ const dataScrappingLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 3.00000012219251,
           op: 4498.0001832073,
           st: 3.00000012219251,
           ct: 1,
-          bm: 0,
+          bm: 0
         },
         {
           ddd: 0,
@@ -288,23 +290,23 @@ const dataScrappingLottieData = {
                   i: { x: [0.667], y: [0.636] },
                   o: { x: [0.333], y: [0] },
                   t: 81,
-                  s: [0],
+                  s: [0]
                 },
                 {
                   i: { x: [0.667], y: [1] },
                   o: { x: [0.333], y: [26.215] },
                   t: 86,
-                  s: [60],
+                  s: [60]
                 },
                 {
                   i: { x: [0.667], y: [1] },
                   o: { x: [0.333], y: [0] },
                   t: 92,
-                  s: [60],
+                  s: [60]
                 },
-                { t: 114.000004643315, s: [0] },
+                { t: 114.000004643315, s: [0] }
               ],
-              ix: 11,
+              ix: 11
             },
             r: { a: 0, k: 0, ix: 10 },
             p: { a: 0, k: [507.465, 511.854, 0], ix: 2, l: 2 },
@@ -316,19 +318,19 @@ const dataScrappingLottieData = {
                   i: { x: [0.667, 0.667, 0.667], y: [1.022, 1.022, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 81,
-                  s: [80.442, 80.442, 100],
+                  s: [80.442, 80.442, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0.038, 0.038, 0] },
                   t: 92,
-                  s: [622.587, 622.587, 100],
+                  s: [622.587, 622.587, 100]
                 },
-                { t: 114.000004643315, s: [0, 0, 100] },
+                { t: 114.000004643315, s: [0, 0, 100] }
               ],
               ix: 6,
-              l: 2,
-            },
+              l: 2
+            }
           },
           ao: 0,
           ef: [
@@ -345,7 +347,7 @@ const dataScrappingLottieData = {
                   nm: 'Start of Ramp',
                   mn: 'ADBE Ramp-0001',
                   ix: 1,
-                  v: { a: 0, k: [500, 0], ix: 1 },
+                  v: { a: 0, k: [500, 0], ix: 1 }
                 },
                 {
                   ty: 2,
@@ -355,15 +357,15 @@ const dataScrappingLottieData = {
                   v: {
                     a: 0,
                     k: [0.956862807274, 0.949988543987, 0.372549027205, 1],
-                    ix: 2,
-                  },
+                    ix: 2
+                  }
                 },
                 {
                   ty: 3,
                   nm: 'End of Ramp',
                   mn: 'ADBE Ramp-0003',
                   ix: 3,
-                  v: { a: 0, k: [500, 1000], ix: 3 },
+                  v: { a: 0, k: [500, 1000], ix: 3 }
                 },
                 {
                   ty: 2,
@@ -373,33 +375,33 @@ const dataScrappingLottieData = {
                   v: {
                     a: 0,
                     k: [0.454901993275, 0.933333396912, 0.501960813999, 1],
-                    ix: 4,
-                  },
+                    ix: 4
+                  }
                 },
                 {
                   ty: 7,
                   nm: 'Ramp Shape',
                   mn: 'ADBE Ramp-0005',
                   ix: 5,
-                  v: { a: 0, k: 2, ix: 5 },
+                  v: { a: 0, k: 2, ix: 5 }
                 },
                 {
                   ty: 0,
                   nm: 'Ramp Scatter',
                   mn: 'ADBE Ramp-0006',
                   ix: 6,
-                  v: { a: 0, k: 22.3, ix: 6 },
+                  v: { a: 0, k: 22.3, ix: 6 }
                 },
                 {
                   ty: 0,
                   nm: 'Blend With Original',
                   mn: 'ADBE Ramp-0007',
                   ix: 7,
-                  v: { a: 0, k: 0, ix: 7 },
+                  v: { a: 0, k: 0, ix: 7 }
                 },
-                { ty: 6, nm: '', mn: 'ADBE Ramp-0008', ix: 8, v: 0 },
-              ],
-            },
+                { ty: 6, nm: '', mn: 'ADBE Ramp-0008', ix: 8, v: 0 }
+              ]
+            }
           ],
           shapes: [
             {
@@ -412,7 +414,7 @@ const dataScrappingLottieData = {
                   p: { a: 0, k: [0, 0], ix: 3 },
                   nm: 'Ellipse Path 1',
                   mn: 'ADBE Vector Shape - Ellipse',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'gs',
@@ -423,10 +425,11 @@ const dataScrappingLottieData = {
                     k: {
                       a: 0,
                       k: [
-                        0, 0.957, 0.949, 0.373, 0.5, 0.706, 0.941, 0.437, 1, 0.455, 0.933, 0.502, 0, 1, 0.5, 0.5, 1, 0,
+                        0, 0.957, 0.949, 0.373, 0.5, 0.706, 0.941, 0.437, 1, 0.455, 0.933, 0.502, 0,
+                        1, 0.5, 0.5, 1, 0
                       ],
-                      ix: 8,
-                    },
+                      ix: 8
+                    }
                   },
                   s: { a: 0, k: [0, 0], ix: 4 },
                   e: { a: 0, k: [65.109, -0.865], ix: 5 },
@@ -440,7 +443,7 @@ const dataScrappingLottieData = {
                   bm: 0,
                   nm: 'Gradient Stroke 1',
                   mn: 'ADBE Vector Graphic - G-Stroke',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -451,8 +454,8 @@ const dataScrappingLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Ellipse 1',
               np: 3,
@@ -460,17 +463,17 @@ const dataScrappingLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 6.00000024438501,
           op: 4501.00018332949,
           st: 6.00000024438501,
           ct: 1,
-          bm: 0,
-        },
-      ],
-    },
+          bm: 0
+        }
+      ]
+    }
   ],
   layers: [
     {
@@ -485,13 +488,13 @@ const dataScrappingLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [289, 711, 0], ix: 2, l: 2 },
         a: { a: 0, k: [0, 0, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -508,23 +511,23 @@ const dataScrappingLottieData = {
               i: { x: [0.833], y: [0.833] },
               o: { x: [0.333], y: [0] },
               t: 18,
-              s: [0],
+              s: [0]
             },
             {
               i: { x: [0.833], y: [0.833] },
               o: { x: [0.167], y: [0.167] },
               t: 28,
-              s: [100],
+              s: [100]
             },
             {
               i: { x: [0.833], y: [0.833] },
               o: { x: [0.167], y: [0.167] },
               t: 107,
-              s: [100],
+              s: [100]
             },
-            { t: 124.000005050624, s: [0] },
+            { t: 124.000005050624, s: [0] }
           ],
-          ix: 11,
+          ix: 11
         },
         r: { a: 0, k: 0, ix: 10 },
         p: {
@@ -536,7 +539,7 @@ const dataScrappingLottieData = {
               t: 28,
               s: [530.5, 472, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
             {
               i: { x: 0.833, y: 0.833 },
@@ -544,7 +547,7 @@ const dataScrappingLottieData = {
               t: 32,
               s: [530.5, 472, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
             {
               i: { x: 0.833, y: 0.833 },
@@ -552,7 +555,7 @@ const dataScrappingLottieData = {
               t: 42,
               s: [578.5, 510, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
             {
               i: { x: 0.833, y: 0.833 },
@@ -560,7 +563,7 @@ const dataScrappingLottieData = {
               t: 69,
               s: [642.5, 510, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
             {
               i: { x: 0.833, y: 0.833 },
@@ -568,21 +571,21 @@ const dataScrappingLottieData = {
               t: 107,
               s: [642.5, 510, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
-            { t: 124.000005050624, s: [760.5, 510, 0] },
+            { t: 124.000005050624, s: [760.5, 510, 0] }
           ],
           ix: 2,
-          l: 2,
+          l: 2
         },
         a: { a: 0, k: [43.5, 43, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 12.00000048877,
       op: 341.000013889215,
       st: 12.00000048877,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -596,7 +599,7 @@ const dataScrappingLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [643, 510, 0], ix: 2, l: 2 },
         a: { a: 0, k: [506, 514, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [55, 55, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [55, 55, 100], ix: 6, l: 2 }
       },
       ao: 0,
       w: 1000,
@@ -604,7 +607,7 @@ const dataScrappingLottieData = {
       ip: 0,
       op: 4495.0001830851,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -625,21 +628,21 @@ const dataScrappingLottieData = {
               t: 103,
               s: [469.5, 472, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
-            { t: 111.000004521123, s: [531, 472, 0] },
+            { t: 111.000004521123, s: [531, 472, 0] }
           ],
           ix: 2,
-          l: 2,
+          l: 2
         },
         a: { a: 0, k: [61.5, 61, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -656,11 +659,11 @@ const dataScrappingLottieData = {
               i: { x: [0.833], y: [0.833] },
               o: { x: [0.167], y: [0.167] },
               t: 103,
-              s: [0],
+              s: [0]
             },
-            { t: 111.000004521123, s: [100] },
+            { t: 111.000004521123, s: [100] }
           ],
-          ix: 11,
+          ix: 11
         },
         r: { a: 0, k: 0, ix: 10 },
         p: {
@@ -672,21 +675,21 @@ const dataScrappingLottieData = {
               t: 103,
               s: [386.875, 472, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
-            { t: 111.000004521123, s: [469.875, 472, 0] },
+            { t: 111.000004521123, s: [469.875, 472, 0] }
           ],
           ix: 2,
-          l: 2,
+          l: 2
         },
         a: { a: 0, k: [61.5, 61, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -703,22 +706,22 @@ const dataScrappingLottieData = {
               i: { x: [0.833], y: [0.833] },
               o: { x: [0.333], y: [0] },
               t: 18,
-              s: [100],
+              s: [100]
             },
-            { t: 28.0000011404634, s: [0] },
+            { t: 28.0000011404634, s: [0] }
           ],
-          ix: 11,
+          ix: 11
         },
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [530.5, 472, 0], ix: 2, l: 2 },
         a: { a: 0, k: [61.5, 61, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -732,13 +735,13 @@ const dataScrappingLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [469.5, 528, 0], ix: 2, l: 2 },
         a: { a: 0, k: [61.5, 61, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -752,13 +755,13 @@ const dataScrappingLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [530.5, 528, 0], ix: 2, l: 2 },
         a: { a: 0, k: [61.5, 61, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -775,23 +778,23 @@ const dataScrappingLottieData = {
               i: { x: [0.667], y: [1] },
               o: { x: [0.167], y: [0.167] },
               t: 0,
-              s: [100],
+              s: [100]
             },
             {
               i: { x: [0.833], y: [1] },
               o: { x: [0.167], y: [0] },
               t: 16,
-              s: [70],
+              s: [70]
             },
             {
               i: { x: [0.833], y: [1] },
               o: { x: [0.167], y: [0] },
               t: 51,
-              s: [70],
+              s: [70]
             },
-            { t: 60.0000024438501, s: [90] },
+            { t: 60.0000024438501, s: [90] }
           ],
-          ix: 11,
+          ix: 11
         },
         r: {
           a: 1,
@@ -800,21 +803,21 @@ const dataScrappingLottieData = {
               i: { x: [0.833], y: [0.833] },
               o: { x: [0.167], y: [0.167] },
               t: 67,
-              s: [0],
+              s: [0]
             },
-            { t: 77.0000031362743, s: [180] },
+            { t: 77.0000031362743, s: [180] }
           ],
-          ix: 10,
+          ix: 10
         },
         p: { a: 0, k: [500, 500, 0], ix: 2, l: 2 },
         a: { a: 0, k: [115, 115, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -831,17 +834,17 @@ const dataScrappingLottieData = {
               i: { x: [0.667], y: [1] },
               o: { x: [0.167], y: [0.167] },
               t: 0,
-              s: [0],
+              s: [0]
             },
             {
               i: { x: [0.833], y: [1] },
               o: { x: [0.167], y: [0] },
               t: 16,
-              s: [100],
+              s: [100]
             },
-            { t: 26.0000010590017, s: [0] },
+            { t: 26.0000010590017, s: [0] }
           ],
-          ix: 11,
+          ix: 11
         },
         r: { a: 0, k: 0, ix: 10 },
         p: {
@@ -853,21 +856,21 @@ const dataScrappingLottieData = {
               t: 16,
               s: [500.5, 500.5, 0],
               to: [0, 0, 0],
-              ti: [0, 0, 0],
+              ti: [0, 0, 0]
             },
-            { t: 26.0000010590017, s: [529.5, 467.5, 0] },
+            { t: 26.0000010590017, s: [529.5, 467.5, 0] }
           ],
           ix: 2,
-          l: 2,
+          l: 2
         },
         a: { a: 0, k: [208.5, 208.5, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -881,17 +884,17 @@ const dataScrappingLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [500.109, 511.891, 0], ix: 2, l: 2 },
         a: { a: 0, k: [210.087, 0.949, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [100, 100, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 329.000013400445,
       st: 0,
-      bm: 0,
-    },
+      bm: 0
+    }
   ],
   markers: [],
-  props: {},
-};
+  props: {}
+}
 
-export default dataScrappingLottieData;
+export default dataScrappingLottieData

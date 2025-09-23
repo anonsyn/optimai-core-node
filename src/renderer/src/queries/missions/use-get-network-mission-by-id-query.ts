@@ -9,6 +9,6 @@ export const useGetNetworkMissionByIdQuery = (id: string) => {
     queryKey: RQUERY(id),
     queryFn: async () => {
       return missionApi.getNetworkMissionById(id).then((res) => res.data)
-    },
+    }
   })
 }

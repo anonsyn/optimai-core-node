@@ -92,7 +92,7 @@ export enum BalanceChangeType {
   SOCIAL_TASK = 'social_task',
   MISSION = 'mission',
   OTHER = 'other',
-  TIER_REWARD = 'tier_reward',
+  TIER_REWARD = 'tier_reward'
 }
 
 export interface Log {

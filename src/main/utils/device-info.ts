@@ -76,7 +76,10 @@ function getTimezone(): string {
       return timezone
     }
   } catch (error) {
-    console.error('Failed to resolve timezone:', getErrorMessage(error, 'Failed to resolve timezone'))
+    console.error(
+      'Failed to resolve timezone:',
+      getErrorMessage(error, 'Failed to resolve timezone')
+    )
   }
 
   return 'UTC'

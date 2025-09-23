@@ -11,20 +11,20 @@ const getQueryOptions = () => {
         console.log({ error })
       }
       return {
-        nodes: [],
+        nodes: []
       }
     },
-    refetchInterval: 60000,
+    refetchInterval: 60000
   }
 }
 
 export const useGetUserNodesQuery = () => {
   return useQuery({
-    ...getQueryOptions(),
+    ...getQueryOptions()
   })
 }
 export const useGetUserNodesSuspenseQuery = () => {
   return useSuspenseQuery({
-    ...getQueryOptions(),
+    ...getQueryOptions()
   })
 }

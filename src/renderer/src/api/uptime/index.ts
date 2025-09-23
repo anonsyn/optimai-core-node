@@ -4,7 +4,7 @@ import type { LogUptimeRequest, LogUptimeResponse } from './type'
 export const uptimeApi = {
   logUptime(request: LogUptimeRequest) {
     return apiClient.post<LogUptimeResponse>('/uptime/online', request)
-  },
+  }
 }
 
 export * from './type'

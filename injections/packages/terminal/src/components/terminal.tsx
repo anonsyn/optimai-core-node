@@ -31,8 +31,8 @@ export const Terminal = ({
   return (
     <div
       className={cn(
-        'fixed bottom-4 right-4 w-[420px] max-h-[600px]',
-        'bg-brown/90 border border-white/10 rounded-xl shadow-2xl',
+        'fixed right-4 bottom-4 max-h-[600px] w-[420px]',
+        'bg-brown/90 rounded-xl border border-white/10 shadow-2xl',
         'terminal-enter pointer-events-auto z-50 backdrop-blur-lg',
         className
       )}
@@ -41,10 +41,10 @@ export const Terminal = ({
 
       <div
         ref={scrollContainerRef}
-        className="p-4 max-h-[500px] overflow-y-auto font-mono text-[14px] scrollable"
+        className="scrollable max-h-[500px] overflow-y-auto p-4 font-mono text-[14px]"
       >
         {logs.length === 0 ? (
-          <div className="text-white/60 text-center py-8">{emptyMessage}</div>
+          <div className="py-8 text-center text-white/60">{emptyMessage}</div>
         ) : (
           <div className="space-y-1">
             {logs.map((log) => (

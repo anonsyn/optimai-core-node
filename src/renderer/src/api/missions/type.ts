@@ -10,13 +10,13 @@ export enum TaskStatus {
   NOT_STARTED = 'not_started',
   VERIFYING = 'verifying',
   COMPLETED = 'completed',
-  FAILED = 'failed',
+  FAILED = 'failed'
 }
 
 export enum MissionType {
   NETWORK = 'network',
   ENGAGEMENT = 'engagement',
-  COMMUNITY = 'community',
+  COMMUNITY = 'community'
 }
 
 export enum TaskAction {
@@ -29,7 +29,7 @@ export enum TaskAction {
   TWEET = 'tweet',
   COMMENT = 'comment',
   QUOTE = 'quote',
-  VISIT = 'visit',
+  VISIT = 'visit'
 }
 
 // Common base type for all missions

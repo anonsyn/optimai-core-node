@@ -9,7 +9,7 @@ export const useGetDashboardStatsQuery = () => {
     queryKey: RQUERY(),
     queryFn: () => dashboardApi.getDashboardStats().then((res) => res.data),
     refetchInterval: 60000,
-    placeholderData: keepPreviousData,
+    placeholderData: keepPreviousData
   })
 }
 
@@ -17,6 +17,6 @@ export const useGetDashboardStatsSuspenseQuery = () => {
   return useSuspenseQuery({
     queryKey: RQUERY(),
     queryFn: () => dashboardApi.getDashboardStats().then((res) => res.data),
-    refetchInterval: 60000,
+    refetchInterval: 60000
   })
 }

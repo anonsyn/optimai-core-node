@@ -1,4 +1,5 @@
 import Logo from '@/components/branding/logo'
+import { WindowControlButton, WindowControls } from '@/components/modules/window-controls'
 import { DockerNotInstalledModal } from '@core-node/modals/docker-not-installed-modal'
 import { DockerNotRunningModal } from '@core-node/modals/docker-not-running-modal'
 import LoginModal from '@core-node/modals/login-modal'
@@ -18,6 +19,9 @@ const StartUpShell = () => {
       className="bg-background text-foreground relative flex size-full flex-col overflow-hidden"
     >
       <div className="drag-region absolute inset-x-0 top-0 z-50 h-20" />
+      <WindowControls>
+        <WindowControlButton variant="close" />
+      </WindowControls>
 
       {/* Background Layer - Subtle */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">

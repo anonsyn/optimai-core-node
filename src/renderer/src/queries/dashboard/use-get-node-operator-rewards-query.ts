@@ -8,7 +8,7 @@ export const useGetNodeOperatorRewardsQuery = () => {
   return useQuery({
     queryKey: RQUERY(),
     queryFn: () => dashboardApi.getNodeOperatorRewards().then((res) => res.data),
-    refetchInterval: 45000,
+    refetchInterval: 45000
   })
 }
 
@@ -16,6 +16,6 @@ export const useGetNodeOperatorRewardsSuspenseQuery = () => {
   return useSuspenseQuery({
     queryKey: RQUERY(),
     queryFn: () => dashboardApi.getNodeOperatorRewards().then((res) => res.data),
-    refetchInterval: 45000,
+    refetchInterval: 45000
   })
 }

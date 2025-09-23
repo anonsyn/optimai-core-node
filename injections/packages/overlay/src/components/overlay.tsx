@@ -16,7 +16,7 @@ const Overlay = ({ children, className }: OverlayProps) => {
   if (!isVisible) return null
 
   return (
-    <div className={cn('fixed inset-0 pointer-events-auto bg-black/60 z-50', className)}>
+    <div className={cn('pointer-events-auto fixed inset-0 z-50 bg-black/60', className)}>
       {children}
     </div>
   )

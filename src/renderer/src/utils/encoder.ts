@@ -10,7 +10,6 @@ function encode(input: string): string {
 
   const swapped = shifted.split('')
   for (let i = 0; i < swapped.length - 1; i += 2) {
-    // eslint-disable-next-line no-extra-semi
     ;[swapped[i], swapped[i + 1]] = [swapped[i + 1], swapped[i]]
   }
 

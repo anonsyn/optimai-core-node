@@ -37,9 +37,9 @@ export const homeNodeActiveLottieData = {
                 { i: { x: [0.364], y: [1] }, o: { x: [0.333], y: [0] }, t: 32.032, s: [0] },
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 48.849, s: [-48] },
                 { i: { x: [0.348], y: [1] }, o: { x: [0.333], y: [0] }, t: 134.535, s: [-48] },
-                { t: 146.546546546547, s: [0] },
+                { t: 146.546546546547, s: [0] }
               ],
-              ix: 10,
+              ix: 10
             },
             p: {
               a: 1,
@@ -50,7 +50,7 @@ export const homeNodeActiveLottieData = {
                   t: 24.024,
                   s: [743.181, 519.247, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -58,7 +58,7 @@ export const homeNodeActiveLottieData = {
                   t: 32.032,
                   s: [743.181, 519.247, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 0.667 },
@@ -66,7 +66,7 @@ export const homeNodeActiveLottieData = {
                   t: 48.849,
                   s: [547.431, 1144.997, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -74,12 +74,12 @@ export const homeNodeActiveLottieData = {
                   t: 134.535,
                   s: [547.431, 1144.997, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
-                { t: 140.940940940941, s: [743.181, 519.247, 0] },
+                { t: 140.940940940941, s: [743.181, 519.247, 0] }
               ],
               ix: 2,
-              l: 2,
+              l: 2
             },
             a: { a: 0, k: [491.951, 85.225, 0], ix: 1, l: 2 },
             s: {
@@ -89,31 +89,31 @@ export const homeNodeActiveLottieData = {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 24.024,
-                  s: [141.534, 141.534, 100],
+                  s: [141.534, 141.534, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 32.032,
-                  s: [141.534, 141.534, 100],
+                  s: [141.534, 141.534, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 48.849,
-                  s: [141.915, 141.915, 100],
+                  s: [141.915, 141.915, 100]
                 },
                 {
                   i: { x: [0.667, 0.667, 0.667], y: [1, 1, 1] },
                   o: { x: [0.333, 0.333, 0.333], y: [0, 0, 0] },
                   t: 134.535,
-                  s: [141.915, 141.915, 100],
+                  s: [141.915, 141.915, 100]
                 },
-                { t: 146.546546546547, s: [141.534, 141.534, 100] },
+                { t: 146.546546546547, s: [141.534, 141.534, 100] }
               ],
               ix: 6,
-              l: 2,
-            },
+              l: 2
+            }
           },
           ao: 0,
           shapes: [
@@ -133,7 +133,7 @@ export const homeNodeActiveLottieData = {
                         [-32.084, 0],
                         [0, 0],
                         [0, 0],
-                        [35.219, 0],
+                        [35.219, 0]
                       ],
                       o: [
                         [0, 0],
@@ -141,7 +141,7 @@ export const homeNodeActiveLottieData = {
                         [0, 0],
                         [0, 0],
                         [-23.564, -26.176],
-                        [0, 0],
+                        [0, 0]
                       ],
                       v: [
                         [-491.701, -84.975],
@@ -149,15 +149,15 @@ export const homeNodeActiveLottieData = {
                         [-288.742, 84.975],
                         [491.701, 84.975],
                         [375.729, -43.853],
-                        [283.381, -84.975],
+                        [283.381, -84.975]
                       ],
-                      c: true,
+                      c: true
                     },
-                    ix: 2,
+                    ix: 2
                   },
                   nm: 'Path 1',
                   mn: 'ADBE Vector Shape - Group',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'fl',
@@ -167,7 +167,7 @@ export const homeNodeActiveLottieData = {
                   bm: 0,
                   nm: 'Fill 1',
                   mn: 'ADBE Vector Graphic - Fill',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -178,8 +178,8 @@ export const homeNodeActiveLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Group 1',
               np: 2,
@@ -187,14 +187,14 @@ export const homeNodeActiveLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 1008,
           st: 0,
           ct: 1,
-          bm: 0,
+          bm: 0
         },
         {
           ddd: 0,
@@ -209,9 +209,9 @@ export const homeNodeActiveLottieData = {
               k: [
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 24.024, s: [0] },
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 32.032, s: [0] },
-                { t: 143.343343343343, s: [0] },
+                { t: 143.343343343343, s: [0] }
               ],
-              ix: 10,
+              ix: 10
             },
             p: {
               a: 1,
@@ -222,7 +222,7 @@ export const homeNodeActiveLottieData = {
                   t: 24.024,
                   s: [697.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -230,7 +230,7 @@ export const homeNodeActiveLottieData = {
                   t: 32.032,
                   s: [697.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 0.667 },
@@ -238,7 +238,7 @@ export const homeNodeActiveLottieData = {
                   t: 48.849,
                   s: [1009.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -246,15 +246,15 @@ export const homeNodeActiveLottieData = {
                   t: 134.535,
                   s: [1009.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
-                { t: 143.343343343343, s: [697.52, 997.252, 0] },
+                { t: 143.343343343343, s: [697.52, 997.252, 0] }
               ],
               ix: 2,
-              l: 2,
+              l: 2
             },
             a: { a: 0, k: [219.801, 314.12, 0], ix: 1, l: 2 },
-            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 },
+            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 }
           },
           ao: 0,
           shapes: [
@@ -275,7 +275,7 @@ export const homeNodeActiveLottieData = {
                         [0, 0],
                         [0, 0],
                         [31.888, -6.865],
-                        [0, 0],
+                        [0, 0]
                       ],
                       o: [
                         [0, 0],
@@ -284,7 +284,7 @@ export const homeNodeActiveLottieData = {
                         [0, 0],
                         [-10.241, 25.247],
                         [0, 0],
-                        [0, 0],
+                        [0, 0]
                       ],
                       v: [
                         [-219.434, 313.754],
@@ -293,15 +293,15 @@ export const homeNodeActiveLottieData = {
                         [219.551, -313.87],
                         [-16.857, 271.592],
                         [-67.093, 313.87],
-                        [-219.551, 313.87],
+                        [-219.551, 313.87]
                       ],
-                      c: true,
+                      c: true
                     },
-                    ix: 2,
+                    ix: 2
                   },
                   nm: 'Path 1',
                   mn: 'ADBE Vector Shape - Group',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'fl',
@@ -311,7 +311,7 @@ export const homeNodeActiveLottieData = {
                   bm: 0,
                   nm: 'Fill 1',
                   mn: 'ADBE Vector Graphic - Fill',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -322,8 +322,8 @@ export const homeNodeActiveLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Group 1',
               np: 2,
@@ -331,14 +331,14 @@ export const homeNodeActiveLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 1008,
           st: 0,
           ct: 1,
-          bm: 0,
+          bm: 0
         },
         {
           ddd: 0,
@@ -353,9 +353,9 @@ export const homeNodeActiveLottieData = {
               k: [
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 24.024, s: [0] },
                 { i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] }, t: 32.032, s: [0] },
-                { t: 100.900900900901, s: [0] },
+                { t: 100.900900900901, s: [0] }
               ],
-              ix: 10,
+              ix: 10
             },
             p: {
               a: 1,
@@ -366,7 +366,7 @@ export const homeNodeActiveLottieData = {
                   t: 24.024,
                   s: [1143.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -374,7 +374,7 @@ export const homeNodeActiveLottieData = {
                   t: 32.032,
                   s: [1143.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 0.667 },
@@ -382,7 +382,7 @@ export const homeNodeActiveLottieData = {
                   t: 52.853,
                   s: [1455.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
                 {
                   i: { x: 0.667, y: 1 },
@@ -390,15 +390,15 @@ export const homeNodeActiveLottieData = {
                   t: 134.535,
                   s: [1455.52, 997.252, 0],
                   to: [0, 0, 0],
-                  ti: [0, 0, 0],
+                  ti: [0, 0, 0]
                 },
-                { t: 144.144144144144, s: [1143.52, 997.252, 0] },
+                { t: 144.144144144144, s: [1143.52, 997.252, 0] }
               ],
               ix: 2,
-              l: 2,
+              l: 2
             },
             a: { a: 0, k: [219.801, 314.12, 0], ix: 1, l: 2 },
-            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 },
+            s: { a: 0, k: [148.088, 148.088, 100], ix: 6, l: 2 }
           },
           ao: 0,
           shapes: [
@@ -419,7 +419,7 @@ export const homeNodeActiveLottieData = {
                         [0, 0],
                         [0, 0],
                         [31.888, -6.865],
-                        [0, 0],
+                        [0, 0]
                       ],
                       o: [
                         [0, 0],
@@ -428,7 +428,7 @@ export const homeNodeActiveLottieData = {
                         [0, 0],
                         [-10.241, 25.247],
                         [0, 0],
-                        [0, 0],
+                        [0, 0]
                       ],
                       v: [
                         [-219.434, 313.754],
@@ -437,15 +437,15 @@ export const homeNodeActiveLottieData = {
                         [219.551, -313.87],
                         [-16.857, 271.592],
                         [-67.093, 313.87],
-                        [-219.551, 313.87],
+                        [-219.551, 313.87]
                       ],
-                      c: true,
+                      c: true
                     },
-                    ix: 2,
+                    ix: 2
                   },
                   nm: 'Path 1',
                   mn: 'ADBE Vector Shape - Group',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'fl',
@@ -455,7 +455,7 @@ export const homeNodeActiveLottieData = {
                   bm: 0,
                   nm: 'Fill 1',
                   mn: 'ADBE Vector Graphic - Fill',
-                  hd: false,
+                  hd: false
                 },
                 {
                   ty: 'tr',
@@ -466,8 +466,8 @@ export const homeNodeActiveLottieData = {
                   o: { a: 0, k: 100, ix: 7 },
                   sk: { a: 0, k: 0, ix: 4 },
                   sa: { a: 0, k: 0, ix: 5 },
-                  nm: 'Transform',
-                },
+                  nm: 'Transform'
+                }
               ],
               nm: 'Group 1',
               np: 2,
@@ -475,17 +475,17 @@ export const homeNodeActiveLottieData = {
               bm: 0,
               ix: 1,
               mn: 'ADBE Vector Group',
-              hd: false,
-            },
+              hd: false
+            }
           ],
           ip: 0,
           op: 1008,
           st: 0,
           ct: 1,
-          bm: 0,
-        },
-      ],
-    },
+          bm: 0
+        }
+      ]
+    }
   ],
   layers: [
     {
@@ -501,13 +501,13 @@ export const homeNodeActiveLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [653, 522.5, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [149.1, 149.1, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [149.1, 149.1, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 719.91991991992,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -521,7 +521,7 @@ export const homeNodeActiveLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [992, 972, 0], ix: 2, l: 2 },
         a: { a: 0, k: [960, 960, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [37.167, 37.167, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [37.167, 37.167, 100], ix: 6, l: 2 }
       },
       ao: 0,
       sy: [
@@ -535,8 +535,8 @@ export const homeNodeActiveLottieData = {
           bm: { a: 0, k: 5, ix: 1 },
           no: { a: 0, k: 10, ix: 9 },
           ty: 2,
-          nm: 'Inner Shadow',
-        },
+          nm: 'Inner Shadow'
+        }
       ],
       tm: { a: 0, k: 0.3, ix: 2 },
       w: 1920,
@@ -544,7 +544,7 @@ export const homeNodeActiveLottieData = {
       ip: -7.20720720720721,
       op: 305.105105105105,
       st: -7.20720720720721,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -558,13 +558,13 @@ export const homeNodeActiveLottieData = {
           a: 1,
           k: [
             { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 19, s: [0] },
-            { t: 199.399374960898, s: [1440] },
+            { t: 199.399374960898, s: [1440] }
           ],
-          ix: 10,
+          ix: 10
         },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [-1, 121, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [665.8, 665.8, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [665.8, 665.8, 100], ix: 6, l: 2 }
       },
       ao: 0,
       shapes: [
@@ -578,7 +578,7 @@ export const homeNodeActiveLottieData = {
               p: { a: 0, k: [0, 0], ix: 3 },
               nm: 'Ellipse Path 1',
               mn: 'ADBE Vector Shape - Ellipse',
-              hd: false,
+              hd: false
             },
             {
               ty: 'gs',
@@ -589,8 +589,8 @@ export const homeNodeActiveLottieData = {
                 k: {
                   a: 0,
                   k: [0, 0.965, 0.965, 0.333, 0.312, 0.649, 0.965, 0.333, 1, 0.333, 0.965, 0.333],
-                  ix: 8,
-                },
+                  ix: 8
+                }
               },
               s: { a: 0, k: [-42, 0], ix: 4 },
               e: { a: 0, k: [63, 0], ix: 5 },
@@ -602,7 +602,7 @@ export const homeNodeActiveLottieData = {
               bm: 0,
               nm: 'Gradient Stroke 1',
               mn: 'ADBE Vector Graphic - G-Stroke',
-              hd: false,
+              hd: false
             },
             {
               ty: 'tr',
@@ -613,8 +613,8 @@ export const homeNodeActiveLottieData = {
               o: { a: 0, k: 100, ix: 7 },
               sk: { a: 0, k: 0, ix: 4 },
               sa: { a: 0, k: 0, ix: 5 },
-              nm: 'Transform',
-            },
+              nm: 'Transform'
+            }
           ],
           nm: 'Ellipse 1',
           np: 3,
@@ -622,14 +622,14 @@ export const homeNodeActiveLottieData = {
           bm: 0,
           ix: 1,
           mn: 'ADBE Vector Group',
-          hd: false,
-        },
+          hd: false
+        }
       ],
       ip: -1.6016016016016,
       op: 718.318318318318,
       st: -1.6016016016016,
       ct: 1,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -644,13 +644,13 @@ export const homeNodeActiveLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [600, 600, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 1008,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -665,13 +665,13 @@ export const homeNodeActiveLottieData = {
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [424, 424, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [130.189, 130.189, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 1008,
       st: 0,
-      bm: 0,
+      bm: 0
     },
     {
       ddd: 0,
@@ -686,22 +686,22 @@ export const homeNodeActiveLottieData = {
           a: 1,
           k: [
             { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 0, s: [0] },
-            { t: 19, s: [100] },
+            { t: 19, s: [100] }
           ],
-          ix: 11,
+          ix: 11
         },
         r: { a: 0, k: 0, ix: 10 },
         p: { a: 0, k: [960, 960, 0], ix: 2, l: 2 },
         a: { a: 0, k: [592.5, 592.5, 0], ix: 1, l: 2 },
-        s: { a: 0, k: [147.257, 147.257, 100], ix: 6, l: 2 },
+        s: { a: 0, k: [147.257, 147.257, 100], ix: 6, l: 2 }
       },
       ao: 0,
       ip: 0,
       op: 1008,
       st: 0,
-      bm: 0,
-    },
+      bm: 0
+    }
   ],
   markers: [],
-  props: {},
+  props: {}
 }

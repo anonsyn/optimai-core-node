@@ -10,7 +10,7 @@ import {
   GetNodeOperatorRewardsResponse,
   GetReferralRewardsStatsResponse,
   GetRewardsParams,
-  GetRewardsResponse,
+  GetRewardsResponse
 } from './type'
 
 export const dashboardApi = {
@@ -34,7 +34,7 @@ export const dashboardApi = {
   },
   getActivityLog(params?: GetActivityLogParams) {
     return apiClient.get<GetActivityLogResponse>('/dashboard/activity-log', { params })
-  },
+  }
 }
 
 export * from './type'
