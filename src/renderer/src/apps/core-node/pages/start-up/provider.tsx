@@ -28,7 +28,6 @@ export enum StartupPhase {
   INITIALIZING = 'initializing',
   CHECKING_UPDATES = 'checking_updates',
   CHECKING_DOCKER = 'checking_docker',
-  INITIALIZING_CRAWLER = 'initializing_crawler',
   CHECKING_AUTH = 'checking_auth',
   STARTING_NODE = 'starting_node',
   COMPLETED = 'completed',
@@ -215,46 +214,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     setError
   ])
 
-  // Initialize Crawl4AI service
-  const initializeCrawler = useCallback(async (): Promise<boolean> => {
-    setPhase(StartupPhase.INITIALIZING_CRAWLER)
-    // Small delay to ensure phase transition is visible
-    await sleep(100)
-    addStatus('Initializing crawler service...')
-
-    try {
-      // Listen for initialization progress
-      const unsubscribe = window.crawl4AiIPC.onInitProgress((progress) => {
-        if (progress.status === 'checking') {
-          addStatus('Checking crawler requirements...')
-        } else if (progress.status === 'pulling') {
-          addStatus('Downloading crawler image...')
-        } else if (progress.status === 'ready') {
-          addStatus('Crawler service is ready')
-        } else if (progress.status === 'error') {
-          addStatus(`Crawler initialization failed: ${progress.error}`, true)
-        }
-      })
-
-      const success = await window.crawl4AiIPC.initialize()
-      unsubscribe()
-
-      if (success) {
-        addStatus('Crawler service initialized successfully')
-        return true
-      } else {
-        addStatus('Failed to initialize crawler service', true)
-        setError('Crawler service initialization failed')
-        return false
-      }
-    } catch (error) {
-      console.error('Crawler initialization failed:', error)
-      addStatus('Crawler initialization failed', true)
-      setError('Failed to initialize crawler service')
-      return false
-    }
-  }, [addStatus])
-
   // Check authentication
   const checkAuth = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.CHECKING_AUTH)
@@ -368,19 +327,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         return
       }
 
-      // 3. Initialize Crawl4AI service
-      const crawlerStartTime = Date.now()
-      const crawlerReady = await initializeCrawler()
-      const crawlerElapsed = Date.now() - crawlerStartTime
-      if (crawlerElapsed < PHASE_TRANSITION_DELAY) {
-        await sleep(PHASE_TRANSITION_DELAY - crawlerElapsed)
-      }
-      if (!crawlerReady) {
-        setPhase(StartupPhase.ERROR)
-        return
-      }
-
-      // 4. Check authentication
+      // 3. Check authentication
       const authStartTime = Date.now()
       const isAuthenticated = await checkAuth()
       const authElapsed = Date.now() - authStartTime
@@ -409,7 +356,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         return
       }
 
-      // 5. Start node
+      // 4. Start node
       const nodeStartTime = Date.now()
       const nodeStarted = await startNode()
       const nodeElapsed = Date.now() - nodeStartTime
@@ -434,7 +381,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   }, [
     checkForUpdates,
     checkDockerRequirements,
-    initializeCrawler,
     checkAuth,
     startNode,
     openLoginModal,

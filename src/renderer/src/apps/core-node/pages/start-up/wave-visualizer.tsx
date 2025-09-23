@@ -22,14 +22,12 @@ const WaveVisualizer = ({ phase, className }: WaveVisualizerProps) => {
         return { duration: 0.5, stagger: 0.1, maxHeight: 20 }
       case StartupPhase.CHECKING_DOCKER:
         return { duration: 0.4, stagger: 0.08, maxHeight: 28 }
-      case StartupPhase.INITIALIZING_CRAWLER:
-        return { duration: 0.45, stagger: 0.12, maxHeight: 22 }
       case StartupPhase.CHECKING_AUTH:
-        return { duration: 0.55, stagger: 0.2, maxHeight: 18 }
+        return { duration: 0.45, stagger: 0.12, maxHeight: 22 }
       case StartupPhase.STARTING_NODE:
-        return { duration: 0.3, stagger: 0.05, maxHeight: 32 }
+        return { duration: 0.55, stagger: 0.2, maxHeight: 18 }
       case StartupPhase.COMPLETED:
-        return { duration: 0.7, stagger: 0.25, maxHeight: 16 }
+        return { duration: 0.3, stagger: 0.05, maxHeight: 32 }
       default:
         return { duration: 0.4, stagger: 0.15, maxHeight: 20 }
     }

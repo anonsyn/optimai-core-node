@@ -28,7 +28,7 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
       const { data } = await miningApi.getAssignments(params)
       return data
     },
-    refetchInterval: 5000, // Refresh every 5 seconds
+    refetchInterval: 60000, // Refresh every 5 seconds
     staleTime: 1000 * 5, // Consider data stale after 5 seconds
     retry: options?.retry ?? false,
     enabled: options?.enabled ?? true

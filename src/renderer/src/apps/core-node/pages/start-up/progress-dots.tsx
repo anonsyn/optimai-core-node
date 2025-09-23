@@ -7,7 +7,6 @@ const phases = [
   StartupPhase.INITIALIZING,
   StartupPhase.CHECKING_UPDATES,
   StartupPhase.CHECKING_DOCKER,
-  StartupPhase.INITIALIZING_CRAWLER,
   StartupPhase.CHECKING_AUTH,
   StartupPhase.STARTING_NODE,
   StartupPhase.COMPLETED

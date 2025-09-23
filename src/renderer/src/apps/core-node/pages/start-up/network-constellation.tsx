@@ -33,14 +33,12 @@ const NetworkConstellation = ({ phase, className }: NetworkConstellationProps) =
         return { nodeCount: 10, connectionDistance: 120, speed: 0.4, pulseSpeed: 0.025 }
       case StartupPhase.CHECKING_DOCKER:
         return { nodeCount: 12, connectionDistance: 130, speed: 0.5, pulseSpeed: 0.03 }
-      case StartupPhase.INITIALIZING_CRAWLER:
-        return { nodeCount: 14, connectionDistance: 140, speed: 0.6, pulseSpeed: 0.035 }
       case StartupPhase.CHECKING_AUTH:
-        return { nodeCount: 16, connectionDistance: 150, speed: 0.7, pulseSpeed: 0.04 }
+        return { nodeCount: 14, connectionDistance: 140, speed: 0.6, pulseSpeed: 0.035 }
       case StartupPhase.STARTING_NODE:
-        return { nodeCount: 18, connectionDistance: 160, speed: 0.8, pulseSpeed: 0.045 }
+        return { nodeCount: 16, connectionDistance: 150, speed: 0.7, pulseSpeed: 0.04 }
       case StartupPhase.COMPLETED:
-        return { nodeCount: 20, connectionDistance: 180, speed: 1, pulseSpeed: 0.05 }
+        return { nodeCount: 18, connectionDistance: 160, speed: 0.8, pulseSpeed: 0.045 }
       default:
         return { nodeCount: 8, connectionDistance: 100, speed: 0.3, pulseSpeed: 0.02 }
     }

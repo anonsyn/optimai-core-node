@@ -11,7 +11,7 @@ type Step = {
   phase: StartupPhase
   title: string
   description: string
-  icon: 'CPU' | 'LoaderCircle' | 'Globe' | 'Hourglass' | 'CircleCheck' | 'LockOpen'
+  icon: 'CPU' | 'LoaderCircle' | 'Globe' | 'CircleCheck' | 'LockOpen'
   code: string // Terminal-like code representation
 }
 
@@ -36,13 +36,6 @@ const steps: Step[] = [
     description: 'Verifying container runtime and daemon status',
     icon: 'LoaderCircle',
     code: '> docker.validate()'
-  },
-  {
-    phase: StartupPhase.INITIALIZING_CRAWLER,
-    title: 'Crawler Setup',
-    description: 'Initializing Crawl4AI service container',
-    icon: 'Hourglass',
-    code: '> crawler.initialize()'
   },
   {
     phase: StartupPhase.CHECKING_AUTH,
