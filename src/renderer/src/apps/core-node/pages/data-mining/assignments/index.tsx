@@ -1,11 +1,14 @@
 import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningAssignmentsQuery } from '@/queries/mining'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { AssignmentItem } from './assignment-item'
 
 export const AssignmentsList = () => {
-  const { data, isLoading } = useGetMiningAssignmentsQuery()
+  const { data, isLoading } = useGetMiningAssignmentsQuery({
+    platforms: ['google'],
+    sort_by: 'updated_at'
+  })
   const assignments = data?.assignments || []
 
   if (isLoading) {

@@ -132,7 +132,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     try {
       // Set preferences to receive both platforms
       // But we'll only process Google tasks
-      await miningApi.setWorkerPreferences(['google', 'twitter'])
+      await miningApi.setWorkerPreferences(['google'])
       log.info(
         '[mining] Worker preferences set to receive all platforms (will process Google only)'
       )

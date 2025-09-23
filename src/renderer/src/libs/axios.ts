@@ -37,6 +37,49 @@ const processQueue = (error: any = null) => {
   failedQueue = []
 }
 
+const serializeParams = (params?: Record<string, unknown> | URLSearchParams | string): string => {
+  if (!params) {
+    return ''
+  }
+
+  if (typeof params === 'string') {
+    return params
+  }
+
+  if (params instanceof URLSearchParams) {
+    return params.toString()
+  }
+
+  const searchParams = new URLSearchParams()
+
+  const appendValue = (key: string, value: unknown) => {
+    if (value === undefined || value === null) {
+      return
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((item) => appendValue(key, item))
+      return
+    }
+
+    if (value instanceof Date) {
+      searchParams.append(key, value.toISOString())
+      return
+    }
+
+    if (typeof value === 'object') {
+      searchParams.append(key, JSON.stringify(value))
+      return
+    }
+
+    searchParams.append(key, String(value))
+  }
+
+  Object.entries(params).forEach(([key, value]) => appendValue(key, value))
+
+  return searchParams.toString()
+}
+
 /**
  * Creates an axios instance with authentication interceptors
  * @param baseURL - The base URL for the axios instance
@@ -56,6 +99,9 @@ function createAuthenticatedClient(
     headers: {
       'Content-Type': 'application/json',
       ...options.customHeaders
+    },
+    paramsSerializer: {
+      serialize: serializeParams
     }
   })
 

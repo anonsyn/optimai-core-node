@@ -8,4 +8,6 @@ export type GetMiningAssignmentsParams = {
   offset?: number
   statuses?: string[]
   created_after?: string
+  sort_by?: 'created_at' | 'updated_at' | 'started_at' | 'completed_at'
+  sort_order?: 'asc' | 'desc'
 }

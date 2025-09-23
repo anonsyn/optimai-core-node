@@ -19,7 +19,9 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
     statuses: options?.statuses,
     search_query_id: options?.search_query_id,
     offset: options?.offset,
-    created_after: options?.created_after
+    created_after: options?.created_after,
+    sort_by: options?.sort_by,
+    sort_order: options?.sort_order
   }
 
   return useQuery({
