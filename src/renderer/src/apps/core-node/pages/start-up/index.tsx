@@ -15,7 +15,7 @@ const StartUpShell = () => {
   return (
     <div
       ref={containerRef}
-      className="relative flex size-full flex-col overflow-hidden bg-background text-foreground"
+      className="bg-background text-foreground relative flex size-full flex-col overflow-hidden"
     >
       <div className="drag-region absolute inset-x-0 top-0 z-50 h-20" />
 
@@ -24,7 +24,7 @@ const StartUpShell = () => {
         <CanvasGlow className="opacity-30" phase={phase} />
 
         {/* Very subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background/80" />
+        <div className="via-background/50 to-background/80 absolute inset-0 bg-gradient-to-b from-transparent" />
 
         {/* Subtle grid pattern */}
         <motion.div
@@ -52,9 +52,9 @@ const StartUpShell = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="absolute top-8"
+          className="absolute top-8 z-10"
         >
-          <Logo variant="horizontal" className="h-8 w-auto opacity-50" />
+          <Logo variant="horizontal" className="h-8 w-auto" />
         </motion.div>
 
         {/* Status - Main Focus */}
@@ -62,11 +62,10 @@ const StartUpShell = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-          className="flex flex-col items-center gap-8"
+          className="flex w-full flex-col items-center gap-8"
         >
           <Status />
         </motion.div>
-
       </div>
 
       <LoginModal />

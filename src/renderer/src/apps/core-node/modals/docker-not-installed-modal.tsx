@@ -41,7 +41,9 @@ export function DockerNotInstalledModal() {
     try {
       const success = await data.onRetry()
       if (!success) {
-        setRetryError('Docker Desktop is still not detected. Complete the installation and try again.')
+        setRetryError(
+          'Docker Desktop is still not detected. Complete the installation and try again.'
+        )
       } else {
         setRetryError(null)
       }
@@ -78,7 +80,7 @@ export function DockerNotInstalledModal() {
             to continue.
           </DialogDescription>
           {retryError && (
-            <p className="mt-2 text-sm text-destructive" role="alert" aria-live="assertive">
+            <p className="text-destructive mt-2 text-sm" role="alert" aria-live="assertive">
               {retryError}
             </p>
           )}

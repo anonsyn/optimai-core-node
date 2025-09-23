@@ -51,7 +51,7 @@ const CanvasGlow = ({ className, phase = StartupPhase.INITIALIZING }: CanvasGlow
         rect.height * 0.3 + offset2,
         300,
         'rgba(246, 246, 85, 1)',
-        phase === StartupPhase.COMPLETED ? 0.15 : 0.08
+        phase === StartupPhase.COMPLETED ? 0.15 : 0.1
       )
 
       // Green glow - moves opposite
@@ -60,19 +60,13 @@ const CanvasGlow = ({ className, phase = StartupPhase.INITIALIZING }: CanvasGlow
         rect.height * 0.7 - offset2,
         250,
         'rgba(94, 237, 135, 1)',
-        phase === StartupPhase.COMPLETED ? 0.15 : 0.08
+        phase === StartupPhase.COMPLETED ? 0.15 : 0.1
       )
 
       // Center pulse on completion
       if (phase === StartupPhase.COMPLETED) {
         const pulseRadius = 200 + Math.sin(time * 2) * 20
-        drawGlow(
-          rect.width / 2,
-          rect.height / 2,
-          pulseRadius,
-          'rgba(94, 237, 135, 1)',
-          0.1
-        )
+        drawGlow(rect.width / 2, rect.height / 2, pulseRadius, 'rgba(94, 237, 135, 1)', 0.1)
       }
 
       animationRef.current = requestAnimationFrame(animate)

@@ -29,7 +29,9 @@ export function DockerNotRunningModal() {
     try {
       const success = await data.onRetry()
       if (!success) {
-        setRetryError('Docker Desktop is still starting. Wait for Docker to finish launching and retry.')
+        setRetryError(
+          'Docker Desktop is still starting. Wait for Docker to finish launching and retry.'
+        )
       } else {
         setRetryError(null)
       }
@@ -59,7 +61,7 @@ export function DockerNotRunningModal() {
           <DialogDescription>
             <div className="space-y-4">
               <p>Docker Desktop is installed but not currently running.</p>
-              <ol className="list-inside list-decimal space-y-2 text-sm">
+              <ol className="text-md list-inside list-decimal space-y-2">
                 <li>Open Docker Desktop application</li>
                 <li>Wait for Docker to fully start (icon in system tray)</li>
                 <li>Click &quot;Retry&quot; below when Docker is running</li>
@@ -67,7 +69,7 @@ export function DockerNotRunningModal() {
             </div>
           </DialogDescription>
           {retryError && (
-            <p className="mt-2 text-sm text-destructive" role="alert" aria-live="assertive">
+            <p className="text-destructive mt-2" role="alert" aria-live="assertive">
               {retryError}
             </p>
           )}

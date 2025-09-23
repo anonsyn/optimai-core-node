@@ -5,7 +5,6 @@ import { authActions } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
 import { sessionManager } from '@/utils/session-manager'
 import { sleep } from '@/utils/sleep'
-import { PATHS } from '@core-node/routers/paths'
 import {
   createContext,
   ReactNode,
@@ -402,7 +401,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
             if (success) {
               // Give time for completion animation
               await sleep(2000)
-              navigate(PATHS.DATA_MINING)
+              // navigate(PATHS.DATA_MINING)
             }
           }
         })
@@ -420,7 +419,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       if (nodeStarted) {
         // Give time for completion animation before navigating
         await sleep(2000)
-        navigate(PATHS.DATA_MINING)
+        // navigate(PATHS.DATA_MINING)
       }
     } catch (err) {
       console.error('Startup error:', err)
