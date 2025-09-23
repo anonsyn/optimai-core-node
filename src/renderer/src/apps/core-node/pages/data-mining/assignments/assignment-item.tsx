@@ -85,7 +85,7 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       whileHover={{ scale: 1.01 }}
-      className="group relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent backdrop-blur-xl transition-all hover:border-white/10"
+      className="group relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent backdrop-blur-xl transition-colors hover:border-white/10"
     >
       {/* Status Indicator Line */}
       <div

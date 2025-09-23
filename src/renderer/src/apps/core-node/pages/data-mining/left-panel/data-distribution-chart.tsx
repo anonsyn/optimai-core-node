@@ -101,8 +101,8 @@ export const DataDistributionChart = ({ data }: DataDistributionProps) => {
                 {chartData.map((item) => (
                   <div key={item.name} className="flex items-center gap-1.5">
                     <div className="h-2 w-2 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-12 text-white/60">{item.name}</span>
-                    <span className="text-12 ml-auto text-white/80">{item.value}%</span>
+                    <span className="text-13 text-white">{item.name}</span>
+                    <span className="text-13 ml-auto text-white/80">{item.value}%</span>
                   </div>
                 ))}
               </div>

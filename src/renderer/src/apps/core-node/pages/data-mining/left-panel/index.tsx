@@ -21,7 +21,7 @@ export const LeftPanel = () => {
     <motion.div
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
+      transition={{ x: { duration: 0.4 }, opacity: { duration: 0.5 }, ease: 'easeOut' }}
       className="from-secondary/20 to-background relative h-full w-[420px] flex-shrink-0 border-r border-white/5 bg-gradient-to-b backdrop-blur-xl"
     >
       <ScrollArea className="h-full w-full">

@@ -57,8 +57,8 @@ export const AssignmentsList = () => {
     return (
       <div className="flex h-full w-full items-center justify-center">
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center gap-4 text-center"
         >
@@ -80,8 +80,8 @@ export const AssignmentsList = () => {
         <div className="p-8">
           {/* Header */}
           <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             className="mb-6"
           >
