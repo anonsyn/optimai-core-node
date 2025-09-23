@@ -8,6 +8,12 @@ export const createWindow = (windowType: WindowType) => {
   const primaryDisplay = screen.getPrimaryDisplay()
   const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
 
+  // Traffic light positioning constants
+  const HEADER_HEIGHT = 40
+  const TRAFFIC_LIGHT_HEIGHT = 12
+  const TRAFFIC_LIGHT_LEFT_MARGIN = 16
+  const TRAFFIC_LIGHT_Y = (HEADER_HEIGHT - TRAFFIC_LIGHT_HEIGHT) / 2
+
   const windowOptions: Record<WindowType, Partial<BrowserWindowConstructorOptions>> = {
     [WindowType.CoreNode]: {
       width: Math.min(screenWidth, 1200),
@@ -21,8 +27,14 @@ export const createWindow = (windowType: WindowType) => {
     show: false,
     frame: false,
     transparent: true,
+    width: Math.min(screenWidth, 1200),
+    height: Math.min(screenHeight, 800),
     maximizable: false,
+    fullscreenable: false,
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: TRAFFIC_LIGHT_LEFT_MARGIN, y: TRAFFIC_LIGHT_Y },
     autoHideMenuBar: true,
+    center: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     ...windowOptions[windowType],
     webPreferences: {
