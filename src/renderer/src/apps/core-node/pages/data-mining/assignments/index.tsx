@@ -2,14 +2,34 @@ import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningAssignmentsQuery } from '@/queries/mining'
 import { AnimatePresence, motion } from 'framer-motion'
+import lodash from 'lodash'
+import { useEffect } from 'react'
 import { AssignmentItem } from './assignment-item'
 
 export const AssignmentsList = () => {
-  const { data, isLoading } = useGetMiningAssignmentsQuery({
+  const { data, isLoading, refetch } = useGetMiningAssignmentsQuery({
     platforms: ['google'],
     sort_by: 'updated_at'
   })
   const assignments = data?.assignments || []
+
+  // Listen for new assignments and refetch the list
+  useEffect(() => {
+    const refetchAssignments = lodash.debounce(
+      () => {
+        void refetch()
+      },
+      300,
+      { maxWait: 1000 }
+    )
+    const assignmentListener = window.nodeIPC.onMiningAssignment(refetchAssignments)
+    const completedListener = window.nodeIPC.onMiningAssignmentCompleted(refetchAssignments)
+
+    return () => {
+      assignmentListener.unsubscribe()
+      completedListener.unsubscribe()
+    }
+  }, [refetch])
 
   if (isLoading) {
     return (
