@@ -1,5 +1,5 @@
 export type GetMiningAssignmentsParams = {
-  platforms?: string[]
+  platforms?: string[] | string
   search_query_id?: string
   limit?: number
   offset?: number

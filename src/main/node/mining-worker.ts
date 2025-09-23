@@ -1,5 +1,6 @@
 import log from 'electron-log/main'
 import EventEmitter from 'eventemitter3'
+import lodash from 'lodash'
 import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/type'
@@ -324,7 +325,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       const { data } = await miningApi.getAssignments({
         statuses: ['not_started', 'in_progress'],
         limit: 30,
-        platforms: ['google'] // Only fetch Google platform tasks
+        platforms: 'google' // Only fetch Google platform tasks
       })
 
       const assignments = data?.assignments ?? []
@@ -333,6 +334,8 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       const googleAssignments = assignments.filter(
         (a) => a.task?.platform === 'google' || !a.task?.platform
       )
+
+      log.info({ googleAssignments })
 
       log.info(`[mining] Fetched ${googleAssignments.length} Google assignments`)
 
@@ -412,9 +415,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       const startTime = Date.now()
 
       const crawlResult = await crawlerService.crawl({
-        url,
-        useLightMode: true, // Better performance
-        cacheMode: 'smart'
+        url
       })
 
       if (!crawlResult || !crawlResult.markdown) {
@@ -429,11 +430,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       // Prepare metadata
       const metadata: Record<string, any> = {
         platform: 'google',
-        url: crawlResult.url,
-        title: crawlResult.metadata.title || title,
+        url,
         timestamp: new Date().toISOString(),
-        status_code: crawlResult.status_code,
-        ...crawlResult.metadata
+        ...crawlResult.metadata,
+        title: lodash.get(crawlResult, 'metadata.title', title)
       }
 
       // Submit assignment

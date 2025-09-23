@@ -85,7 +85,10 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const checkForUpdates = useCallback(async (): Promise<boolean> => {
     return new Promise<boolean>((resolve) => {
       setPhase(StartupPhase.CHECKING_UPDATES)
-      addStatus('Looking for new updates...')
+      // Small delay to ensure phase transition is visible
+      setTimeout(() => {
+        addStatus('Looking for new updates...')
+      }, 100)
 
       const { unsubscribe } = window.updaterIPC.onStateChange((state) => {
         if (state.status === 'downloading') {
@@ -114,6 +117,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   // Check Docker requirements
   const checkDockerRequirements = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.CHECKING_DOCKER)
+    // Small delay to ensure phase transition is visible
+    await sleep(100)
     addStatus('Checking Docker requirements...')
 
     const waitForRetry = async (type: 'installed' | 'running') => {
@@ -213,6 +218,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   // Initialize Crawl4AI service
   const initializeCrawler = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.INITIALIZING_CRAWLER)
+    // Small delay to ensure phase transition is visible
+    await sleep(100)
     addStatus('Initializing crawler service...')
 
     try {
@@ -251,6 +258,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   // Check authentication
   const checkAuth = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.CHECKING_AUTH)
+    // Small delay to ensure phase transition is visible
+    await sleep(100)
     addStatus('Checking authentication...')
 
     try {
@@ -285,6 +294,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const startNode = useCallback(async (): Promise<boolean> => {
     try {
       setPhase(StartupPhase.STARTING_NODE)
+      // Small delay to ensure phase transition is visible
+      await sleep(100)
       addStatus('Starting Node...')
 
       const success = await window.nodeIPC.startNode()
@@ -315,6 +326,9 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     }
   }, [addStatus])
 
+  // Minimum delay between phase transitions for smooth animations
+  const PHASE_TRANSITION_DELAY = 1500 // 1.5 seconds minimum per phase
+
   // Main startup sequence
   const startApplication = useCallback(async () => {
     if (isStartingRef.current) {
@@ -330,8 +344,12 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       await sleep(3000)
 
       // 1. Check for updates
+      const updateStartTime = Date.now()
       const shouldRestart = await checkForUpdates()
-      await sleep(1000)
+      const updateElapsed = Date.now() - updateStartTime
+      if (updateElapsed < PHASE_TRANSITION_DELAY) {
+        await sleep(PHASE_TRANSITION_DELAY - updateElapsed)
+      }
 
       if (shouldRestart) {
         window.updaterIPC.quitAndInstall()
@@ -339,29 +357,51 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
 
       // 2. Check Docker requirements
+      const dockerStartTime = Date.now()
       const dockerReady = await checkDockerRequirements()
+      const dockerElapsed = Date.now() - dockerStartTime
+      if (dockerElapsed < PHASE_TRANSITION_DELAY) {
+        await sleep(PHASE_TRANSITION_DELAY - dockerElapsed)
+      }
       if (!dockerReady) {
         setPhase(StartupPhase.ERROR)
         return
       }
 
       // 3. Initialize Crawl4AI service
+      const crawlerStartTime = Date.now()
       const crawlerReady = await initializeCrawler()
+      const crawlerElapsed = Date.now() - crawlerStartTime
+      if (crawlerElapsed < PHASE_TRANSITION_DELAY) {
+        await sleep(PHASE_TRANSITION_DELAY - crawlerElapsed)
+      }
       if (!crawlerReady) {
         setPhase(StartupPhase.ERROR)
         return
       }
 
       // 4. Check authentication
+      const authStartTime = Date.now()
       const isAuthenticated = await checkAuth()
+      const authElapsed = Date.now() - authStartTime
+      if (authElapsed < PHASE_TRANSITION_DELAY) {
+        await sleep(PHASE_TRANSITION_DELAY - authElapsed)
+      }
 
       if (!isAuthenticated) {
         // Show login modal
         openLoginModal({
           onSuccess: async () => {
             // After successful login, continue with node startup
+            const nodeStartTime = Date.now()
             const success = await startNode()
+            const nodeElapsed = Date.now() - nodeStartTime
+            if (nodeElapsed < PHASE_TRANSITION_DELAY) {
+              await sleep(PHASE_TRANSITION_DELAY - nodeElapsed)
+            }
             if (success) {
+              // Give time for completion animation
+              await sleep(2000)
               navigate(PATHS.DATA_MINING)
             }
           }
@@ -370,11 +410,16 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
 
       // 5. Start node
+      const nodeStartTime = Date.now()
       const nodeStarted = await startNode()
+      const nodeElapsed = Date.now() - nodeStartTime
+      if (nodeElapsed < PHASE_TRANSITION_DELAY) {
+        await sleep(PHASE_TRANSITION_DELAY - nodeElapsed)
+      }
 
       if (nodeStarted) {
-        // Navigate to data mining page after a short delay
-        await sleep(500)
+        // Give time for completion animation before navigating
+        await sleep(2000)
         navigate(PATHS.DATA_MINING)
       }
     } catch (err) {

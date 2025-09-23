@@ -139,7 +139,6 @@ for assignment in assignments:
         # Use crawler for Google search results
         crawl_result = await crawler_service.crawl(
             assignment["url"],
-            light_mode=True,  # Performance optimization
             text_only=False,
             wait_until="domcontentloaded",
             delay_before_return_html=2.0
