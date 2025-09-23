@@ -1,10 +1,10 @@
 import EventEmitter from 'eventemitter3'
 
-import type { SubmitAssignmentRequest } from '../api/mining/type'
 import { apiClient } from '../libs/axios'
 import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
+import { sleep } from '../utils/sleep'
 import { MiningWorker } from './mining-worker'
 import { registerDevice } from './register-device'
 import type { MiningAssignment, NodeStatusResponse } from './types'
@@ -87,7 +87,8 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       await registerDevice()
 
       this.uptimeRunner.start()
-      await this.miningWorker.start()
+      this.miningWorker.start()
+      await sleep(5000)
 
       this.setStatus(NodeStatus.Running)
       return true
@@ -124,10 +125,6 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       running: this.running,
       last_error: this.lastError
     }
-  }
-
-  async completeMiningAssignment(assignmentId: string, payload: SubmitAssignmentRequest) {
-    await this.miningWorker.completeAssignment(assignmentId, payload)
   }
 
   private setStatus(status: NodeStatus) {

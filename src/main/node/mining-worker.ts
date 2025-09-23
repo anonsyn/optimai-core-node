@@ -480,32 +480,4 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     this.assignmentQueue = new PQueueCtor({ concurrency: 1 })
     return this.assignmentQueue
   }
-
-  /**
-   * Complete an assignment with external content (for manual/Twitter assignments)
-   */
-  async completeAssignment(assignmentId: string, payload: SubmitAssignmentRequest) {
-    try {
-      // Start assignment if needed
-      try {
-        await miningApi.startAssignment(assignmentId)
-      } catch (error: any) {
-        const status = error?.response?.status
-        if (status !== 409) {
-          throw error
-        }
-      }
-
-      // Submit assignment
-      await miningApi.submitAssignment(assignmentId, payload)
-      this.processingAssignments.delete(assignmentId)
-      this.emit('assignmentCompleted', assignmentId)
-
-      // Trigger new assignment fetch
-      void this.processAssignments()
-    } catch (error) {
-      this.emit('error', error instanceof Error ? error : new Error(String(error)))
-      throw error
-    }
-  }
 }

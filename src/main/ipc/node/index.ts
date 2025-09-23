@@ -1,7 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import log from 'electron-log/main'
 
-import type { SubmitAssignmentRequest } from '../../api/mining/type'
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { NodeEvents } from './events'
@@ -58,12 +57,9 @@ class NodeIpcHandler {
       return nodeRuntime.getStatus()
     })
 
-    ipcMain.handle(
-      NodeEvents.CompleteMiningAssignment,
-      async (_event, assignmentId: string, payload: SubmitAssignmentRequest) => {
-        return nodeRuntime.completeMiningAssignment(assignmentId, payload)
-      }
-    )
+    ipcMain.handle(NodeEvents.CompleteMiningAssignment, async () => {
+      throw new Error('Complete assignment functionality has been removed')
+    })
   }
 
   async cleanup() {
