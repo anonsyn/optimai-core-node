@@ -1,3 +1,4 @@
+import { cn } from '@/utils/tw'
 import { useEffect, useRef, useState } from 'react'
 
 interface CanvasGlowProps {
@@ -187,10 +188,10 @@ const CanvasGlow = ({ className }: CanvasGlowProps) => {
   }, [])
 
   return (
-    <div className="absolute inset-0">
+    <div className={cn('absolute inset-0', className)}>
       <canvas
         ref={canvasRef}
-        className={`pointer-events-none ${className || ''}`}
+        className="pointer-events-none"
         style={{
           width: '100%',
           height: '100%'
