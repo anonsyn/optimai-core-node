@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { memo, useEffect, useRef } from 'react'
 import { StartupPhase } from './provider'
 
 interface NetworkConstellationProps {
@@ -120,7 +120,7 @@ const NetworkConstellation = ({ phase, className }: NetworkConstellationProps) =
       }
 
       // Update node positions
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         node.x += node.vx
         node.y += node.vy
         node.pulsePhase += config.pulseSpeed
@@ -139,7 +139,7 @@ const NetworkConstellation = ({ phase, className }: NetworkConstellationProps) =
 
       // Draw connections
       nodes.forEach((node) => {
-        node.connections.forEach(j => {
+        node.connections.forEach((j) => {
           const otherNode = nodes[j]
           const dx = node.x - otherNode.x
           const dy = node.y - otherNode.y
@@ -162,16 +162,16 @@ const NetworkConstellation = ({ phase, className }: NetworkConstellationProps) =
       })
 
       // Draw nodes
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         const pulseFactor = Math.sin(node.pulsePhase) * 0.5 + 1
         const radius = node.radius * pulseFactor
 
         // Node glow
-        const glowGradient = ctx.createRadialGradient(
-          node.x, node.y, 0,
-          node.x, node.y, radius * 4
+        const glowGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, radius * 4)
+        glowGradient.addColorStop(
+          0,
+          node.active ? 'rgba(94, 237, 135, 0.6)' : 'rgba(246, 246, 85, 0.4)'
         )
-        glowGradient.addColorStop(0, node.active ? 'rgba(94, 237, 135, 0.6)' : 'rgba(246, 246, 85, 0.4)')
         glowGradient.addColorStop(1, 'rgba(94, 237, 135, 0)')
 
         ctx.fillStyle = glowGradient
@@ -233,4 +233,4 @@ const NetworkConstellation = ({ phase, className }: NetworkConstellationProps) =
   )
 }
 
-export default NetworkConstellation
+export default memo(NetworkConstellation)
