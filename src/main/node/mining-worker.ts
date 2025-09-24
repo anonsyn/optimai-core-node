@@ -8,28 +8,10 @@ import { crawlerService } from '../services/crawler-service'
 import { dockerService } from '../services/docker-service'
 import { tokenStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
-import type { MiningAssignment } from './types'
+import { MiningStatus, type MiningAssignment, type MiningWorkerStatus } from './types'
 
-export enum MiningStatus {
-  Idle = 'idle',
-  Initializing = 'initializing',
-  CheckingDocker = 'checking_docker',
-  InitializingCrawler = 'initializing_crawler',
-  Ready = 'ready',
-  Processing = 'processing',
-  Degraded = 'degraded', // Docker not available but still fetching
-  Error = 'error',
-  Stopped = 'stopped'
-}
-
-export interface MiningWorkerStatus {
-  status: MiningStatus
-  dockerAvailable: boolean
-  crawlerInitialized: boolean
-  isProcessing: boolean
-  assignmentCount: number
-  lastError?: string
-}
+// Re-export for backward compatibility
+export { MiningStatus, type MiningWorkerStatus }
 
 interface MiningWorkerEvents {
   assignment: (assignment: MiningAssignment) => void
@@ -90,34 +72,38 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     this.setStatus(MiningStatus.Initializing)
 
     // Check Docker availability
-    this.setStatus(MiningStatus.CheckingDocker)
     this.dockerAvailable = await this.checkDockerAvailability()
     if (!this.dockerAvailable) {
-      log.warn(
-        '[mining] Docker is not available - mining service will fetch but not process assignments'
-      )
-      log.warn('[mining] Please install and start Docker from https://docker.com to enable mining')
-      this.setStatus(MiningStatus.Degraded, 'Docker not available')
-    } else {
-      this.setStatus(MiningStatus.InitializingCrawler)
-      // Initialize crawler service
-      try {
-        const initialized = await crawlerService.initialize()
-        if (initialized) {
-          this.crawlerServiceInitialized = true
-          this.setStatus(MiningStatus.Ready)
-        } else {
-          this.setStatus(MiningStatus.Degraded, 'Crawler initialization failed')
-        }
+      log.error('[mining] Docker is not available - cannot start mining')
+      log.error('[mining] Please install and start Docker from https://docker.com to enable mining')
+      this.setStatus(MiningStatus.Error, 'Docker not available')
+      this.running = false
+      return
+    }
+
+    // Initialize crawler service
+    this.setStatus(MiningStatus.InitializingCrawler)
+    try {
+      const initialized = await crawlerService.initialize()
+      if (initialized) {
+        this.crawlerServiceInitialized = true
+        this.setStatus(MiningStatus.Ready)
         log.info('[mining] Crawler service initialized successfully')
-      } catch (error) {
-        log.error(
-          '[mining] Failed to initialize crawler service:',
-          getErrorMessage(error, 'Failed to initialize crawler service')
-        )
-        this.dockerAvailable = false
-        this.setStatus(MiningStatus.Degraded, 'Crawler initialization failed')
+      } else {
+        log.error('[mining] Crawler initialization failed')
+        this.setStatus(MiningStatus.Error, 'Crawler initialization failed')
+        this.running = false
+        return
       }
+    } catch (error) {
+      log.error(
+        '[mining] Failed to initialize crawler service:',
+        getErrorMessage(error, 'Failed to initialize crawler service')
+      )
+      this.dockerAvailable = false
+      this.setStatus(MiningStatus.Error, 'Crawler initialization failed')
+      this.running = false
+      return
     }
 
     // Set worker preferences
@@ -526,7 +512,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         this.setStatus(
           this.dockerAvailable && this.crawlerServiceInitialized
             ? MiningStatus.Ready
-            : MiningStatus.Degraded
+            : MiningStatus.Error
         )
       }
     }

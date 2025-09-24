@@ -1,0 +1,49 @@
+import { MiningStatus, type MiningWorkerStatus } from '@main/node/types'
+import { useEffect, useState } from 'react'
+import { MiningLoading } from './mining-loading'
+import { MiningOperational } from './mining-operational'
+
+const isLoadingStatus = (status: MiningStatus) =>
+  [MiningStatus.Idle, MiningStatus.Initializing, MiningStatus.InitializingCrawler].includes(status)
+
+const isOperationalStatus = (status: MiningStatus) =>
+  [MiningStatus.Ready, MiningStatus.Processing, MiningStatus.Error, MiningStatus.Stopped].includes(
+    status
+  )
+
+export const Mining = () => {
+  const [miningStatus, setMiningStatus] = useState<MiningWorkerStatus>({
+    status: MiningStatus.Idle,
+    dockerAvailable: false,
+    crawlerInitialized: false,
+    isProcessing: false,
+    assignmentCount: 0
+  })
+
+  useEffect(() => {
+    // Get initial status
+    window.nodeIPC.getMiningStatus().then(setMiningStatus).catch(console.error)
+
+    // Listen for status changes
+    const unsubscribe = window.nodeIPC.onMiningStatusChanged((status) => {
+      setMiningStatus(status)
+    })
+
+    return () => {
+      unsubscribe.unsubscribe()
+    }
+  }, [])
+
+  // Group 1: Loading states
+  if (isLoadingStatus(miningStatus.status)) {
+    return <MiningLoading status={miningStatus} />
+  }
+
+  // Group 2: Operational states
+  if (isOperationalStatus(miningStatus.status)) {
+    return <MiningOperational status={miningStatus} />
+  }
+
+  // Fallback (shouldn't happen)
+  return null
+}

@@ -50,6 +50,25 @@ export interface RewardResponse {
 }
 
 // Mining types
+export enum MiningStatus {
+  Idle = 'idle',
+  Initializing = 'initializing',
+  InitializingCrawler = 'initializing_crawler',
+  Ready = 'ready',
+  Processing = 'processing',
+  Error = 'error',
+  Stopped = 'stopped'
+}
+
+export interface MiningWorkerStatus {
+  status: MiningStatus
+  dockerAvailable: boolean
+  crawlerInitialized: boolean
+  isProcessing: boolean
+  assignmentCount: number
+  lastError?: string
+}
+
 export interface MiningAssignment {
   id: string
   status: 'not_started' | 'in_progress' | 'completed' | 'failed'

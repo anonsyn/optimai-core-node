@@ -1,6 +1,6 @@
-import { AssignmentsList } from './assignments'
 import { DataMiningHeader } from './header'
 import { LeftPanel } from './left-panel'
+import { Mining } from './mining'
 
 const DataMiningPage = () => {
   return (
@@ -28,7 +28,7 @@ const DataMiningPage = () => {
 
         {/* Panels */}
         <LeftPanel />
-        <AssignmentsList />
+        <Mining />
       </div>
     </div>
   )
