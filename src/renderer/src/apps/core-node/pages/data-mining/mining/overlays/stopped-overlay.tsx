@@ -29,7 +29,7 @@ export const StoppedOverlay = () => {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-background/95 backdrop-blur-md"
+        className="bg-background/95 mx-4 w-full max-w-md overflow-hidden rounded-xl border border-white/10 backdrop-blur-md"
       >
         <div className="p-8">
           {/* Icon */}
@@ -61,7 +61,7 @@ export const StoppedOverlay = () => {
             <Button
               onClick={handleStart}
               disabled={isStarting}
-              className="bg-main w-full text-black transition-all hover:bg-main/90"
+              className="bg-main hover:bg-main/90 w-full text-black transition-all"
             >
               {isStarting ? (
                 <>

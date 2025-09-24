@@ -28,13 +28,13 @@ export const ErrorOverlay = ({ error }: ErrorOverlayProps) => {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-background/95 backdrop-blur-md"
+        className="bg-background/95 mx-4 w-full max-w-md overflow-hidden rounded-xl border border-white/10 backdrop-blur-md"
       >
         <div className="p-8">
           {/* Icon */}
           <div className="mb-6 flex justify-center">
-            <div className="rounded-full bg-destructive/10 p-4">
-              <Icon icon="X" className="size-8 text-destructive" />
+            <div className="bg-destructive/10 rounded-full p-4">
+              <Icon icon="X" className="text-destructive size-8" />
             </div>
           </div>
 
@@ -45,8 +45,8 @@ export const ErrorOverlay = ({ error }: ErrorOverlayProps) => {
               {error === 'Docker not available'
                 ? 'Docker is not running. Please install and start Docker to enable mining.'
                 : error === 'Crawler initialization failed'
-                ? 'Failed to initialize the crawler service. Please check Docker is running properly.'
-                : error || 'An unexpected error occurred while mining.'}
+                  ? 'Failed to initialize the crawler service. Please check Docker is running properly.'
+                  : error || 'An unexpected error occurred while mining.'}
             </p>
 
             {/* Docker specific help */}
@@ -72,7 +72,7 @@ export const ErrorOverlay = ({ error }: ErrorOverlayProps) => {
           <div className="mt-8 flex gap-3">
             <Button
               onClick={handleRetry}
-              className="bg-main flex-1 text-black transition-all hover:bg-main/90"
+              className="bg-main hover:bg-main/90 flex-1 text-black transition-all"
             >
               <Icon icon="RotateCcw" className="mr-2 size-4" />
               Try Again
