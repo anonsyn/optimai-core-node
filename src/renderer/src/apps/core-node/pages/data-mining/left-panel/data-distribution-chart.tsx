@@ -68,7 +68,7 @@ export const DataDistributionChart = ({ data }: DataDistributionProps) => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.5, duration: 0.5 }}
     >
-      <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+      <Card>
         <CardTitle>Data Distribution</CardTitle>
         <CardContent>
           {hasAnyData ? (

@@ -5,7 +5,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningStatsQuery } from '@/queries/mining'
 import { formatNumber } from '@/utils/number'
 import { motion } from 'framer-motion'
-import { ExternalLink } from 'lucide-react'
 import { DataDistributionChart } from './data-distribution-chart'
 import { LLMList } from './llm-list'
 import { StatsCard } from './stats-card'
@@ -41,10 +40,7 @@ export const LeftPanel = () => {
               className="bg-main group mt-4 w-full transition-all"
               variant="primary"
             >
-              <span className="flex items-center gap-2 font-semibold text-black">
-                Go to Dashboard
-                <ExternalLink className="size-4" />
-              </span>
+              <span className="font-semibold text-black">Go to Dashboard</span>
             </Button>
           </div>
 

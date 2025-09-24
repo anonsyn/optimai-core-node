@@ -18,7 +18,7 @@ export const StatsCard = ({ title, value, subtitle, icon, delay = 0 }: StatsCard
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay, duration: 0.5 }}
     >
-      <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+      <Card>
         <CardTitle>{title}</CardTitle>
         <CardContent className={icon ? 'items-start' : undefined}>
           <div className="flex items-baseline gap-2">

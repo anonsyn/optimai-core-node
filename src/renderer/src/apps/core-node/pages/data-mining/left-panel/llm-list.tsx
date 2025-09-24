@@ -17,7 +17,7 @@ export const LLMList = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.6, duration: 0.5 }}
     >
-      <Card className="relative overflow-hidden border-white/5 bg-white/[0.02]">
+      <Card>
         <CardTitle>Supported LLMs</CardTitle>
         <CardContent>
           <div className="flex flex-wrap gap-1.5">
