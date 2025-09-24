@@ -62,10 +62,10 @@ export const AssignmentsList = () => {
           transition={{ duration: 0.5 }}
           className="flex flex-col items-center gap-3 text-center"
         >
-          <Icon icon="Pickaxe" className="size-8 text-white/20" />
+          <Icon icon="Pickaxe" className="size-8 text-white/60" />
           <div>
-            <p className="text-16 font-medium text-white/60">No assignments yet</p>
-            <p className="text-13 mt-1 text-white/30">Mining tasks will appear here</p>
+            <p className="text-18 font-medium text-white">No assignments yet</p>
+            <p className="text-14 mt-1 text-white/60">Mining tasks will appear here</p>
           </div>
         </motion.div>
       </div>
