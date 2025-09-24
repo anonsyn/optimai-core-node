@@ -3,8 +3,10 @@ export type Options = {
 }
 
 const getPort = async (options?: Options) => {
-  const { default: getPort } = await import('get-port')
-  return getPort(options)
+  const { default: getPort, clearLockedPorts } = await import('get-port')
+  clearLockedPorts()
+  const port = await getPort(options)
+  return port
 }
 
 export { getPort }
