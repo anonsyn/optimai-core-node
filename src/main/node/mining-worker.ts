@@ -4,6 +4,7 @@ import lodash from 'lodash'
 import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/type'
+import { crawl4AiService } from '../services/crawl4ai-service'
 import { crawlerService } from '../services/crawler-service'
 import { dockerService } from '../services/docker-service'
 import { tokenStore } from '../storage'
@@ -22,6 +23,7 @@ interface MiningWorkerEvents {
   statusChanged: (status: MiningWorkerStatus) => void
 }
 
+const DOCKER_CHECK_INTERVAL_MS = 15_000
 const HEARTBEAT_INTERVAL_MS = 30_000
 const POLL_INTERVAL_MS = 30_000
 const SSE_RETRY_BASE_MS = 2_000
@@ -32,6 +34,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private pollTimer: NodeJS.Timeout | null = null
   private heartbeatTimer: NodeJS.Timeout | null = null
   private reconnectTimer: NodeJS.Timeout | null = null
+  private dockerMonitorTimer: NodeJS.Timeout | null = null
   private sseAbortController: AbortController | null = null
   private processing = false
   private processingAssignments = new Set<string>()
@@ -95,6 +98,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         this.crawlerServiceInitialized = true
         this.setStatus(MiningStatus.Ready)
         log.info('[mining] Crawler service initialized successfully')
+        this.startDockerMonitor()
       } else {
         log.error('[mining] Crawler initialization failed')
         this.setStatus(MiningStatus.Error, 'Crawler initialization failed')
@@ -135,6 +139,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
     this.clearTimer(this.reconnectTimer)
     this.reconnectTimer = null
+
+    this.clearTimer(this.dockerMonitorTimer)
+    this.dockerMonitorTimer = null
 
     if (this.sseAbortController) {
       this.sseAbortController.abort()
@@ -354,6 +361,49 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     if (timer) {
       clearTimeout(timer)
     }
+  }
+
+  private startDockerMonitor() {
+    this.clearTimer(this.dockerMonitorTimer)
+
+    let checking = false
+    const checkDockerState = async () => {
+      if (checking) {
+        return
+      }
+      checking = true
+
+      if (!this.running) {
+        checking = false
+        return
+      }
+      try {
+        const dockerAvailable = await this.checkDockerAvailability()
+        let containerRunning = true
+
+        if (dockerAvailable && this.crawlerServiceInitialized) {
+          containerRunning = await crawl4AiService.isContainerRunning()
+        }
+
+        const environmentHealthy = dockerAvailable && containerRunning
+        this.dockerAvailable = environmentHealthy
+
+        if (!environmentHealthy) {
+          const reason = !dockerAvailable ? 'Docker not available' : 'Crawler container stopped'
+          const containerInfo = !dockerAvailable ? '' : ` (${crawl4AiService.getContainerName()})`
+          log.warn(`[mining] ${reason}${containerInfo} - stopping mining worker`)
+          this.setStatus(MiningStatus.Error, reason)
+          await this.stop()
+        }
+      } finally {
+        checking = false
+      }
+    }
+
+    void checkDockerState()
+    this.dockerMonitorTimer = setInterval(() => {
+      void checkDockerState()
+    }, DOCKER_CHECK_INTERVAL_MS)
   }
 
   private async processAssignments() {

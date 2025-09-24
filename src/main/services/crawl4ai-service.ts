@@ -188,6 +188,20 @@ export class Crawl4AiService {
   }
 
   /**
+   * Get the container name
+   */
+  getContainerName(): string {
+    return this.config.containerName
+  }
+
+  /**
+   * Check if the container is running
+   */
+  async isContainerRunning(): Promise<boolean> {
+    return await dockerService.isContainerRunning(this.config.containerName)
+  }
+
+  /**
    * Check if the service is initialized
    */
   isInitialized(): boolean {
