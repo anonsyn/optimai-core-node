@@ -22,7 +22,8 @@ export const Mining = () => {
 
   useEffect(() => {
     // Get initial status
-    window.nodeIPC.getMiningStatus()
+    window.nodeIPC
+      .getMiningStatus()
       .then((status) => {
         console.log('[Mining] Initial status:', status)
         setMiningStatus(status)
