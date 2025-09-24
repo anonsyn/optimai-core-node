@@ -14,7 +14,7 @@ import { MiningStatus, type MiningAssignment, type MiningWorkerStatus } from './
 export { MiningStatus, type MiningWorkerStatus }
 
 interface MiningWorkerEvents {
-  assignment: (assignment: MiningAssignment) => void
+  assignments: (assignments: MiningAssignment[]) => void
   assignmentStarted: (assignmentId: string) => void
   assignmentCompleted: (assignmentId: string) => void
   assignmentFailed: (assignmentId: string, error: Error) => void
@@ -380,6 +380,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
       log.info(`[mining] Fetched ${googleAssignments.length} Google assignments`)
 
+      // Emit assignments event for UI consumers
+      this.emit('assignments', googleAssignments)
+
       // Process each assignment
       const queue = await this.getAssignmentQueue()
 
@@ -392,9 +395,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         if (this.processingAssignments.has(assignment.id)) {
           continue
         }
-
-        // Emit assignment event for UI
-        this.emit('assignment', assignment)
 
         if (this.dockerAvailable && this.crawlerServiceInitialized) {
           this.processingAssignments.add(assignment.id)

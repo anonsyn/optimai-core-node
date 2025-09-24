@@ -19,8 +19,13 @@ class NodeIpcHandler {
       this.broadcast(NodeEvents.OnUptimeCycle, cycle)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.MiningAssignment, (assignment) => {
-      this.broadcast(NodeEvents.OnMiningAssignment, assignment)
+    nodeRuntime.on(NodeRuntimeEvent.MiningAssignments, (assignments) => {
+      console.log('NEW MINING ASSIGNMENTS')
+      this.broadcast(NodeEvents.OnMiningAssignments, assignments)
+    })
+
+    nodeRuntime.on(NodeRuntimeEvent.MiningAssignmentStarted, (assignmentId) => {
+      this.broadcast(NodeEvents.OnMiningAssignmentStarted, assignmentId)
     })
 
     nodeRuntime.on(NodeRuntimeEvent.MiningAssignmentCompleted, (assignmentId) => {

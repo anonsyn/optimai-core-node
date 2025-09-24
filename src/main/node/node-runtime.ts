@@ -15,7 +15,8 @@ export enum NodeRuntimeEvent {
   Status = 'status',
   UptimeReward = 'uptime-reward',
   UptimeCycle = 'uptime-cycle',
-  MiningAssignment = 'mining-assignment',
+  MiningAssignments = 'mining-assignments',
+  MiningAssignmentStarted = 'mining-assignment-started',
   MiningAssignmentCompleted = 'mining-assignment-completed',
   MiningError = 'mining-error',
   MiningStatusChanged = 'mining-status-changed',
@@ -26,7 +27,8 @@ type NodeRuntimeEventMap = {
   [NodeRuntimeEvent.Status]: (status: NodeStatusResponse) => void
   [NodeRuntimeEvent.UptimeReward]: (reward: { amount: string; timestamp: number }) => void
   [NodeRuntimeEvent.UptimeCycle]: (cycle: UptimeData) => void
-  [NodeRuntimeEvent.MiningAssignment]: (assignment: MiningAssignment) => void
+  [NodeRuntimeEvent.MiningAssignments]: (assignments: MiningAssignment[]) => void
+  [NodeRuntimeEvent.MiningAssignmentStarted]: (assignmentId: string) => void
   [NodeRuntimeEvent.MiningAssignmentCompleted]: (assignmentId: string) => void
   [NodeRuntimeEvent.MiningError]: (error: Error) => void
   [NodeRuntimeEvent.MiningStatusChanged]: (status: MiningWorkerStatus) => void
@@ -58,8 +60,12 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       this.emit(NodeRuntimeEvent.Status, this.getStatus())
     })
 
-    this.miningWorker.on('assignment', (assignment: MiningAssignment) => {
-      this.emit(NodeRuntimeEvent.MiningAssignment, assignment)
+    this.miningWorker.on('assignments', (assignments: MiningAssignment[]) => {
+      this.emit(NodeRuntimeEvent.MiningAssignments, assignments)
+    })
+
+    this.miningWorker.on('assignmentStarted', (assignmentId: string) => {
+      this.emit(NodeRuntimeEvent.MiningAssignmentStarted, assignmentId)
     })
 
     this.miningWorker.on('assignmentCompleted', (assignmentId: string) => {

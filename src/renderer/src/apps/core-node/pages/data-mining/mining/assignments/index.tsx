@@ -19,18 +19,25 @@ export const AssignmentsList = () => {
 
   // Listen for new assignments and refetch the list
   useEffect(() => {
+    console.log('HI')
     const refetchAssignments = lodash.debounce(
       () => {
         void refetch()
+        console.log('event emitted')
       },
       300,
-      { maxWait: 1000 }
+      { maxWait: 500 }
     )
-    const assignmentListener = window.nodeIPC.onMiningAssignment(refetchAssignments)
+    const assignmentsListener = window.nodeIPC.onMiningAssignments(() => {
+      console.log('HIHIHIHI')
+      refetchAssignments()
+    })
+    const startedListener = window.nodeIPC.onMiningAssignmentStarted(refetchAssignments)
     const completedListener = window.nodeIPC.onMiningAssignmentCompleted(refetchAssignments)
 
     return () => {
-      assignmentListener.unsubscribe()
+      assignmentsListener.unsubscribe()
+      startedListener.unsubscribe()
       completedListener.unsubscribe()
     }
   }, [refetch])

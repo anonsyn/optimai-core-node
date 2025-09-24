@@ -26,8 +26,10 @@ const nodeIPC = {
     createPreloadEventListener(NodeEvents.OnUptimeReward, callback),
   onUptimeCycle: (callback: (cycle: UptimeData) => void) =>
     createPreloadEventListener(NodeEvents.OnUptimeCycle, callback),
-  onMiningAssignment: (callback: (assignment: MiningAssignment) => void) =>
-    createPreloadEventListener(NodeEvents.OnMiningAssignment, callback),
+  onMiningAssignments: (callback: (assignments: MiningAssignment[]) => void) =>
+    createPreloadEventListener(NodeEvents.OnMiningAssignments, callback),
+  onMiningAssignmentStarted: (callback: (assignmentId: string) => void) =>
+    createPreloadEventListener(NodeEvents.OnMiningAssignmentStarted, callback),
   onMiningAssignmentCompleted: (callback: (assignmentId: string) => void) =>
     createPreloadEventListener(NodeEvents.OnMiningAssignmentCompleted, callback),
   onMiningStatusChanged: (callback: (status: MiningWorkerStatus) => void) =>
