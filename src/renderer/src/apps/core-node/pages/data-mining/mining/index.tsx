@@ -22,10 +22,16 @@ export const Mining = () => {
 
   useEffect(() => {
     // Get initial status
-    window.nodeIPC.getMiningStatus().then(setMiningStatus).catch(console.error)
+    window.nodeIPC.getMiningStatus()
+      .then((status) => {
+        console.log('[Mining] Initial status:', status)
+        setMiningStatus(status)
+      })
+      .catch(console.error)
 
     // Listen for status changes
     const unsubscribe = window.nodeIPC.onMiningStatusChanged((status) => {
+      console.log('[Mining] Status changed:', status)
       setMiningStatus(status)
     })
 

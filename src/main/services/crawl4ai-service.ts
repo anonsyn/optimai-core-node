@@ -1,6 +1,7 @@
 import log from 'electron-log/main'
 import { getErrorMessage } from '../utils/get-error-message'
 import { getPort } from '../utils/get-port'
+import { sleep } from '../utils/sleep'
 import { dockerService } from './docker-service'
 
 export interface Crawl4AiConfig {
@@ -89,6 +90,10 @@ export class Crawl4AiService {
         log.error('[crawl4ai] Failed to start container')
         return false
       }
+
+      // Wait for container to initialize before checking health
+      log.info('[crawl4ai] Waiting for container to initialize...')
+      await sleep(3200)
 
       // Wait for container to be healthy
       const healthy = await dockerService.waitForHealth(

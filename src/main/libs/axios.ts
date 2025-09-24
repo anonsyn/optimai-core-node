@@ -95,7 +95,7 @@ function createAuthenticatedClient(
 ): AxiosInstance {
   const client = axios.create({
     baseURL,
-    timeout: options.timeout || 30000, // 30 seconds for main process
+    timeout: options.timeout || 60000, // 60 seconds for main process
     headers: {
       'Content-Type': 'application/json',
       ...options.customHeaders
@@ -229,7 +229,7 @@ export const minerClient = createAuthenticatedClient(BASE_MINER_URL, {
  */
 export const publicClient = axios.create({
   baseURL: BASE_API_URL,
-  timeout: 30000,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json'
   }

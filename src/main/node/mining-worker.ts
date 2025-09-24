@@ -43,11 +43,17 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private lastError?: string
 
   private setStatus(status: MiningStatus, error?: string) {
-    if (this.status !== status || error !== this.lastError) {
-      this.status = status
-      this.lastError = error
-      this.emit('statusChanged', this.getStatus())
-    }
+    const prevStatus = this.status
+    this.status = status
+    this.lastError = error
+    const fullStatus = this.getStatus()
+
+    // Always log status changes for debugging
+    log.info(`[mining] Status update: ${prevStatus} → ${status}`, fullStatus)
+
+    // Always emit the status, even if it hasn't changed
+    // This ensures the UI gets updated
+    this.emit('statusChanged', fullStatus)
   }
 
   getStatus(): MiningWorkerStatus {
