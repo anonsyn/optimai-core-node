@@ -10,9 +10,9 @@ interface MiningLoadingProps {
 }
 
 const statusMessages: Record<string, string> = {
-  [MiningStatus.Idle]: 'Mining Service Initialization',
+  [MiningStatus.Idle]: 'Service Initialization',
   [MiningStatus.Initializing]: 'System Verification',
-  [MiningStatus.InitializingCrawler]: 'Mining Tools Setup'
+  [MiningStatus.InitializingCrawler]: 'Tools Setup'
 }
 
 const statusDescriptions: Record<string, string> = {

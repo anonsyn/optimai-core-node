@@ -18,9 +18,9 @@ const MiningSpinner = ({ status, className }: MiningSpinnerProps) => {
     switch (currentStatus) {
       case MiningStatus.Idle:
         return {
-          speed: 0.005, // Slower rotation
+          speed: 0.008, // Slower rotation
           barCount: 24, // More bars
-          activeBarCount: 6,
+          activeBarCount: 16,
           pulseSpeed: 0.5
         }
       case MiningStatus.Initializing:
@@ -94,7 +94,7 @@ const MiningSpinner = ({ status, className }: MiningSpinnerProps) => {
 
         // Calculate opacity based on position and active state
         const fadePosition = (i / config.barCount) * Math.PI * 2
-        const pulse = Math.sin(Date.now() / 1000 * config.pulseSpeed + fadePosition)
+        const pulse = Math.sin((Date.now() / 1000) * config.pulseSpeed + fadePosition)
         const baseOpacity = isActive ? 0.9 : 0.2
         const opacity = isActive ? baseOpacity + pulse * 0.1 : baseOpacity
 
