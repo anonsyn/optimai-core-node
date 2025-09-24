@@ -22,7 +22,7 @@ export const LeftPanel = () => {
   })()
 
   const handleDashboardClick = () => {
-    window.open('https://app.optimai.xyz/dashboard', '_blank')
+    window.open('https://node.optimai.network/', '_blank')
   }
 
   return (
@@ -73,12 +73,7 @@ export const LeftPanel = () => {
 
             {/* Tasks and Storage */}
             <div className="grid grid-cols-2 gap-3">
-              <StatsCard
-                title="Tasks"
-                value={stats?.data_points || 0}
-                unit="tasks"
-                delay={0.3}
-              />
+              <StatsCard title="Tasks" value={stats?.data_points || 0} unit="tasks" delay={0.3} />
               <StatsCard title="Data Storage" value={storageValue} unit={storageUnit} delay={0.4} />
             </div>
 
