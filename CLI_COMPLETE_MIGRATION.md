@@ -4,6 +4,8 @@
 
 This document provides a comprehensive migration plan for moving ALL functionality from the node-cli Python wrapper to direct implementation within the Electron desktop application. This migration will eliminate the Python intermediary layer, improve performance, simplify deployment, and provide better integration with the desktop environment.
 
+> **Status:** The bundled CLI has been removed from the desktop app; the information below remains for historical context and architectural reference.
+
 ## Table of Contents
 
 1. [Current Architecture Overview](#current-architecture-overview)

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-OptimAI Core Node - An Electron desktop application with React and TypeScript that provides a node client for the OptimAI network. The app manages a wrapped CLI binary and provides mining, authentication, and node management functionality.
+OptimAI Core Node - An Electron desktop application with React and TypeScript that provides a node client for the OptimAI network. The app embeds the full node runtime (uptime tracker, mining worker, auth flows) within the Electron main process.
 
 ## Essential Commands
 
@@ -23,44 +23,39 @@ OptimAI Core Node - An Electron desktop application with React and TypeScript th
 - `npm run build:mac` - Build macOS installer
 - `npm run build:linux` - Build Linux installer
 
-### Utilities
-- `npm run download-binary` - Download/refresh the bundled CLI binary
-
 ## Architecture
 
 ### Process Architecture
 The application follows Electron's multi-process architecture:
-- **Main Process** (`src/main/`): Manages app lifecycle, spawns CLI process, handles IPC
+- **Main Process** (`src/main/`): Manages app lifecycle, hosts the node runtime, handles IPC
 - **Preload Scripts** (`src/preload/`): Sandboxed bridges between main and renderer
 - **Renderer Process** (`src/renderer/`): React 19 UI application
 
-### CLI Integration
-The app wraps a CLI binary (`applications/node/bin/node_cli`) that runs as a separate process:
-1. **API Server**: Spawned via `node_cli api-server --port <dynamic> --data-dir <userData>/node`
-2. **Health Monitoring**: Polls `/health` endpoint until ready
-3. **IPC Bridge**: Exposes port to renderer via IPC channels
-4. **Auto-restart**: Up to 5 automatic restarts on unexpected CLI exits
-5. **WebSocket**: Real-time updates via `ws://127.0.0.1:<port>/ws`
+### Node Runtime
+The node runtime in `src/main/node` coordinates the OptimAI workflow directly:
+1. **Authentication & Device**: Ensures valid tokens and registers the device before starting
+2. **Uptime Tracking**: `UptimeRunner` records availability and emits reward cycles
+3. **Mining Worker**: `MiningWorker` polls assignments and reports completion/status updates
+4. **IPC Bridge**: `src/main/ipc/node` exposes start/stop/status handlers and event broadcasts
+5. **Error Handling**: Centralized logging and status transitions keep the renderer informed
 
 ### Key Directories
-- `applications/` - Packaged CLI binaries and wrappers
+- `src/main/node/` - Node runtime (uptime runner, mining worker, device registration)
 - `injections/` - Monorepo for browser injection scripts (pnpm workspace)
-- `tmp/applications/` - Development mirror of application binaries
 - `dist/` - Production build outputs
 - `out/` - Development build outputs
 
 ### Data Storage
-- CLI state: `app.getPath('userData')/node/` (encrypted)
+- Node state: `app.getPath('userData')/node/` (encrypted)
 - Environment configs: `.env` (app config), `electron-builder.env` (build/publish)
 
 ## API Endpoints
 
-The CLI exposes these key endpoints:
-- `/auth/login` - Authentication
-- `/node/start`, `/node/stop` - Node control
+The runtime now calls OptimAI services directly through the shared Axios client:
+- `/auth/login` and `/auth/me` - Authentication flows
+- `/node/start`, `/node/stop`, `/node/status` - Node control
 - `/uptime/progress` - Uptime tracking
 - `/api/mining/assignments` - Mining operations
-- `/health` - Server health check
 
 ## Development Workflow
 
@@ -84,8 +79,6 @@ The `injections/` directory is a pnpm workspace containing browser injection scr
 
 ## Important Notes
 
-- The CLI binary must be refreshed before packaging using `npm run download-binary`
-- In development, binaries are mirrored to `tmp/applications/`
 - Never commit `.env` or `electron-builder.env` files
-- The WebSocket connection provides real-time updates from the CLI
 - Feature folders should align across main, preload, and renderer directories
+- The renderer consumes runtime updates via IPC events dispatched from `nodeRuntime`

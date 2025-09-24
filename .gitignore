@@ -8,5 +8,4 @@ out
 .env
 *.env
 *.vscode
-applications
 tmp

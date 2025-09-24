@@ -22,8 +22,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "deploy": "npm run build && electron-builder build --publish always",
-    "download-binary": "tsx scripts/download-binary.ts"
+    "deploy": "npm run build && electron-builder build --publish always"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",

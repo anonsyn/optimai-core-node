@@ -4,6 +4,8 @@
 
 This document outlines the migration plan to move crawler functionality from the node-cli wrapper to direct integration within the Electron desktop application. Currently, the crawler service uses crawl4ai Docker container through the CLI, but since crawl4ai exposes HTTP APIs directly, we can eliminate the CLI intermediary layer.
 
+> **Status:** The Electron app now integrates crawler support without depending on the CLI; use this document as historical reference.
+
 ## Current Architecture
 
 ### Overview

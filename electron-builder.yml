@@ -15,9 +15,6 @@ extraResources:
     to: injections
 win:
   executableName: optimai-corenode
-  extraResources:
-    - from: applications/node/windows
-      to: applications/node/bin
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -29,20 +26,14 @@ mac:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+  - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
-  extraResources:
-    - from: applications/node/darwin
-      to: applications/node/bin
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
   target:
     - AppImage
   category: Utility
-  extraResources:
-    - from: applications/node/linux
-      to: applications/node/bin
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
