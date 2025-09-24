@@ -77,7 +77,7 @@ export const AssignmentsList = () => {
       className="relative h-full w-full overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.8 }}
     >
       <ScrollArea className="h-full">
         <div className="p-6">
