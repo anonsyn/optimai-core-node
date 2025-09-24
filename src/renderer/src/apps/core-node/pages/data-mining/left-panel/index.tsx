@@ -4,6 +4,7 @@ import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningStatsQuery } from '@/queries/mining'
 import { formatNumber } from '@/utils/number'
+import { filesize } from 'filesize'
 import { motion } from 'framer-motion'
 import { DataDistributionChart } from './data-distribution-chart'
 import { LLMList } from './llm-list'
@@ -11,6 +12,14 @@ import { StatsCard } from './stats-card'
 
 export const LeftPanel = () => {
   const { data: stats } = useGetMiningStatsQuery()
+
+  const { storageUnit, storageValue } = (() => {
+    const size = filesize((stats?.data_storage || 0) * 1024 * 1024 * 1024, {
+      standard: 'jedec'
+    })
+    const [storageValue, storageUnit] = size.split(' ')
+    return { storageValue, storageUnit }
+  })()
 
   const handleDashboardClick = () => {
     window.open('https://app.optimai.xyz/dashboard', '_blank')
@@ -52,7 +61,7 @@ export const LeftPanel = () => {
                 value={formatNumber(stats?.total_rewards.amount || 0, {
                   minimumFractionDigits: 2
                 })}
-                icon={<Token className="size-5" />}
+                icon={<Token className="size-6" />}
                 delay={0.1}
               />
               <StatsCard
@@ -67,15 +76,10 @@ export const LeftPanel = () => {
               <StatsCard
                 title="Data Points"
                 value={stats?.data_points || 0}
-                subtitle="collected"
+                unit="points"
                 delay={0.3}
               />
-              <StatsCard
-                title="Data Storage"
-                value={stats?.data_storage || 0}
-                subtitle="MB"
-                delay={0.4}
-              />
+              <StatsCard title="Data Storage" value={storageValue} unit={storageUnit} delay={0.4} />
             </div>
 
             {/* Data Distribution */}

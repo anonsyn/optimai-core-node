@@ -60,6 +60,7 @@
     "embla-carousel-react": "^8.6.0",
     "eventemitter3": "^5.0.1",
     "execa": "^5.1.1",
+    "filesize": "^11.0.13",
     "framer-motion": "^12.9.2",
     "get-port": "^7.1.0",
     "gsap": "^3.13.0",

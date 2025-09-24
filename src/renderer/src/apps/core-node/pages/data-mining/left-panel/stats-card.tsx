@@ -6,12 +6,12 @@ import { ReactNode } from 'react'
 interface StatsCardProps {
   title: string
   value: string | number
-  subtitle?: string
+  unit?: string
   icon?: ReactNode
   delay?: number
 }
 
-export const StatsCard = ({ title, value, subtitle, icon, delay = 0 }: StatsCardProps) => {
+export const StatsCard = ({ title, value, unit, icon, delay = 0 }: StatsCardProps) => {
   return (
     <motion.div
       initial={{ y: 20, opacity: 0 }}
@@ -21,12 +21,12 @@ export const StatsCard = ({ title, value, subtitle, icon, delay = 0 }: StatsCard
       <Card>
         <CardTitle>{title}</CardTitle>
         <CardContent className={icon ? 'items-start' : undefined}>
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-center gap-2">
             {icon && <div className="flex items-center gap-2">{icon}</div>}
-            <span className="text-24 font-bold text-white">
+            <span className="text-28 leading-none font-bold text-white">
               {typeof value === 'number' ? formatNumber(value) : value}
             </span>
-            {subtitle && <span className="text-11 text-white/30">{subtitle}</span>}
+            {unit && <span className="text-12 self-end text-white/30">{unit}</span>}
           </div>
         </CardContent>
       </Card>

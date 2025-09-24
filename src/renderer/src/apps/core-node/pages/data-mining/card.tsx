@@ -19,7 +19,7 @@ const CardTitle = ({ className, children, ...props }: React.HTMLAttributes<HTMLH
     return (
       <div
         className={cn(
-          'text-11 flex items-center justify-between font-medium text-white',
+          'text-18 flex items-center justify-between font-medium text-white',
           className
         )}
         {...props}
@@ -30,7 +30,7 @@ const CardTitle = ({ className, children, ...props }: React.HTMLAttributes<HTMLH
   }
 
   return (
-    <h3 className={cn('text-11 font-medium text-white', className)} {...props}>
+    <h3 className={cn('text-18 font-medium text-white', className)} {...props}>
       {children}
     </h3>
   )

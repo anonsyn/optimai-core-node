@@ -27,7 +27,7 @@ export const LLMList = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.7 + index * 0.03 }}
-                className="text-11 rounded-md border border-white/10 bg-white/[0.02] px-2.5 py-1 text-white/70"
+                className="text-12 bg-accent/40 rounded-3xl border border-white/10 px-2.5 py-[5px] text-white/70"
               >
                 {llm}
               </motion.div>
