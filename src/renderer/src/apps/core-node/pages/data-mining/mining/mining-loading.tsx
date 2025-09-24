@@ -2,7 +2,8 @@ import { MiningStatus, type MiningWorkerStatus } from '@main/node/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Info } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import MiningConstellation from './mining-constellation'
+// import MiningConstellation from './mining-constellation'
+import MiningSpinner from './mining-spinner'
 
 interface MiningLoadingProps {
   status: MiningWorkerStatus
@@ -76,9 +77,9 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
         transition={{ duration: 0.8 }}
         className="relative z-10 flex w-full max-w-md flex-col items-center gap-6"
       >
-        {/* Constellation Visualization */}
+        {/* Mining Visualization */}
         <div className="relative h-48 w-full">
-          <MiningConstellation status={status.status} />
+          <MiningSpinner status={status.status} />
         </div>
 
         {/* Title and Description */}
@@ -110,21 +111,6 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
           </AnimatePresence>
         </div>
 
-        {/* Phase Indicator - Subtle */}
-        <div className="mt-2 flex items-center gap-3">
-          <PhaseIndicator
-            active={status.status === MiningStatus.Idle}
-            completed={status.status !== MiningStatus.Idle}
-          />
-          <PhaseIndicator
-            active={status.status === MiningStatus.Initializing}
-            completed={status.status === MiningStatus.InitializingCrawler}
-          />
-          <PhaseIndicator
-            active={status.status === MiningStatus.InitializingCrawler}
-            completed={false}
-          />
-        </div>
 
         {/* First Run Notice */}
         <AnimatePresence>
@@ -151,22 +137,3 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
     </div>
   )
 }
-
-const PhaseIndicator = ({ active, completed }: { active: boolean; completed: boolean }) => (
-  <motion.div
-    animate={{
-      scale: active ? [1, 1.3, 1] : 1,
-      opacity: completed ? 1 : 0.3
-    }}
-    transition={{
-      scale: {
-        duration: 1.5,
-        repeat: active ? Infinity : 0,
-        ease: 'easeInOut'
-      }
-    }}
-    className={`h-1 w-8 rounded-full ${
-      completed ? 'bg-green' : active ? 'bg-yellow' : 'bg-white/20'
-    }`}
-  />
-)
