@@ -9,7 +9,7 @@ export const StoppedOverlay = () => {
   const handleStart = async () => {
     setIsStarting(true)
     try {
-      await window.nodeIPC.startNode()
+      await window.nodeIPC.restartMining()
     } catch (error) {
       console.error('Failed to start mining:', error)
     } finally {

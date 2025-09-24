@@ -63,6 +63,10 @@ class NodeIpcHandler {
       return nodeRuntime.stop()
     })
 
+    ipcMain.handle(NodeEvents.RestartMining, async () => {
+      return nodeRuntime.restartMining()
+    })
+
     ipcMain.handle(NodeEvents.GetStatus, async () => {
       return nodeRuntime.getStatus()
     })

@@ -13,7 +13,7 @@ export const ErrorOverlay = ({ error }: ErrorOverlayProps) => {
   const handleRetry = async () => {
     setIsRetrying(true)
     try {
-      await window.nodeIPC.startNode()
+      await window.nodeIPC.restartMining()
     } catch (error) {
       console.error('Failed to restart mining:', error)
     } finally {

@@ -1,6 +1,7 @@
 export const NodeEvents = {
   StartNode: 'node:start',
   StopNode: 'node:stop',
+  RestartMining: 'node:restart-mining',
   GetStatus: 'node:get-status',
   GetMiningStatus: 'node:get-mining-status',
   CompleteMiningAssignment: 'node:complete-mining-assignment',

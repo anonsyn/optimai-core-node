@@ -11,6 +11,7 @@ import { NodeEvents } from './events'
 const nodeIPC = {
   startNode: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.StartNode),
   stopNode: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.StopNode),
+  restartMining: (): Promise<boolean> => ipcRenderer.invoke(NodeEvents.RestartMining),
   getStatus: (): Promise<NodeStatusResponse> => ipcRenderer.invoke(NodeEvents.GetStatus),
   getMiningStatus: (): Promise<MiningWorkerStatus> =>
     ipcRenderer.invoke(NodeEvents.GetMiningStatus),

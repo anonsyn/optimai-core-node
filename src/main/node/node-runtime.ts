@@ -131,6 +131,16 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
     return true
   }
 
+  async restartMining(): Promise<boolean> {
+    if (!this.running) {
+      return await this.start()
+    }
+
+    await this.miningWorker.stop()
+    await this.miningWorker.start()
+    return true
+  }
+
   getStatus(): NodeStatusResponse {
     return {
       status: this.status,
