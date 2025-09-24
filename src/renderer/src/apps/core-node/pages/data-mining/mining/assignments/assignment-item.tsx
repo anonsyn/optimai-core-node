@@ -3,10 +3,8 @@ import { Icon } from '@/components/ui/icon'
 import { formatNumber } from '@/utils/number'
 import { cn } from '@/utils/tw'
 import { MiningAssignment } from '@main/node/types'
-import { formatDate } from 'date-fns'
-import { motion } from 'framer-motion'
+import { formatDistanceToNow } from 'date-fns'
 import lodash from 'lodash'
-import { AlertCircle, CheckCircle, Clock, PlayCircle } from 'lucide-react'
 
 interface AssignmentItemProps {
   assignment: MiningAssignment
@@ -23,129 +21,70 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
   const reward = lodash.get(assignment, 'task.reward_amount', 0)
   const updatedAt = lodash.get(assignment, 'updated_at', lodash.get(assignment, 'started_at', ''))
 
-  console.log({ assignment })
-
-  const getStatusColor = () => {
+  const getStatusStyles = () => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return 'text-green'
+        return { color: 'text-green/80', bgColor: 'bg-green/10', label: 'Completed' }
       case 'in_progress':
-        return 'text-yellow'
+        return { color: 'text-yellow/80', bgColor: 'bg-yellow/10', label: 'Processing' }
       case 'failed':
-        return 'text-destructive'
+        return { color: 'text-red-500/80', bgColor: 'bg-red-500/10', label: 'Failed' }
       default:
-        return 'text-white/40'
-    }
-  }
-
-  const getStatusIcon = () => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return <CheckCircle className="size-4.5" />
-      case 'in_progress':
-        return <PlayCircle className="size-4.5" />
-      case 'failed':
-        return <AlertCircle className="size-4.5" />
-      default:
-        return <Clock className="size-4.5" />
-    }
-  }
-
-  const getStatusText = () => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return 'Completed'
-      case 'in_progress':
-        return 'In Progress'
-      case 'failed':
-        return 'Failed'
-      default:
-        return 'Not Started'
-    }
-  }
-
-  const getPlatformIcon = () => {
-    switch (platform?.toLowerCase()) {
-      case 'google':
-        return <Icon icon="Google" className="size-4.5" />
-      case 'twitter':
-        return <Icon icon="Twitter" className="size-4.5" />
-      default:
-        return <Icon icon="Globe" className="size-4.5" />
+        return { color: 'text-white/40', bgColor: 'bg-white/5', label: 'Pending' }
     }
   }
 
   const formatTaskId = (id: string) => {
-    return id.slice(0, 8) + '...' + id.slice(-4)
+    return id.slice(0, 6) + '...' + id.slice(-4)
   }
 
+  const statusStyles = getStatusStyles()
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      whileHover={{ scale: 1.01 }}
-      className="group relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.02] to-transparent backdrop-blur-xl transition-colors hover:border-white/10"
-    >
-      {/* Status Indicator Line */}
+    <div className="relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all hover:bg-white/[0.03]">
+      {/* Status Indicator */}
       <div
         className={cn(
-          'absolute top-0 left-0 h-full w-1 transition-all',
+          'absolute left-0 top-0 h-full w-0.5',
           status.toLowerCase() === 'completed' && 'bg-green',
-          status.toLowerCase() === 'in_progress' && 'bg-yellow',
-          status.toLowerCase() === 'failed' && 'bg-destructive',
-          !status && 'bg-white/20'
+          status.toLowerCase() === 'in_progress' && 'bg-yellow animate-pulse',
+          status.toLowerCase() === 'failed' && 'bg-red-500',
+          !status && 'bg-white/10'
         )}
       />
 
-      {/* Background Gradient on Hover */}
-      <div className="from-yellow/5 to-green/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-
       {/* Header */}
-      <div className="relative flex items-center justify-between border-b border-white/5 p-5">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5">
-            <Icon className="size-3.5 text-white/50" icon="Pickaxe" />
-            <span className="text-12 font-medium text-white/50">{formatTaskId(id)}</span>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5">
-            {getPlatformIcon()}
-            <span className="text-12 font-medium text-white/70 capitalize">{platform}</span>
-          </div>
+      <div className="flex items-center justify-between p-4 pb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-11 font-mono text-white/30">{formatTaskId(id)}</span>
+          <span className="text-11 text-white/20">•</span>
+          <span className="text-11 capitalize text-white/30">{platform || 'Web'}</span>
         </div>
-        <div className={cn('flex items-center gap-1.5', getStatusColor())}>
-          {getStatusIcon()}
-          <span className="text-12 font-semibold">{getStatusText()}</span>
+        <div className={cn('rounded px-2 py-0.5 text-11 font-medium', statusStyles.bgColor, statusStyles.color)}>
+          {statusStyles.label}
         </div>
       </div>
 
       {/* Content */}
-      <div className="relative flex min-h-[120px] flex-col p-5">
-        <h3 className="text-18 mb-2 leading-tight font-semibold text-white">{title}</h3>
+      <div className="px-4 pb-3">
+        <h3 className="text-15 font-medium text-white line-clamp-2">{title || 'Processing assignment...'}</h3>
         {snippet && (
-          <p className="text-13 mb-3 line-clamp-2 leading-relaxed text-white/60">{snippet}</p>
-        )}
-        {(searchQuery || sourceUrl) && (
-          <div className="mt-auto flex items-center gap-2">
-            <Icon icon="Search" className="size-3.5 text-white/30" />
-            <p className="text-12 line-clamp-1 text-white/40">{searchQuery || sourceUrl}</p>
-          </div>
+          <p className="text-12 mt-2 line-clamp-2 text-white/40">{snippet}</p>
         )}
       </div>
 
       {/* Footer */}
-      <div className="relative flex items-center justify-between border-t border-white/5 bg-black/20 px-5 py-3">
-        <div className="text-12 flex items-center gap-2 text-white/40">
-          <Icon icon="Timer" className="size-3.5" />
-          <span>{formatDate(updatedAt || Date.now(), 'MMM dd, HH:mm')}</span>
-        </div>
-        <div className="bg-main flex items-center gap-1.5 rounded-full bg-clip-text px-3 py-1 font-bold text-transparent">
-          <Token className="size-4" />
-          <span className="text-14">
+      <div className="flex items-center justify-between border-t border-white/5 px-4 py-3">
+        <span className="text-11 text-white/30">
+          {updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : 'Just now'}
+        </span>
+        <div className="flex items-center gap-1.5 text-white">
+          <Token className="size-3.5" />
+          <span className="text-13 font-medium">
             {formatNumber(reward, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
