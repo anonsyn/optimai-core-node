@@ -29,6 +29,10 @@ class WindowManager {
   getVisibleWindow() {
     return this.windows.find((w) => w.isVisible())
   }
+
+  getAllWindows() {
+    return this.windows
+  }
 }
 
 const windowManager = new WindowManager()

@@ -1,11 +1,11 @@
-import { BrowserWindow, ipcMain, shell } from 'electron'
+import { ipcMain, shell } from 'electron'
 import log from 'electron-log/main'
 import { crawl4AiService } from '../../services/crawl4ai-service'
 import { dockerService } from '../../services/docker-service'
 import { getErrorMessage } from '../../utils/get-error-message'
+import windowManager from '../../window/manager'
 import { Crawl4AiEvents } from './events'
 import type { Crawl4AiStatus, InitProgress, ServiceInfo } from './types'
-
 class Crawl4AiIpcHandler {
   initialize() {
     // Check Crawl4AI service availability
@@ -188,7 +188,7 @@ class Crawl4AiIpcHandler {
   }
 
   private broadcast(channel: string, ...args: unknown[]) {
-    BrowserWindow.getAllWindows().forEach((window) => {
+    windowManager.getAllWindows().forEach((window) => {
       window.webContents.send(channel, ...args)
     })
   }

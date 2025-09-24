@@ -1,8 +1,9 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { ipcMain } from 'electron'
 import log from 'electron-log/main'
 
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
 import { getErrorMessage } from '../../utils/get-error-message'
+import windowManager from '../../window/manager'
 import { NodeEvents } from './events'
 
 class NodeIpcHandler {
@@ -80,7 +81,7 @@ class NodeIpcHandler {
   }
 
   private broadcast(channel: string, ...args: unknown[]) {
-    BrowserWindow.getAllWindows().forEach((window) => {
+    windowManager.getAllWindows().forEach((window) => {
       window.webContents.send(channel, ...args)
     })
   }
