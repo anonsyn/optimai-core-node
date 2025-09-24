@@ -18,9 +18,9 @@ const MiningSpinner = ({ status, className }: MiningSpinnerProps) => {
     switch (currentStatus) {
       case MiningStatus.Idle:
         return {
-          speed: 0.008, // Slower rotation
+          speed: 0.005, // Slower rotation
           barCount: 24, // More bars
-          activeBarCount: 16,
+          activeBarCount: 6,
           pulseSpeed: 0.5
         }
       case MiningStatus.Initializing:
