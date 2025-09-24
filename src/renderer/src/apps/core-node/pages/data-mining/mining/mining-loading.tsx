@@ -75,7 +75,7 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="relative z-10 flex w-full max-w-md flex-col items-center gap-6"
+        className="relative z-10 flex w-full max-w-md flex-col items-center"
       >
         {/* Mining Visualization */}
         <div className="relative h-48 w-full">
@@ -111,7 +111,6 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
           </AnimatePresence>
         </div>
 
-
         {/* First Run Notice */}
         <AnimatePresence>
           {showFirstRunNotice && (
@@ -120,7 +119,7 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.3 }}
-              className="border-yellow/20 bg-yellow/5 mt-6 flex max-w-sm items-start gap-2 rounded-lg border p-3"
+              className="border-yellow/20 bg-yellow/5 mt-8 flex max-w-sm items-start gap-2 rounded-lg border p-3"
             >
               <Info className="text-yellow mt-0.5 h-4 w-4 flex-shrink-0" />
               <div className="text-12 text-white/70">
