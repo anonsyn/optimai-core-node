@@ -54,29 +54,29 @@ export const LeftPanel = () => {
           </div>
 
           <div className="space-y-4">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <StatsCard
-                title="Total Rewards"
-                value={formatNumber(stats?.total_rewards.amount || 0, {
-                  minimumFractionDigits: 2
-                })}
-                icon={<Token className="size-6" />}
-                delay={0.1}
-              />
-              <StatsCard
-                title="Weekly Rank"
-                value={`#${stats?.weekly_rank.current || 0}`}
-                delay={0.2}
-              />
-            </div>
+            {/* Total Rewards - Full Width */}
+            <StatsCard
+              title="Total Rewards"
+              value={formatNumber(stats?.total_rewards.amount || 0, {
+                minimumFractionDigits: 2
+              })}
+              icon={<Token className="size-6" />}
+              delay={0.1}
+            />
 
-            {/* Data Points and Storage */}
+            {/* Weekly Rank - Full Width */}
+            <StatsCard
+              title="Weekly Rank"
+              value={`#${stats?.weekly_rank.current || 0}`}
+              delay={0.2}
+            />
+
+            {/* Tasks and Storage */}
             <div className="grid grid-cols-2 gap-3">
               <StatsCard
-                title="Data Points"
+                title="Tasks"
                 value={stats?.data_points || 0}
-                unit="points"
+                unit="tasks"
                 delay={0.3}
               />
               <StatsCard title="Data Storage" value={storageValue} unit={storageUnit} delay={0.4} />
