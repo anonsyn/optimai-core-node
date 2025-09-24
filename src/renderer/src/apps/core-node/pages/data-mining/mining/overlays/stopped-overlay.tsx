@@ -12,6 +12,7 @@ export const StoppedOverlay = () => {
       await window.nodeIPC.startNode()
     } catch (error) {
       console.error('Failed to start mining:', error)
+    } finally {
       setIsStarting(false)
     }
   }
@@ -22,46 +23,37 @@ export const StoppedOverlay = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
     >
       <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
+        initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
+        exit={{ scale: 0.95, opacity: 0 }}
         transition={{ duration: 0.2 }}
-        className="bg-background/95 mx-4 w-full max-w-md overflow-hidden rounded-xl border border-white/10 backdrop-blur-md"
+        className="mx-4 w-full max-w-md"
       >
-        <div className="p-8">
+        <div className="bg-background relative overflow-hidden rounded-xl border border-white/5 p-6 backdrop-blur-sm">
           {/* Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="rounded-full bg-white/5 p-4">
-              <Icon icon="Square" className="size-8 text-white/60" />
-            </div>
+          <div className="mb-4 flex justify-center">
+            <Icon icon="Square" className="size-8 text-white/40" />
           </div>
 
           {/* Content */}
           <div className="text-center">
-            <h3 className="text-20 font-semibold text-white">Mining Stopped</h3>
-            <p className="text-14 mt-3 text-white/60">
+            <h3 className="text-18 font-medium text-white">Mining Stopped</h3>
+            <p className="text-13 mt-2 text-white/60">
               Mining is currently stopped. Start mining to begin processing assignments and earning
               rewards.
             </p>
-
-            {/* Status info */}
-            <div className="mt-4 flex justify-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-white/20" />
-                <span className="text-12 text-white/40">Idle</span>
-              </div>
-            </div>
           </div>
 
-          {/* Actions */}
-          <div className="mt-8">
+          {/* Action */}
+          <div className="mt-6">
             <Button
               onClick={handleStart}
               disabled={isStarting}
-              className="bg-main hover:bg-main/90 w-full text-black transition-all"
+              className="w-full"
+              variant="primary"
             >
               {isStarting ? (
                 <>
