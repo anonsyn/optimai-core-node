@@ -1,5 +1,4 @@
 import Token from '@/components/branding/token'
-import { Icon } from '@/components/ui/icon'
 import { formatNumber } from '@/utils/number'
 import { cn } from '@/utils/tw'
 import { MiningAssignment } from '@main/node/types'
@@ -16,8 +15,8 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
   const title = lodash.get(assignment, 'task.metadata.title', '')
   const snippet = lodash.get(assignment, 'task.metadata.snippet', '')
   const platform = lodash.get(assignment, 'task.platform', '')
-  const searchQuery = lodash.get(assignment, 'task.search_query', '')
-  const sourceUrl = lodash.get(assignment, 'task.source_url', '')
+  // const searchQuery = lodash.get(assignment, 'task.search_query', '')
+  // const sourceUrl = lodash.get(assignment, 'task.source_url', '')
   const reward = lodash.get(assignment, 'task.reward_amount', 0)
   const updatedAt = lodash.get(assignment, 'updated_at', lodash.get(assignment, 'started_at', ''))
 
@@ -45,7 +44,7 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
       {/* Status Indicator */}
       <div
         className={cn(
-          'absolute left-0 top-0 h-full w-0.5',
+          'absolute top-0 left-0 h-full w-0.5',
           status.toLowerCase() === 'completed' && 'bg-green',
           status.toLowerCase() === 'in_progress' && 'bg-yellow animate-pulse',
           status.toLowerCase() === 'failed' && 'bg-red-500',
@@ -58,19 +57,25 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
         <div className="flex items-center gap-2">
           <span className="text-11 font-mono text-white/30">{formatTaskId(id)}</span>
           <span className="text-11 text-white/20">•</span>
-          <span className="text-11 capitalize text-white/30">{platform || 'Web'}</span>
+          <span className="text-11 text-white/30 capitalize">{platform || 'Web'}</span>
         </div>
-        <div className={cn('rounded px-2 py-0.5 text-11 font-medium', statusStyles.bgColor, statusStyles.color)}>
+        <div
+          className={cn(
+            'text-11 rounded px-2 py-0.5 font-medium',
+            statusStyles.bgColor,
+            statusStyles.color
+          )}
+        >
           {statusStyles.label}
         </div>
       </div>
 
       {/* Content */}
       <div className="px-4 pb-3">
-        <h3 className="text-15 font-medium text-white line-clamp-2">{title || 'Processing assignment...'}</h3>
-        {snippet && (
-          <p className="text-12 mt-2 line-clamp-2 text-white/40">{snippet}</p>
-        )}
+        <h3 className="text-15 line-clamp-2 font-medium text-white">
+          {title || 'Processing assignment...'}
+        </h3>
+        {snippet && <p className="text-12 mt-2 line-clamp-2 text-white/40">{snippet}</p>}
       </div>
 
       {/* Footer */}
