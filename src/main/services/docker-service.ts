@@ -1,3 +1,6 @@
+import os from 'node:os'
+import path from 'node:path'
+
 import log from 'electron-log/main'
 import execa from 'execa'
 import { getErrorMessage } from '../utils/get-error-message'
@@ -33,13 +36,16 @@ export interface ContainerInfo {
  * Generic Docker service for managing containers
  */
 export class DockerService {
+  private dockerResolutionCache: { command: string; version: string } | null = null
+  private dockerResolutionPromise: Promise<{ command: string; version: string }> | null = null
+
   /**
    * Check if Docker is installed
    */
   async isInstalled(): Promise<boolean> {
     try {
-      const { stdout } = await execa('docker', ['--version'])
-      log.info('[docker] Docker version:', stdout.trim())
+      const { version } = await this.ensureDockerBinary()
+      log.info('[docker] Docker version:', version)
       return true
     } catch (error) {
       log.error('[docker] Docker not installed:', getErrorMessage(error, 'Docker not installed'))
@@ -52,7 +58,8 @@ export class DockerService {
    */
   async isRunning(): Promise<boolean> {
     try {
-      await execa('docker', ['info'])
+      const docker = await this.getDockerCommand()
+      await execa(docker, ['info'])
       return true
     } catch (error) {
       log.error(
@@ -68,7 +75,8 @@ export class DockerService {
    */
   async getInfo(): Promise<DockerInfo | null> {
     try {
-      const { stdout } = await execa('docker', ['version', '--format', 'json'])
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, ['version', '--format', 'json'])
       const info = JSON.parse(stdout)
       return {
         version: info.Client?.Version,
@@ -99,7 +107,8 @@ export class DockerService {
       log.info(`[docker] Pulling image ${image}...`)
       onProgress?.(`Pulling ${image}...`)
 
-      const pullProcess = execa('docker', ['pull', image])
+      const docker = await this.getDockerCommand()
+      const pullProcess = execa(docker, ['pull', image])
 
       if (pullProcess.stdout) {
         pullProcess.stdout.on('data', (data) => {
@@ -129,7 +138,8 @@ export class DockerService {
    */
   async imageExists(image: string): Promise<boolean> {
     try {
-      await execa('docker', ['image', 'inspect', image])
+      const docker = await this.getDockerCommand()
+      await execa(docker, ['image', 'inspect', image])
       return true
     } catch {
       return false
@@ -184,7 +194,8 @@ export class DockerService {
       }
 
       log.info(`[docker] Running container ${config.name}...`)
-      const { stdout } = await execa('docker', args)
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, args)
       const containerId = stdout.trim().substring(0, 12)
       log.info(`[docker] Container ${config.name} started with ID: ${containerId}`)
       return containerId
@@ -203,7 +214,8 @@ export class DockerService {
   async startContainer(name: string): Promise<boolean> {
     try {
       log.info(`[docker] Starting container ${name}...`)
-      await execa('docker', ['start', name])
+      const docker = await this.getDockerCommand()
+      await execa(docker, ['start', name])
       log.info(`[docker] Container ${name} started`)
       return true
     } catch (error) {
@@ -227,7 +239,8 @@ export class DockerService {
       }
       args.push(name)
 
-      await execa('docker', args)
+      const docker = await this.getDockerCommand()
+      await execa(docker, args)
       log.info(`[docker] Container ${name} stopped`)
       return true
     } catch (error) {
@@ -251,7 +264,8 @@ export class DockerService {
       }
       args.push(name)
 
-      await execa('docker', args)
+      const docker = await this.getDockerCommand()
+      await execa(docker, args)
       log.info(`[docker] Container ${name} removed`)
       return true
     } catch (error) {
@@ -268,7 +282,8 @@ export class DockerService {
    */
   async getContainerStatus(name: string): Promise<ContainerInfo | null> {
     try {
-      const { stdout } = await execa('docker', [
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, [
         'ps',
         '-a',
         '--filter',
@@ -314,7 +329,8 @@ export class DockerService {
     command: string[]
   ): Promise<{ stdout: string; stderr: string } | null> {
     try {
-      const result = await execa('docker', ['exec', container, ...command])
+      const docker = await this.getDockerCommand()
+      const result = await execa(docker, ['exec', container, ...command])
       return {
         stdout: result.stdout,
         stderr: result.stderr
@@ -342,7 +358,8 @@ export class DockerService {
       }
       args.push(name)
 
-      const { stdout } = await execa('docker', args)
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, args)
       return stdout
     } catch (error) {
       log.error(
@@ -363,7 +380,8 @@ export class DockerService {
         args.splice(1, 0, '-a')
       }
 
-      const { stdout } = await execa('docker', args)
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, args)
       if (!stdout) {
         return []
       }
@@ -420,6 +438,172 @@ export class DockerService {
 
     log.error(`[docker] Container ${name} health check failed after ${maxRetries} attempts`)
     return false
+  }
+
+  /**
+   * Ensure we have a usable Docker binary and cache the resolution
+   */
+  private async ensureDockerBinary(): Promise<{ command: string; version: string }> {
+    if (this.dockerResolutionCache) {
+      return this.dockerResolutionCache
+    }
+
+    if (!this.dockerResolutionPromise) {
+      this.dockerResolutionPromise = this.resolveDockerBinary()
+    }
+
+    try {
+      const result = await this.dockerResolutionPromise
+      this.dockerResolutionCache = result
+
+      if (!process.env.DOCKER_PATH && path.isAbsolute(result.command)) {
+        process.env.DOCKER_PATH = result.command
+      }
+
+      return result
+    } finally {
+      this.dockerResolutionPromise = null
+    }
+  }
+
+  /**
+   * Retrieve the resolved Docker command path
+   */
+  private async getDockerCommand(): Promise<string> {
+    const { command } = await this.ensureDockerBinary()
+    return command
+  }
+
+  /**
+   * Attempt to locate the Docker CLI across PATH and common install locations
+   */
+  private async resolveDockerBinary(): Promise<{ command: string; version: string }> {
+    const candidates = this.getDockerCandidates()
+
+    for (const candidate of candidates) {
+      const trimmedCandidate = candidate.trim()
+      if (!trimmedCandidate) {
+        continue
+      }
+
+      try {
+        const { stdout } = await execa(trimmedCandidate, ['--version'])
+        const version = stdout.trim()
+        log.info(`[docker] Using Docker CLI at: ${trimmedCandidate}`)
+        return { command: trimmedCandidate, version }
+      } catch (error) {
+        const code = (error as NodeJS.ErrnoException | undefined)?.code
+
+        if (code === 'ENOENT' || code === 'EACCES' || code === 'UNKNOWN') {
+          continue
+        }
+
+        log.debug(
+          `[docker] Candidate ${trimmedCandidate} failed validation:`,
+          getErrorMessage(error, 'Candidate validation failed')
+        )
+      }
+    }
+
+    throw new Error(
+      'Docker CLI not found. Ensure Docker Desktop is installed or set DOCKER_PATH to the Docker binary.'
+    )
+  }
+
+  /**
+   * Build the ordered list of Docker binary candidates to test
+   */
+  private getDockerCandidates(): string[] {
+    const candidates = new Set<string>()
+    const binaryNames = this.getBinaryNames()
+
+    binaryNames.forEach((name) => candidates.add(name))
+
+    const configuredPath = process.env.DOCKER_PATH?.trim()
+    if (configuredPath) {
+      if (this.looksLikeBinaryPath(configuredPath, binaryNames)) {
+        candidates.add(configuredPath)
+      } else {
+        binaryNames.forEach((name) => candidates.add(path.join(configuredPath, name)))
+      }
+    }
+
+    const pathEntries = process.env.PATH?.split(path.delimiter) ?? []
+    for (const entry of pathEntries) {
+      const trimmedEntry = entry.trim()
+      if (!trimmedEntry) {
+        continue
+      }
+
+      binaryNames.forEach((name) => candidates.add(path.join(trimmedEntry, name)))
+    }
+
+    for (const dir of this.getPlatformSpecificDirectories()) {
+      binaryNames.forEach((name) => candidates.add(path.join(dir, name)))
+    }
+
+    return Array.from(candidates)
+  }
+
+  /**
+   * Candidate binary names for the current platform
+   */
+  private getBinaryNames(): string[] {
+    if (process.platform === 'win32') {
+      return ['docker.exe', 'com.docker.cli.exe']
+    }
+
+    return ['docker', 'com.docker.cli']
+  }
+
+  /**
+   * Additional directories to probe for the Docker CLI based on platform defaults
+   */
+  private getPlatformSpecificDirectories(): string[] {
+    if (process.platform === 'darwin') {
+      return [
+        '/usr/local/bin',
+        '/opt/homebrew/bin',
+        '/opt/local/bin',
+        '/Applications/Docker.app/Contents/Resources/bin',
+        path.join(os.homedir(), '.docker', 'bin')
+      ]
+    }
+
+    if (process.platform === 'win32') {
+      const directories = new Set<string>()
+      const programFilesRoots = [
+        process.env.ProgramFiles,
+        process.env['ProgramFiles(x86)'],
+        process.env.ProgramW6432
+      ].filter((value): value is string => Boolean(value))
+
+      for (const root of programFilesRoots) {
+        directories.add(path.join(root, 'Docker', 'Docker', 'resources'))
+        directories.add(path.join(root, 'Docker', 'Docker', 'resources', 'bin'))
+      }
+
+      if (process.env.LOCALAPPDATA) {
+        directories.add(
+          path.join(process.env.LOCALAPPDATA, 'Programs', 'Docker', 'Docker', 'resources')
+        )
+        directories.add(
+          path.join(process.env.LOCALAPPDATA, 'Programs', 'Docker', 'Docker', 'resources', 'bin')
+        )
+      }
+
+      return Array.from(directories)
+    }
+
+    return ['/usr/bin', '/usr/local/bin', '/snap/bin', '/bin', '/usr/sbin']
+  }
+
+  /**
+   * Determine if the provided path already looks like a binary path
+   */
+  private looksLikeBinaryPath(candidate: string, binaryNames: string[]): boolean {
+    const lowerCandidate = candidate.toLowerCase()
+    return binaryNames.some((name) => lowerCandidate.endsWith(name.toLowerCase()))
   }
 
   /**
