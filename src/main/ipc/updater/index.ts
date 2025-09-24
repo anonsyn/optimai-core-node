@@ -41,7 +41,7 @@ class UpdaterIpcHandler {
     })
 
     autoUpdater.on('download-progress', (progressInfo) => {
-      logger.info('Downloading update')
+      logger.info('Downloading update', progressInfo)
       state.next({
         status: 'downloading',
         progressInfo
@@ -78,6 +78,7 @@ class UpdaterIpcHandler {
       autoUpdater.downloadUpdate()
     })
     ipcMain.on(UpdaterEvents.QuitAndInstall, () => {
+      logger.info('Quitting and installing update')
       autoUpdater.quitAndInstall()
     })
   }
