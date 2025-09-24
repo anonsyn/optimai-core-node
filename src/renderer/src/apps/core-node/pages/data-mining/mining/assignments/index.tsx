@@ -1,6 +1,7 @@
 import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningAssignmentsQuery } from '@/queries/mining'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { motion } from 'framer-motion'
 import lodash from 'lodash'
 import { useEffect } from 'react'
@@ -11,6 +12,9 @@ export const AssignmentsList = () => {
     platforms: ['google'],
     sort_by: 'updated_at'
   })
+
+  const [animationParent] = useAutoAnimate()
+
   const assignments = data?.assignments || []
 
   // Listen for new assignments and refetch the list
@@ -66,28 +70,28 @@ export const AssignmentsList = () => {
   }
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <motion.div
+      className="relative h-full w-full overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <ScrollArea className="h-full">
         <div className="p-6">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6 flex items-center gap-2"
-          >
+          <div className="mb-6 flex items-center gap-2">
             <Icon icon="Pickaxe" className="size-5 text-white/80" />
             <h2 className="text-24 font-semibold text-white">Mining Assignments</h2>
-          </motion.div>
+          </div>
 
           {/* Assignment Grid */}
-          <div className="grid gap-3 lg:grid-cols-1 xl:grid-cols-2">
+          <div className="grid gap-3 lg:grid-cols-1 xl:grid-cols-2" ref={animationParent}>
             {assignments.map((assignment) => (
               <AssignmentItem key={assignment.id} assignment={assignment} />
             ))}
           </div>
         </div>
       </ScrollArea>
-    </div>
+    </motion.div>
   )
 }

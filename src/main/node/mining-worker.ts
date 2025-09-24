@@ -378,8 +378,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         (a) => a.task?.platform === 'google' || !a.task?.platform
       )
 
-      log.info({ googleAssignments })
-
       log.info(`[mining] Fetched ${googleAssignments.length} Google assignments`)
 
       // Process each assignment

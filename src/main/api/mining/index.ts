@@ -28,7 +28,10 @@ export const miningApi = {
   },
 
   startAssignment(assignmentId: string) {
-    return minerClient.post<StartAssignmentResponse>(`/mining/assignments/${assignmentId}/start`)
+    return minerClient.post<StartAssignmentResponse>(
+      `/mining/assignments/${assignmentId}/start`,
+      {}
+    )
   },
 
   submitAssignment(assignmentId: string, request: SubmitAssignmentRequest) {
