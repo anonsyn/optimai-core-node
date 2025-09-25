@@ -470,7 +470,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } catch (error) {
       const errorMsg = getErrorMessage(error, 'Error fetching assignments')
       log.error('[mining] Error fetching assignments:', errorMsg)
-      this.setStatus(MiningStatus.Error, errorMsg)
       this.emit('error', error instanceof Error ? error : new Error(String(error)))
     } finally {
       this.processing = false
