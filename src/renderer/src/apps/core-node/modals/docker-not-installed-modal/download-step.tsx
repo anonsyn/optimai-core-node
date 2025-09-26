@@ -27,6 +27,8 @@ export function DownloadStep({ onComplete }: DownloadStepProps) {
   useEffect(() => {
     if (!isDownloading) return
 
+    let id: any = null
+
     // Listen for download progress
     const unsubscribe = window.dockerIPC.onDownloadProgress((progress) => {
       setDownloadProgress(progress.percent)
@@ -34,14 +36,19 @@ export function DownloadStep({ onComplete }: DownloadStepProps) {
       if (progress.status === 'completed') {
         setIsCompleted(true)
         setIsDownloading(false)
-        // setTimeout(() => onComplete(), 1500)
+        id = setTimeout(() => onComplete(), 1500)
       } else if (progress.status === 'error') {
         setDownloadError('Download failed. Please try again.')
         setIsDownloading(false)
       }
     })
 
-    return unsubscribe
+    return () => {
+      if (id) {
+        clearTimeout(id)
+      }
+      unsubscribe()
+    }
   }, [isDownloading, onComplete])
 
   const handleDownload = async () => {
