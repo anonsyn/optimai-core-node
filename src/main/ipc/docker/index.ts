@@ -1,6 +1,7 @@
-import { ipcMain, shell } from 'electron'
+import { BrowserWindow, ipcMain, shell } from 'electron'
 import log from 'electron-log/main'
 import { dockerService } from '../../services/docker-service'
+import { downloadService } from '../../services/download-service'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { DockerEvents } from './events'
 import type { ContainerStatus, DockerInfo } from './types'
@@ -125,6 +126,64 @@ class DockerIpcHandler {
 
       await shell.openExternal(url)
       return true
+    })
+
+    // Download Docker installer
+    ipcMain.handle(DockerEvents.DownloadInstaller, async (event): Promise<string | null> => {
+      try {
+        const window = BrowserWindow.fromWebContents(event.sender)
+        if (!window) {
+          log.error('[docker] No window found for download progress')
+          return null
+        }
+
+        const result = await downloadService.downloadDockerInstaller((progress) => {
+          window.webContents.send(DockerEvents.OnDownloadProgress, progress)
+        })
+
+        return result
+      } catch (error) {
+        log.error(
+          'Failed to download Docker installer:',
+          getErrorMessage(error, 'Failed to download Docker installer')
+        )
+        return null
+      }
+    })
+
+    // Open downloaded Docker installer
+    ipcMain.handle(DockerEvents.OpenInstaller, async (): Promise<boolean> => {
+      try {
+        const installerPath = downloadService.getDockerInstallerPath()
+
+        if (!installerPath) {
+          log.error('[docker] No installer found to open')
+          return false
+        }
+
+        await shell.openPath(installerPath)
+        log.info(`[docker] Opened installer: ${installerPath}`)
+        return true
+      } catch (error) {
+        log.error(
+          'Failed to open Docker installer:',
+          getErrorMessage(error, 'Failed to open Docker installer')
+        )
+        return false
+      }
+    })
+
+    // Get Docker installer path
+    ipcMain.handle(DockerEvents.GetInstallerPath, (): string | null => {
+      try {
+        return downloadService.getDockerInstallerPath()
+      } catch (error) {
+        log.error(
+          'Failed to get Docker installer path:',
+          getErrorMessage(error, 'Failed to get Docker installer path')
+        )
+        return null
+      }
     })
   }
 }
