@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 – Docker Installation Improvements
+
+### Enhancements
+
+- Improved Docker installation process with cleaner UI and better user guidance
+
 ## 1.0.0 – Initial Release
 
 ### Highlights
