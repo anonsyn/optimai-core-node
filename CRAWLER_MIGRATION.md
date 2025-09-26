@@ -9,6 +9,7 @@ This document outlines the migration plan to move crawler functionality from the
 ## Current Architecture
 
 ### Overview
+
 ```
 Electron App → IPC → CLI Server → Crawler Service → crawl4ai Docker → Web Content
 ```
@@ -20,6 +21,7 @@ Electron App → IPC → CLI Server → Crawler Service → crawl4ai Docker → 
 **Purpose**: Manages crawl4ai Docker container lifecycle and provides crawling capabilities
 
 **Key Features**:
+
 - Docker container management (pull, start, stop, health checks)
 - Session management for browser tab reuse
 - Performance optimization modes (light mode, text-only)
@@ -27,6 +29,7 @@ Electron App → IPC → CLI Server → Crawler Service → crawl4ai Docker → 
 - Comprehensive error handling
 
 **Main Methods**:
+
 ```python
 - initialize(): Sets up and starts Docker container
 - crawl(url, ...): Full crawling with extensive options
@@ -38,6 +41,7 @@ Electron App → IPC → CLI Server → Crawler Service → crawl4ai Docker → 
 #### 2. Docker Configuration
 
 **Container Details**:
+
 - **Image**: `unclecode/crawl4ai:0.7.4`
 - **Container Name**: `opai_crawl4ai`
 - **Port Mapping**: Host 11235 → Container 11235
@@ -45,6 +49,7 @@ Electron App → IPC → CLI Server → Crawler Service → crawl4ai Docker → 
 - **Auto-restart**: No (managed by service)
 
 **Environment Variables**:
+
 ```bash
 CRAWL4AI_DOCKER_PORT=11235         # Container port
 CRAWL4AI_IMAGE=unclecode/crawl4ai:0.7.4  # Docker image
@@ -54,10 +59,12 @@ CRAWL4AI_CONTAINER_NAME=opai_crawl4ai    # Container name
 #### 3. crawl4ai Docker API
 
 **Endpoints**:
+
 - `GET http://localhost:11235/health` - Health check
 - `POST http://localhost:11235/crawl` - Main crawling endpoint
 
 **Request Payload Structure**:
+
 ```json
 {
   "urls": ["https://example.com"],
@@ -95,35 +102,38 @@ CRAWL4AI_CONTAINER_NAME=opai_crawl4ai    # Container name
 ```
 
 **Response Structure**:
+
 ```json
 {
   "status": "success",
-  "results": [{
-    "url": "https://example.com",
-    "success": true,
-    "html": "<html>...</html>",
-    "markdown": "# Markdown content...",
-    "text": "Plain text content...",
-    "metadata": {
-      "title": "Page Title",
-      "description": "Page description",
-      "keywords": ["keyword1", "keyword2"],
-      "author": "Author name",
-      "favicon": "favicon.ico",
-      "language": "en"
-    },
-    "media": {
-      "images": [{"src": "...", "alt": "..."}],
-      "videos": [],
-      "audios": []
-    },
-    "links": {
-      "internal": [],
-      "external": []
-    },
-    "screenshot": "base64_encoded_screenshot",
-    "extraction_rules": {}
-  }],
+  "results": [
+    {
+      "url": "https://example.com",
+      "success": true,
+      "html": "<html>...</html>",
+      "markdown": "# Markdown content...",
+      "text": "Plain text content...",
+      "metadata": {
+        "title": "Page Title",
+        "description": "Page description",
+        "keywords": ["keyword1", "keyword2"],
+        "author": "Author name",
+        "favicon": "favicon.ico",
+        "language": "en"
+      },
+      "media": {
+        "images": [{ "src": "...", "alt": "..." }],
+        "videos": [],
+        "audios": []
+      },
+      "links": {
+        "internal": [],
+        "external": []
+      },
+      "screenshot": "base64_encoded_screenshot",
+      "extraction_rules": {}
+    }
+  ],
   "error": null
 }
 ```
@@ -131,6 +141,7 @@ CRAWL4AI_CONTAINER_NAME=opai_crawl4ai    # Container name
 #### 4. Current Integration with Mining Service
 
 **Usage in `miner_service.py`**:
+
 ```python
 # Service initialization
 crawler_service = await get_crawler_service()
@@ -154,11 +165,13 @@ for assignment in assignments:
 ## Target Architecture
 
 ### Overview
+
 ```
 Electron App → Direct HTTP → crawl4ai Docker → Web Content
 ```
 
 ### Benefits
+
 1. **Reduced Complexity**: Eliminate CLI intermediary layer
 2. **Better Performance**: Direct HTTP communication
 3. **Easier Debugging**: Fewer moving parts
@@ -174,12 +187,15 @@ Create a new module in Electron to manage Docker container lifecycle.
 **Location**: `src/main/services/docker/`
 
 **Required Functionality**:
+
 1. **Check Docker Availability**
+
    ```typescript
    async function isDockerAvailable(): Promise<boolean>
    ```
 
 2. **Container Management**
+
    ```typescript
    async function isContainerRunning(name: string): Promise<boolean>
    async function pullImage(imageName: string): Promise<void>
@@ -197,6 +213,7 @@ Create a new module in Electron to manage Docker container lifecycle.
 **Location**: `src/main/services/crawler/`
 
 **Core Service Class**:
+
 ```typescript
 interface CrawlerConfig {
   dockerPort: number
@@ -216,12 +233,15 @@ class CrawlerService {
 ```
 
 **Key Features to Implement**:
+
 1. **Session Management**
+
    - Track session IDs for browser tab reuse
    - Map assignment IDs to session IDs
    - Cleanup stale sessions
 
 2. **Performance Modes**
+
    - Light mode (faster, less accurate)
    - Full mode (slower, more complete)
    - Text-only mode (fastest, no media)
@@ -236,6 +256,7 @@ class CrawlerService {
 **Location**: `src/renderer/src/services/crawler/`
 
 **Service Layer**:
+
 ```typescript
 export const crawlerService = {
   async crawl(url: string, options?: CrawlOptions): Promise<CrawlResult> {
@@ -249,6 +270,7 @@ export const crawlerService = {
 ```
 
 **IPC Bridge**:
+
 ```typescript
 // In preload
 crawl: (url: string, options?: CrawlOptions) =>
@@ -302,9 +324,7 @@ async function isDockerAvailable(): Promise<boolean> {
 
 async function isContainerRunning(name: string): Promise<boolean> {
   try {
-    const { stdout } = await execAsync(
-      `docker ps --filter name=${name} --format "{{.Names}}"`
-    )
+    const { stdout } = await execAsync(`docker ps --filter name=${name} --format "{{.Names}}"`)
     return stdout.trim() === name
   } catch {
     return false
@@ -419,6 +439,7 @@ class SessionManager {
 ### Environment Variables
 
 Add to `.env`:
+
 ```env
 # Crawler Configuration
 CRAWLER_DOCKER_PORT=11235
@@ -472,6 +493,7 @@ const lightModeConfig = {
 ### Docker-Related Errors
 
 1. **Docker Not Available**
+
    ```typescript
    class DockerNotAvailableError extends Error {
      constructor() {
@@ -481,6 +503,7 @@ const lightModeConfig = {
    ```
 
 2. **Container Start Failed**
+
    ```typescript
    class ContainerStartError extends Error {
      constructor(reason: string) {
@@ -501,6 +524,7 @@ const lightModeConfig = {
 ### Crawling Errors
 
 1. **Timeout Error**
+
    ```typescript
    class CrawlTimeoutError extends Error {
      constructor(url: string, timeout: number) {
@@ -523,11 +547,13 @@ const lightModeConfig = {
 ### Unit Tests
 
 1. **Docker Management**
+
    - Test container lifecycle methods
    - Mock docker commands
    - Test error scenarios
 
 2. **Crawler Service**
+
    - Test initialization flow
    - Test crawl request building
    - Test response parsing
@@ -541,6 +567,7 @@ const lightModeConfig = {
 ### Integration Tests
 
 1. **End-to-End Crawling**
+
    - Start container
    - Crawl test URLs
    - Verify response structure
@@ -566,12 +593,14 @@ const lightModeConfig = {
 ## Migration Checklist
 
 ### Pre-Migration
+
 - [ ] Document current CLI crawler usage
 - [ ] Identify all crawler touchpoints
 - [ ] Test crawl4ai Docker directly
 - [ ] Verify Docker availability on target machines
 
 ### Implementation
+
 - [ ] Create Docker management module
 - [ ] Implement crawler service
 - [ ] Add IPC handlers
@@ -582,18 +611,21 @@ const lightModeConfig = {
 - [ ] Add logging and monitoring
 
 ### Testing
+
 - [ ] Unit test coverage >80%
 - [ ] Integration tests passing
 - [ ] Manual testing complete
 - [ ] Performance benchmarks met
 
 ### Deployment
+
 - [ ] Update environment variables
 - [ ] Update installation documentation
 - [ ] Create troubleshooting guide
 - [ ] Plan rollback strategy
 
 ### Post-Migration
+
 - [ ] Remove CLI crawler code
 - [ ] Update CLAUDE.md
 - [ ] Monitor for issues
@@ -604,11 +636,13 @@ const lightModeConfig = {
 ### Optimization Strategies
 
 1. **Session Reuse**
+
    - Keep browser tabs alive between crawls
    - Map assignment IDs to sessions
    - Significant performance improvement (2-3x faster)
 
 2. **Mode Selection**
+
    - Light mode for quick extraction
    - Full mode for complete content
    - Text-only for maximum speed
@@ -621,11 +655,13 @@ const lightModeConfig = {
 ### Resource Management
 
 1. **Memory**
+
    - Browser processes consume significant RAM
    - Monitor and limit concurrent sessions
    - Implement session timeout and cleanup
 
 2. **CPU**
+
    - Chrome rendering is CPU-intensive
    - Throttle concurrent crawls on low-end machines
    - Provide user-configurable limits
@@ -638,11 +674,13 @@ const lightModeConfig = {
 ## Security Considerations
 
 1. **Container Isolation**
+
    - Run container with minimal privileges
    - No host network access needed
    - Restrict volume mounts
 
 2. **Input Validation**
+
    - Validate URLs before crawling
    - Sanitize crawler configuration
    - Prevent command injection in Docker commands
@@ -657,12 +695,14 @@ const lightModeConfig = {
 ### Common Issues
 
 1. **Container Won't Start**
+
    - Check Docker daemon status
    - Verify port availability
    - Check disk space for images
    - Review container logs
 
 2. **Crawl Failures**
+
    - Verify target URL accessibility
    - Check network connectivity
    - Review timeout settings
@@ -696,18 +736,21 @@ docker stop opai_crawl4ai && docker rm opai_crawl4ai
 ## Future Enhancements
 
 1. **Advanced Features**
+
    - Custom extraction rules
    - Proxy support
    - Authentication handling
    - Cookie management
 
 2. **Performance**
+
    - Implement caching layer
    - Add request queuing
    - Optimize Docker resource allocation
    - Consider native implementation for simple cases
 
 3. **Monitoring**
+
    - Add metrics collection
    - Implement health dashboards
    - Create alerting system
@@ -799,28 +842,28 @@ interface ExtractionRule {
 
 ### B. Migration Timeline Estimate
 
-| Phase | Duration | Dependencies |
-|-------|----------|--------------|
-| Phase 1: Docker Management | 2-3 days | None |
-| Phase 2: Crawler Service | 3-4 days | Phase 1 |
-| Phase 3: Renderer Integration | 2 days | Phase 2 |
-| Phase 4: Mining Update | 1 day | Phase 3 |
-| Testing & Refinement | 3-4 days | All phases |
-| **Total** | **11-14 days** | |
+| Phase                         | Duration       | Dependencies |
+| ----------------------------- | -------------- | ------------ |
+| Phase 1: Docker Management    | 2-3 days       | None         |
+| Phase 2: Crawler Service      | 3-4 days       | Phase 1      |
+| Phase 3: Renderer Integration | 2 days         | Phase 2      |
+| Phase 4: Mining Update        | 1 day          | Phase 3      |
+| Testing & Refinement          | 3-4 days       | All phases   |
+| **Total**                     | **11-14 days** |              |
 
 ### C. Risk Assessment
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Docker unavailable on user machines | High | Medium | Provide fallback or require Docker |
-| Performance degradation | Medium | Low | Implement optimization strategies |
-| Container management complexity | Medium | Medium | Thorough testing and error handling |
-| Breaking changes in crawl4ai | Low | Low | Pin Docker image version |
-| Network issues with Docker | Medium | Low | Implement retry logic |
+| Risk                                | Impact | Probability | Mitigation                          |
+| ----------------------------------- | ------ | ----------- | ----------------------------------- |
+| Docker unavailable on user machines | High   | Medium      | Provide fallback or require Docker  |
+| Performance degradation             | Medium | Low         | Implement optimization strategies   |
+| Container management complexity     | Medium | Medium      | Thorough testing and error handling |
+| Breaking changes in crawl4ai        | Low    | Low         | Pin Docker image version            |
+| Network issues with Docker          | Medium | Low         | Implement retry logic               |
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: [Current Date]*
-*Author: Claude*
-*Status: Planning Phase*
+_Document Version: 1.0_
+_Last Updated: [Current Date]_
+_Author: Claude_
+_Status: Planning Phase_

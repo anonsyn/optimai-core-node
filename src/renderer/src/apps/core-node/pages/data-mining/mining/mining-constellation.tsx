@@ -175,7 +175,7 @@ const MiningConstellation = ({ status, className }: MiningConstellationProps) =>
               nextBlock.mining = true
             } else {
               // Find any pending block
-              const pending = blocks.filter(b => !b.mined && !b.mining)
+              const pending = blocks.filter((b) => !b.mined && !b.mining)
               if (pending.length > 0) {
                 pending[0].mining = true
               }
@@ -222,7 +222,14 @@ const MiningConstellation = ({ status, className }: MiningConstellationProps) =>
           ctx.lineWidth = size * 0.3
           ctx.lineCap = 'round'
           ctx.beginPath()
-          ctx.arc(x, y, size * 0.7, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * block.progress), false)
+          ctx.arc(
+            x,
+            y,
+            size * 0.7,
+            -Math.PI / 2,
+            -Math.PI / 2 + Math.PI * 2 * block.progress,
+            false
+          )
           ctx.stroke()
 
           // Center glow

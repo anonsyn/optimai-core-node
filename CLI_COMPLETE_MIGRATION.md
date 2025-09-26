@@ -17,6 +17,7 @@ This document provides a comprehensive migration plan for moving ALL functionali
 ## Current Architecture Overview
 
 ### System Architecture
+
 ```
 ┌─────────────────────────────────────────────┐
 │          Electron Desktop App               │
@@ -66,6 +67,7 @@ This document provides a comprehensive migration plan for moving ALL functionali
 ```
 
 ### Target Architecture
+
 ```
 ┌──────────────────────────────────────────────┐
 │           Electron Desktop App                │
@@ -149,6 +151,7 @@ gantt
 ### 1. Data Storage Layer
 
 #### Current Implementation (Python)
+
 ```python
 # node_cli/store/base.py
 class StoreBase:
@@ -159,6 +162,7 @@ class StoreBase:
 ```
 
 #### Target Implementation (TypeScript/Electron)
+
 ```typescript
 // src/main/services/storage/encrypted-store.ts
 interface EncryptedStore {
@@ -185,14 +189,13 @@ class SecureStorage implements EncryptedStore {
 
   private getDerivedKey(): Buffer {
     // Use Electron safeStorage API for key management
-    return safeStorage.decryptString(
-      fs.readFileSync(this.keyPath)
-    )
+    return safeStorage.decryptString(fs.readFileSync(this.keyPath))
   }
 }
 ```
 
 **Migration Steps:**
+
 1. Implement encryption using Node.js crypto module
 2. Use Electron's safeStorage API for key management
 3. Migrate data location from ~/.opi_node_data/ to Electron userData
@@ -202,6 +205,7 @@ class SecureStorage implements EncryptedStore {
 ### 2. Authentication System
 
 #### Current Implementation (Python)
+
 ```python
 # PKCE OAuth2 Flow
 1. Generate code_verifier and code_challenge
@@ -213,6 +217,7 @@ class SecureStorage implements EncryptedStore {
 ```
 
 #### Target Implementation (TypeScript/Electron)
+
 ```typescript
 // src/main/services/auth/auth-service.ts
 class AuthenticationService {
@@ -256,6 +261,7 @@ class AuthenticationService {
 ```
 
 **Migration Steps:**
+
 1. Implement PKCE generator using crypto.randomBytes
 2. Create token manager with secure storage
 3. Add auth interceptors to axios clients
@@ -265,6 +271,7 @@ class AuthenticationService {
 ### 3. Node Management
 
 #### Current Implementation (Python)
+
 ```python
 # Node lifecycle management
 - Start node with authentication check
@@ -275,6 +282,7 @@ class AuthenticationService {
 ```
 
 #### Target Implementation (TypeScript/Electron)
+
 ```typescript
 // src/main/services/node/node-manager.ts
 class NodeManager {
@@ -319,6 +327,7 @@ class NodeManager {
 ```
 
 **Migration Steps:**
+
 1. Create service registry pattern
 2. Implement lock file using proper-lockfile
 3. Add graceful shutdown handlers
@@ -328,6 +337,7 @@ class NodeManager {
 ### 4. Uptime Tracker
 
 #### Current Implementation (Python)
+
 ```python
 # Cycle-based uptime tracking
 - 10-second increment cycles
@@ -338,6 +348,7 @@ class NodeManager {
 ```
 
 #### Target Implementation (TypeScript/Electron)
+
 ```typescript
 // src/main/services/uptime/uptime-tracker.ts
 class UptimeTracker extends EventEmitter {
@@ -347,8 +358,7 @@ class UptimeTracker extends EventEmitter {
 
   async start(): Promise<void> {
     // Load or create cycle
-    this.currentCycle = await this.store.getCurrentCycle()
-      || await this.createNewCycle()
+    this.currentCycle = (await this.store.getCurrentCycle()) || (await this.createNewCycle())
 
     // Start increment timer
     this.cycleTimer = setInterval(() => {
@@ -403,6 +413,7 @@ class UptimeTracker extends EventEmitter {
 ```
 
 **Migration Steps:**
+
 1. Implement cycle management with timers
 2. Create encoder for data transmission
 3. Add persistence with encrypted store
@@ -412,6 +423,7 @@ class UptimeTracker extends EventEmitter {
 ### 5. Miner Service
 
 #### Current Implementation (Python)
+
 ```python
 # Mining with SSE and crawling
 - SSE listener for real-time assignments
@@ -423,6 +435,7 @@ class UptimeTracker extends EventEmitter {
 ```
 
 #### Target Implementation (TypeScript/Electron)
+
 ```typescript
 // src/main/services/miner/miner-service.ts
 class MinerService extends EventEmitter {
@@ -448,14 +461,11 @@ class MinerService extends EventEmitter {
   private async connectSSE(): Promise<void> {
     const token = await this.authService.getAccessToken()
 
-    this.sseClient = new EventSource(
-      `${MINER_BASE_URL}/mining/sse/assignments`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+    this.sseClient = new EventSource(`${MINER_BASE_URL}/mining/sse/assignments`, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
 
     this.sseClient.onmessage = (event) => {
       const assignment = JSON.parse(event.data)
@@ -498,7 +508,6 @@ class MinerService extends EventEmitter {
       })
 
       this.emit('assignment-completed', assignment.id)
-
     } catch (error) {
       this.emit('assignment-failed', assignment.id, error)
     } finally {
@@ -519,6 +528,7 @@ class MinerService extends EventEmitter {
 ```
 
 **Migration Steps:**
+
 1. Implement EventSource for SSE
 2. Create assignment queue management
 3. Integrate with crawler service
@@ -531,6 +541,7 @@ class MinerService extends EventEmitter {
 > See [CRAWLER_MIGRATION.md](./CRAWLER_MIGRATION.md) for detailed crawler migration plan
 
 **Key Points:**
+
 - Direct Docker container management
 - HTTP API communication with crawl4ai
 - Session management for performance
@@ -539,6 +550,7 @@ class MinerService extends EventEmitter {
 ### 7. Real-time Updates
 
 #### Current Implementation (Python)
+
 ```python
 # WebSocket and SSE
 - WebSocket server for UI updates
@@ -547,6 +559,7 @@ class MinerService extends EventEmitter {
 ```
 
 #### Target Implementation (TypeScript/Electron)
+
 ```typescript
 // src/main/services/realtime/realtime-manager.ts
 class RealtimeManager {
@@ -582,6 +595,7 @@ class RealtimeManager {
 ```
 
 **Migration Steps:**
+
 1. Implement WebSocket client
 2. Create SSE client manager
 3. Setup IPC event system
@@ -591,19 +605,12 @@ class RealtimeManager {
 ### 8. Background Services
 
 #### Service Orchestration
+
 ```typescript
 // src/main/services/service-orchestrator.ts
 class ServiceOrchestrator {
   private services: Map<string, IService> = new Map()
-  private startupOrder = [
-    'storage',
-    'auth',
-    'docker',
-    'crawler',
-    'uptime',
-    'miner',
-    'realtime'
-  ]
+  private startupOrder = ['storage', 'auth', 'docker', 'crawler', 'uptime', 'miner', 'realtime']
 
   async initialize(): Promise<void> {
     // Register all services
@@ -627,6 +634,7 @@ class ServiceOrchestrator {
 ### 9. API Clients
 
 #### HTTP Client Configuration
+
 ```typescript
 // src/main/api/clients/
 export const clients = {
@@ -650,7 +658,7 @@ function createAuthClient(baseURL: string) {
 
   // Add response interceptor for token refresh
   client.interceptors.response.use(
-    response => response,
+    (response) => response,
     async (error) => {
       if (error.response?.status === 401) {
         await authService.refreshToken()
@@ -667,6 +675,7 @@ function createAuthClient(baseURL: string) {
 ### 10. System Utilities
 
 #### Docker Management
+
 ```typescript
 // src/main/utils/docker.ts
 export class DockerManager {
@@ -680,17 +689,18 @@ export class DockerManager {
   }
 
   async isContainerRunning(name: string): Promise<boolean> {
-    const { stdout } = await exec(
-      `docker ps --filter name=${name} --format "{{.Names}}"`
-    )
+    const { stdout } = await exec(`docker ps --filter name=${name} --format "{{.Names}}"`)
     return stdout.trim() === name
   }
 
   async startContainer(config: ContainerConfig): Promise<void> {
     const args = [
-      'run', '-d',
-      '--name', config.name,
-      '-p', `${config.port}:${config.port}`,
+      'run',
+      '-d',
+      '--name',
+      config.name,
+      '-p',
+      `${config.port}:${config.port}`,
       '--shm-size=1g',
       config.image
     ]
@@ -701,6 +711,7 @@ export class DockerManager {
 ```
 
 #### Device Information
+
 ```typescript
 // src/main/utils/device-info.ts
 export class DeviceInfo {
@@ -718,10 +729,7 @@ export class DeviceInfo {
 
   static async generateDeviceId(): Promise<string> {
     const machineId = await getMachineId()
-    return crypto
-      .createHash('sha256')
-      .update(machineId)
-      .digest('hex')
+    return crypto.createHash('sha256').update(machineId).digest('hex')
   }
 }
 ```
@@ -729,36 +737,42 @@ export class DeviceInfo {
 ## Implementation Roadmap
 
 ### Week 1-2: Foundation
+
 - [ ] Setup project structure
 - [ ] Implement encrypted storage
 - [ ] Create authentication service
 - [ ] Setup API clients
 
 ### Week 3-4: Core Services
+
 - [ ] Implement node manager
 - [ ] Create uptime tracker
 - [ ] Setup IPC communication
 - [ ] Add token management
 
 ### Week 5-6: Mining & Crawling
+
 - [ ] Implement miner service
 - [ ] Create crawler service
 - [ ] Setup Docker management
 - [ ] Add SSE support
 
 ### Week 7-8: Real-time & Polish
+
 - [ ] Implement WebSocket client
 - [ ] Create service orchestrator
 - [ ] Add system tray integration
 - [ ] Implement auto-updater
 
 ### Week 9-10: Testing & Migration
+
 - [ ] Unit test coverage
 - [ ] Integration testing
 - [ ] Data migration tools
 - [ ] Performance optimization
 
 ### Week 11-12: Deployment
+
 - [ ] Beta testing
 - [ ] Documentation
 - [ ] CLI deprecation plan
@@ -768,26 +782,27 @@ export class DeviceInfo {
 
 ### Technical Risks
 
-| Risk | Impact | Probability | Mitigation |
-|------|--------|-------------|------------|
-| Docker availability | High | Medium | Provide installation guide, detect and prompt |
-| Data migration failures | High | Low | Create backup/restore tools, validation |
-| SSE connection issues | Medium | Medium | Implement fallback polling |
-| Token refresh race conditions | Medium | Low | Use mutex locks, queue requests |
-| Platform-specific issues | Medium | Medium | Test on Windows/Mac/Linux |
+| Risk                          | Impact | Probability | Mitigation                                    |
+| ----------------------------- | ------ | ----------- | --------------------------------------------- |
+| Docker availability           | High   | Medium      | Provide installation guide, detect and prompt |
+| Data migration failures       | High   | Low         | Create backup/restore tools, validation       |
+| SSE connection issues         | Medium | Medium      | Implement fallback polling                    |
+| Token refresh race conditions | Medium | Low         | Use mutex locks, queue requests               |
+| Platform-specific issues      | Medium | Medium      | Test on Windows/Mac/Linux                     |
 
 ### Migration Risks
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| User disruption | High | Gradual rollout, feature flags |
-| Data loss | High | Automated backups, migration validation |
-| Feature gaps | Medium | Comprehensive testing, beta program |
-| Performance regression | Medium | Benchmarking, optimization |
+| Risk                   | Impact | Mitigation                              |
+| ---------------------- | ------ | --------------------------------------- |
+| User disruption        | High   | Gradual rollout, feature flags          |
+| Data loss              | High   | Automated backups, migration validation |
+| Feature gaps           | Medium | Comprehensive testing, beta program     |
+| Performance regression | Medium | Benchmarking, optimization              |
 
 ## Testing Strategy
 
 ### Unit Testing
+
 ```typescript
 // Example test structure
 describe('AuthenticationService', () => {
@@ -806,6 +821,7 @@ describe('AuthenticationService', () => {
 ```
 
 ### Integration Testing
+
 - End-to-end authentication flow
 - Mining assignment processing
 - Uptime cycle completion
@@ -813,6 +829,7 @@ describe('AuthenticationService', () => {
 - Data persistence and encryption
 
 ### Performance Testing
+
 - Memory usage monitoring
 - CPU utilization
 - Network request optimization
@@ -822,18 +839,21 @@ describe('AuthenticationService', () => {
 ## Security Considerations
 
 ### Data Protection
+
 1. **Encryption at Rest**: All sensitive data encrypted using AES-256
 2. **Key Management**: Use Electron safeStorage API
 3. **Token Security**: Never expose tokens to renderer process
 4. **IPC Security**: Validate all IPC messages
 
 ### Network Security
+
 1. **HTTPS Only**: Enforce TLS for all API calls
 2. **Certificate Pinning**: Optional for high security
 3. **Request Signing**: HMAC for sensitive operations
 4. **Rate Limiting**: Prevent abuse
 
 ### Process Security
+
 1. **Context Isolation**: Enable in all renderer processes
 2. **Node Integration**: Disable in renderers
 3. **CSP Headers**: Strict content security policy
@@ -842,6 +862,7 @@ describe('AuthenticationService', () => {
 ## Monitoring & Logging
 
 ### Logging Strategy
+
 ```typescript
 // src/main/utils/logger.ts
 import winston from 'winston'
@@ -866,6 +887,7 @@ logger.error('Authentication failed', { error: err.message })
 ```
 
 ### Metrics Collection
+
 - Service uptime
 - API response times
 - Error rates
@@ -875,12 +897,14 @@ logger.error('Authentication failed', { error: err.message })
 ## Documentation Requirements
 
 ### User Documentation
+
 1. **Migration Guide**: Step-by-step for existing users
 2. **Installation Guide**: Docker setup, prerequisites
 3. **Troubleshooting**: Common issues and solutions
 4. **FAQ**: Frequently asked questions
 
 ### Developer Documentation
+
 1. **Architecture Overview**: System design and patterns
 2. **API Reference**: IPC and HTTP endpoints
 3. **Service Interfaces**: Public APIs for each service
@@ -889,6 +913,7 @@ logger.error('Authentication failed', { error: err.message })
 ## Success Criteria
 
 ### Functional Requirements
+
 - [ ] All CLI features implemented
 - [ ] Data migration successful
 - [ ] Performance improved or maintained
@@ -896,6 +921,7 @@ logger.error('Authentication failed', { error: err.message })
 - [ ] Cross-platform compatibility
 
 ### Non-Functional Requirements
+
 - [ ] <5 second startup time
 - [ ] <200MB memory usage idle
 - [ ] <5% CPU usage idle
@@ -905,6 +931,7 @@ logger.error('Authentication failed', { error: err.message })
 ## Rollback Strategy
 
 ### Phases
+
 1. **Feature Flags**: Toggle between CLI and native
 2. **Dual Mode**: Run both implementations
 3. **Data Sync**: Keep stores synchronized
@@ -912,6 +939,7 @@ logger.error('Authentication failed', { error: err.message })
 5. **Emergency Rollback**: Restore CLI if issues
 
 ### Rollback Procedure
+
 ```bash
 # 1. Stop native services
 electron.services.stopAll()
@@ -932,6 +960,7 @@ electron.notify('Reverted to CLI mode')
 ## Appendix
 
 ### A. File Structure
+
 ```
 src/
 ├── main/
@@ -960,6 +989,7 @@ src/
 ```
 
 ### B. Environment Variables
+
 ```env
 # API Configuration
 API_URL=https://api.optimai.network
@@ -986,6 +1016,7 @@ LOG_MAX_FILES=5
 ```
 
 ### C. Dependencies
+
 ```json
 {
   "dependencies": {
@@ -1007,8 +1038,8 @@ LOG_MAX_FILES=5
 
 ---
 
-*Document Version: 1.0*
-*Last Updated: [Current Date]*
-*Status: Planning Phase*
-*Total Estimated Timeline: 12 weeks*
-*Estimated Team Size: 2-3 developers*
+_Document Version: 1.0_
+_Last Updated: [Current Date]_
+_Status: Planning Phase_
+_Total Estimated Timeline: 12 weeks_
+_Estimated Team Size: 2-3 developers_

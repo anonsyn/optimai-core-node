@@ -5,6 +5,7 @@
 Based on analysis of the server code at `/Users/tiendungnguyen/CodeSpace/opai/api-server-onchain`, here's how SSE events work:
 
 ### 1. SSE Endpoint
+
 - **URL**: `/workers/events`
 - **Headers Required**:
   - `Authorization: Bearer <token>`
@@ -18,30 +19,37 @@ Based on analysis of the server code at `/Users/tiendungnguyen/CodeSpace/opai/ap
 The server emits the following SSE events:
 
 #### a) **"assignment" Event**
+
 Emitted when new assignments are available for the worker.
 
 **Event Format**:
+
 ```
 event: assignment
 data: {"count": <number>, "search_query_id": "<string>"}
 ```
 
 **When Triggered**:
+
 1. During heartbeat when tasks are auto-assigned (line 255 in workers/index.ts)
 2. When a new search query creates tasks (mining/query.ts)
 3. When stale tasks are reassigned to online workers (mining-tasks.ts)
 4. Manual reassignment by admin
 
 #### b) **Keep-Alive**
+
 Server sends periodic keep-alive messages to maintain connection:
+
 ```
 :keep-alive
 ```
+
 Sent every `SSE_HEARTBEAT_INTERVAL_MS` (defined in constants/scheduling)
 
 ### 3. Assignment Auto-Assignment Flow
 
 When a worker sends a heartbeat (`POST /workers/heartbeat`):
+
 1. Server updates worker's last_seen_at timestamp
 2. Attempts to auto-assign up to 8 pending tasks (`ASSIGN_ON_HEARTBEAT_LIMIT`)
 3. Respects worker platform preferences (google/twitter)
@@ -51,6 +59,7 @@ When a worker sends a heartbeat (`POST /workers/heartbeat`):
 ### 4. Worker Preferences
 
 Workers can set platform preferences:
+
 - **GET /workers/preferences** - Get current preferences
 - **PUT /workers/preferences** - Set platforms: ['google', 'twitter']
 
@@ -59,6 +68,7 @@ Server respects these when assigning tasks.
 ### 5. Test Script Verification
 
 The test script (`test-mining-flow.ts`) shows proper SSE usage:
+
 1. Opens SSE connection with auth token
 2. Listens for "assignment" events
 3. Parses JSON data from events
@@ -67,12 +77,15 @@ The test script (`test-mining-flow.ts`) shows proper SSE usage:
 ## Client-Side Implementation Issues Found
 
 ### Current Implementation (MiningWorkerV2)
+
 ✅ **Correct**:
+
 - Connects to SSE endpoint with proper headers
 - Handles reconnection with backoff
 - Parses SSE events
 
 ❌ **Issues**:
+
 1. Not parsing the event data JSON correctly
 2. Missing proper event type detection
 
@@ -132,9 +145,11 @@ private handleSseEvent(raw: string) {
 To verify SSE is working:
 
 1. **Check Connection**:
+
    - Look for log: `[mining] Connected to miner SSE stream`
 
 2. **Monitor Events**:
+
    - Add logging in `handleSseEvent` to see raw events
    - Should see periodic `:keep-alive` messages
    - Should see `event: assignment` when tasks available
@@ -152,6 +167,7 @@ To verify SSE is working:
 5. **Stop**: Close SSE, stop heartbeats
 
 This architecture ensures:
+
 - Real-time task distribution
 - Automatic task assignment
 - Platform preference respect

@@ -21,11 +21,13 @@ Before running the application, you need to set up environment variables for bot
 #### 1. Application Environment Variables
 
 Create a `.env` file by copying from the example:
+
 ```bash
 $ cp .env.example .env
 ```
 
 Edit the `.env` file and configure the following variables:
+
 - `VITE_API_URL`: API server URL (default: https://api.optimai.network)
 - `VITE_DASHBOARD_URL`: Dashboard URL (default: https://node.optimai.network)
 - `VITE_LP_URL`: Landing page URL (default: https://optimai.network)
@@ -41,15 +43,18 @@ Edit the `.env` file and configure the following variables:
 #### 2. Build Environment Variables (for publishing only)
 
 Create the electron-builder environment file:
+
 ```bash
 $ cp electron-builder.env.example electron-builder.env
 ```
 
 Edit the `electron-builder.env` file and update the following variables:
+
 - `AWS_ACCESS_KEY_ID`: Your AWS access key ID (required for app signing and distribution)
 - `AWS_SECRET_ACCESS_KEY`: Your AWS secret access key (required for app signing and distribution)
 
-**Note:** 
+**Note:**
+
 - The `.env` file contains application configuration and should be kept secure
 - The `electron-builder.env` file is only used for publishing and contains AWS credentials for code signing and app distribution
 - Both files should never be committed to version control
