@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import log from 'electron-log/main'
 
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
+import { getFullDeviceInfo } from '../../utils/device-info'
 import { getErrorMessage } from '../../utils/get-error-message'
 import windowManager from '../../window/manager'
 import { NodeEvents } from './events'
@@ -73,6 +74,10 @@ class NodeIpcHandler {
 
     ipcMain.handle(NodeEvents.GetMiningStatus, async () => {
       return nodeRuntime.getMiningStatus()
+    })
+
+    ipcMain.handle(NodeEvents.GetDeviceInfo, async () => {
+      return getFullDeviceInfo()
     })
 
     ipcMain.handle(NodeEvents.CompleteMiningAssignment, async () => {
