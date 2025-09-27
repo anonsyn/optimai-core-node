@@ -1,3 +1,4 @@
+import AnimatedNumber from '@/components/ui/animated-number'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -141,14 +142,15 @@ export function DownloadStep({ onComplete }: DownloadStepProps) {
                 <div className="rounded-xl bg-white/5 p-4">
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-14 font-medium text-white">Downloading...</span>
-                    <motion.span
-                      key={downloadProgress}
-                      initial={{ scale: 0.8 }}
-                      animate={{ scale: 1 }}
-                      className="text-16 text-primary font-bold"
-                    >
-                      {downloadProgress}%
-                    </motion.span>
+                    <span className="text-14 font-bold text-white">
+                      <AnimatedNumber
+                        value={downloadProgress / 100}
+                        format={{
+                          style: 'percent',
+                          maximumFractionDigits: 0
+                        }}
+                      />
+                    </span>
                   </div>
 
                   {/* Progress Bar */}
@@ -158,19 +160,6 @@ export function DownloadStep({ onComplete }: DownloadStepProps) {
                       initial={{ width: 0 }}
                       animate={{ width: `${downloadProgress}%` }}
                       transition={{ duration: 0.3, ease: 'easeOut' }}
-                    />
-                    <motion.div
-                      className="absolute inset-y-0 rounded-full bg-white/20"
-                      animate={{
-                        x: [`-100%`, `${downloadProgress}%`],
-                        opacity: [0.5, 0]
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        ease: 'linear'
-                      }}
-                      style={{ width: '20%' }}
                     />
                   </div>
 

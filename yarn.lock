@@ -921,13 +921,13 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@number-flow/react@^0.5.9":
-  version "0.5.9"
-  resolved "https://registry.npmjs.org/@number-flow/react/-/react-0.5.9.tgz"
-  integrity sha512-cletUjLUIV6NoNg36z4CR4khIff3fb4RWzuNx8TOZVw34pUpZlgWpnDpJb4UG8B2QyYAFbptVunW0RiqoHVCDA==
+"@number-flow/react@^0.5.10":
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/@number-flow/react/-/react-0.5.10.tgz#7468384c0aaf03148986e4948d534ac832fe42e9"
+  integrity sha512-a8Wh5eNITn7Km4xbddAH7QH8eNmnduR6k34ER1hkHSGO4H2yU1DDnuAWLQM99vciGInFODemSc0tdxrXkJEpbA==
   dependencies:
     esm-env "^1.1.4"
-    number-flow "0.5.7"
+    number-flow "0.5.8"
 
 "@parcel/watcher-android-arm64@2.5.1":
   version "2.5.1"
@@ -5350,10 +5350,10 @@ npmlog@^6.0.0:
     gauge "^4.0.3"
     set-blocking "^2.0.0"
 
-number-flow@0.5.7:
-  version "0.5.7"
-  resolved "https://registry.npmjs.org/number-flow/-/number-flow-0.5.7.tgz"
-  integrity sha512-P83Y9rBgN3Xpz5677YDNtuQHZpIldw6WXeWRg0+edrfFthhV7QqRdABas5gtu07QPLvbA8XhfO69rIvbKRzYIg==
+number-flow@0.5.8:
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/number-flow/-/number-flow-0.5.8.tgz#39bbf5fbce414513f1add06d717c27a299f1e433"
+  integrity sha512-FPr1DumWyGi5Nucoug14bC6xEz70A1TnhgSHhKyfqjgji2SOTz+iLJxKtv37N5JyJbteGYCm6NQ9p1O4KZ7iiA==
   dependencies:
     esm-env "^1.1.4"
 
