@@ -1,9 +1,7 @@
 import authSlice from '@/store/slices/auth'
-import headerSlice from '@/store/slices/header'
 import modalSlice from '@/store/slices/modals'
 import onlineSlice from '@/store/slices/online'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import checkInSlice from './slices/checkin'
 import nodeSlice from './slices/node'
 
 // const persistConfig = {
@@ -15,9 +13,7 @@ import nodeSlice from './slices/node'
 const rootReducer = combineReducers({
   [authSlice.name]: authSlice.reducer,
   [modalSlice.name]: modalSlice.reducer,
-  [headerSlice.name]: headerSlice.reducer,
   [onlineSlice.name]: onlineSlice.reducer,
-  [checkInSlice.name]: checkInSlice.reducer,
   [nodeSlice.name]: nodeSlice.reducer
 })
 
