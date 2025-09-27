@@ -1,13 +1,10 @@
 import Token from '@/components/branding/token'
 import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningStatsQuery } from '@/queries/mining'
 import { formatNumber } from '@/utils/number'
 import { filesize } from 'filesize'
 import { motion } from 'framer-motion'
-import { DataDistributionChart } from './data-distribution-chart'
-import { LLMList } from './llm-list'
 import { StatsCard } from './stats-card'
 
 export const LeftPanel = () => {
@@ -35,10 +32,6 @@ export const LeftPanel = () => {
       <ScrollArea className="h-full w-full">
         <div className="p-6 pb-8">
           <div className="mb-8">
-            <div className="mb-2 flex items-center gap-2">
-              <Icon icon="Pickaxe" className="size-4 text-white/50" />
-              <span className="text-12 font-medium text-white/50">Mining Hub</span>
-            </div>
             <h1 className="text-28 font-bold text-white">Mining Statistics</h1>
             <p className="text-13 mt-2 leading-relaxed text-white/60">
               Track your mining performance, rewards, and data contribution across the OptimAI
@@ -64,26 +57,11 @@ export const LeftPanel = () => {
               delay={0.1}
             />
 
-            {/* Weekly Rank - Full Width */}
-            <StatsCard
-              title="Weekly Rank"
-              value={`#${stats?.weekly_rank.current || 0}`}
-              delay={0.2}
-            />
-
             {/* Tasks and Storage */}
             <div className="grid grid-cols-2 gap-3">
-              <StatsCard title="Tasks" value={stats?.data_points || 0} unit="tasks" delay={0.3} />
-              <StatsCard title="Data Storage" value={storageValue} unit={storageUnit} delay={0.4} />
+              <StatsCard title="Tasks" value={stats?.data_points || 0} unit="tasks" delay={0.2} />
+              <StatsCard title="Data Storage" value={storageValue} unit={storageUnit} delay={0.3} />
             </div>
-
-            {/* Data Distribution */}
-            <DataDistributionChart
-              data={stats?.data_distribution || { video: 0, text: 0, image: 0, audio: 0 }}
-            />
-
-            {/* Supported LLMs */}
-            <LLMList />
           </div>
         </div>
       </ScrollArea>
