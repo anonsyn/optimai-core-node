@@ -3,11 +3,13 @@ import EventEmitter from 'eventemitter3'
 import lodash from 'lodash'
 import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'
+import { MiningAssignmentFailureReason } from '../api/mining/type'
 import type { SubmitAssignmentRequest } from '../api/mining/type'
 import { crawl4AiService } from '../services/crawl4ai-service'
 import { crawlerService } from '../services/crawler-service'
 import { dockerService } from '../services/docker-service'
-import { tokenStore } from '../storage'
+import { deviceStore, tokenStore, userStore } from '../storage'
+import { encode } from '../utils/encoder'
 import { getErrorMessage } from '../utils/get-error-message'
 import { MiningStatus, type MiningAssignment, type MiningWorkerStatus } from './types'
 
@@ -196,15 +198,38 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
   private startHeartbeat() {
     const sendHeartbeat = async () => {
+      const user = userStore.getUser()
+      const deviceId = deviceStore.getDeviceId()
+
+      if (!user || !deviceId) {
+        log.warn('[mining] Skipping heartbeat - missing user or device ID')
+        return
+      }
+
       const agentInfo = {
         client: 'desktop-core-node',
         ts: Date.now(),
         docker_available: this.dockerAvailable
       }
 
+      const payload = {
+        user_id: user.id,
+        device_id: deviceId,
+        agent_info: agentInfo
+      }
+
+      const encodedPayload = encode(JSON.stringify(payload))
+
       try {
-        await miningApi.sendHeartbeat(agentInfo)
+        const response = await miningApi.sendHeartbeat({ data: encodedPayload })
         log.debug('[mining] Heartbeat sent')
+
+        // Handle assignment count in response
+        if (response.data?.assigned && response.data.assigned > 0) {
+          log.info(`[mining] Heartbeat assigned ${response.data.assigned} new tasks`)
+          // Trigger assignment processing
+          void this.processAssignments()
+        }
       } catch (error) {
         log.error('[mining] Heartbeat failed:', getErrorMessage(error, 'Heartbeat failed'))
         this.emit('error', error instanceof Error ? error : new Error(String(error)))
@@ -543,10 +568,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       log.info(`[mining] ✓ Assignment ${assignmentId} submitted successfully`)
       this.emit('assignmentCompleted', assignmentId)
     } catch (error) {
-      log.error(
-        `[mining] Failed to process assignment ${assignmentId}:`,
-        getErrorMessage(error, `Failed to process assignment ${assignmentId}`)
-      )
+      const errorMsg = getErrorMessage(error, `Failed to process assignment ${assignmentId}`)
+      log.error(`[mining] Failed to process assignment ${assignmentId}:`, errorMsg)
+
       this.emit(
         'assignmentFailed',
         assignmentId,
@@ -557,6 +581,23 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       if ((error as any)?.response?.status === 409) {
         log.info(`[mining] Assignment ${assignmentId} already completed`)
         this.emit('assignmentCompleted', assignmentId)
+      } else {
+        // Determine abandon reason based on error
+        const reason = this.getAbandonReason(errorMsg)
+
+        // Abandon the assignment
+        try {
+          await miningApi.abandonAssignment(assignmentId, {
+            reason,
+            details: errorMsg.substring(0, 200)
+          })
+          log.info(`[mining] Assignment ${assignmentId} abandoned with reason: ${reason}`)
+        } catch (abandonError) {
+          log.error(
+            `[mining] Failed to abandon assignment ${assignmentId}:`,
+            getErrorMessage(abandonError, 'Failed to abandon assignment')
+          )
+        }
       }
     } finally {
       // Remove from processing set
@@ -579,5 +620,47 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     const { default: PQueueCtor } = await import('p-queue')
     this.assignmentQueue = new PQueueCtor({ concurrency: 1 })
     return this.assignmentQueue
+  }
+
+  private getAbandonReason(errorMsg: string): MiningAssignmentFailureReason {
+    const msg = errorMsg.toLowerCase()
+
+    // Check for specific error patterns
+    if (
+      msg.includes('404') ||
+      msg.includes('not found') ||
+      msg.includes('no url') ||
+      msg.includes('invalid url')
+    ) {
+      return MiningAssignmentFailureReason.LINK_INVALID
+    }
+
+    if (
+      msg.includes('403') ||
+      msg.includes('forbidden') ||
+      msg.includes('blocked') ||
+      msg.includes('access denied')
+    ) {
+      return MiningAssignmentFailureReason.SITE_BLOCKED
+    }
+
+    if (
+      msg.includes('500') ||
+      msg.includes('502') ||
+      msg.includes('503') ||
+      msg.includes('504') ||
+      msg.includes('timeout') ||
+      msg.includes('timed out') ||
+      msg.includes('unreachable')
+    ) {
+      return MiningAssignmentFailureReason.SITE_DOWN
+    }
+
+    if (msg.includes('removed') || msg.includes('deleted') || msg.includes('no content')) {
+      return MiningAssignmentFailureReason.CONTENT_REMOVED
+    }
+
+    // Default to site_blocked for other errors
+    return MiningAssignmentFailureReason.SITE_BLOCKED
   }
 }

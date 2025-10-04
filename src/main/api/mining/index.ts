@@ -1,4 +1,4 @@
-import { minerClient } from '../../libs/axios'
+import { apiClient, minerClient } from '../../libs/axios'
 import type {
   MiningAssignment,
   MiningAssignmentsResponse,
@@ -6,6 +6,8 @@ import type {
   WorkerPreferences
 } from '../../node/types'
 import type {
+  AbandonAssignmentRequest,
+  AbandonAssignmentResponse,
   GetMiningAssignmentsParams,
   StartAssignmentResponse,
   SubmitAssignmentRequest,
@@ -14,7 +16,7 @@ import type {
 
 export const miningApi = {
   getStats() {
-    return minerClient.get<MiningStatsResponse>('/mining/stats')
+    return apiClient.get<MiningStatsResponse>('/mining/stats')
   },
 
   getAssignments(params?: GetMiningAssignmentsParams) {
@@ -41,6 +43,13 @@ export const miningApi = {
     )
   },
 
+  abandonAssignment(assignmentId: string, request: AbandonAssignmentRequest) {
+    return minerClient.post<AbandonAssignmentResponse>(
+      `/mining/assignments/${assignmentId}/abandon`,
+      request
+    )
+  },
+
   getWorkerPreferences() {
     return minerClient.get<WorkerPreferences>('/workers/preferences')
   },
@@ -55,10 +64,8 @@ export const miningApi = {
     })
   },
 
-  sendHeartbeat(agentInfo: Record<string, unknown>) {
-    return minerClient.post('/workers/heartbeat', {
-      agent_info: agentInfo
-    })
+  sendHeartbeat(request: { data: string }) {
+    return minerClient.post('/workers/heartbeat', request)
   },
 
   getEventsUrl(): string | null {
