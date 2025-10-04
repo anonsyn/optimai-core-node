@@ -1,4 +1,4 @@
-import { minerClient } from '@/libs/axios'
+import { apiClient, minerClient } from '@/libs/axios'
 import type {
   MiningAssignment,
   MiningAssignmentsResponse,
@@ -9,7 +9,7 @@ import type { GetMiningAssignmentsParams } from './type'
 
 export const miningApi = {
   getStats() {
-    return minerClient.get<MiningStatsResponse>('/mining/stats')
+    return apiClient.get<MiningStatsResponse>('/mining/stats')
   },
   getAssignments(params?: GetMiningAssignmentsParams) {
     return minerClient.get<MiningAssignmentsResponse>('/mining/assignments', {
