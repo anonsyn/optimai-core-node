@@ -1,7 +1,7 @@
 import EventEmitter from 'eventemitter3'
 
 import { apiClient } from '../libs/axios'
-import type { UptimeData } from '../storage'
+// import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
 import { sleep } from '../utils/sleep'
@@ -9,12 +9,12 @@ import { MiningWorker, type MiningWorkerStatus } from './mining-worker'
 import { registerDevice } from './register-device'
 import type { MiningAssignment, NodeStatusResponse } from './types'
 import { NodeStatus } from './types'
-import { UptimeRunner } from './uptime-runner'
+// import { UptimeRunner } from './uptime-runner'
 
 export enum NodeRuntimeEvent {
   Status = 'status',
-  UptimeReward = 'uptime-reward',
-  UptimeCycle = 'uptime-cycle',
+  // UptimeReward = 'uptime-reward',
+  // UptimeCycle = 'uptime-cycle',
   MiningAssignments = 'mining-assignments',
   MiningAssignmentStarted = 'mining-assignment-started',
   MiningAssignmentCompleted = 'mining-assignment-completed',
@@ -25,8 +25,8 @@ export enum NodeRuntimeEvent {
 
 type NodeRuntimeEventMap = {
   [NodeRuntimeEvent.Status]: (status: NodeStatusResponse) => void
-  [NodeRuntimeEvent.UptimeReward]: (reward: { amount: string; timestamp: number }) => void
-  [NodeRuntimeEvent.UptimeCycle]: (cycle: UptimeData) => void
+  // [NodeRuntimeEvent.UptimeReward]: (reward: { amount: string; timestamp: number }) => void
+  // [NodeRuntimeEvent.UptimeCycle]: (cycle: UptimeData) => void
   [NodeRuntimeEvent.MiningAssignments]: (assignments: MiningAssignment[]) => void
   [NodeRuntimeEvent.MiningAssignmentStarted]: (assignmentId: string) => void
   [NodeRuntimeEvent.MiningAssignmentCompleted]: (assignmentId: string) => void
@@ -40,25 +40,27 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
   private running = false
   private lastError: string | null = null
 
-  private readonly uptimeRunner = new UptimeRunner()
+  // Note: Uptime reporting disabled per backend team
+  // private readonly uptimeRunner = new UptimeRunner()
   private readonly miningWorker = new MiningWorker()
 
   constructor() {
     super()
 
-    this.uptimeRunner.on('reward', (reward) => {
-      this.emit(NodeRuntimeEvent.UptimeReward, reward)
-    })
+    // Uptime event handlers disabled
+    // this.uptimeRunner.on('reward', (reward) => {
+    //   this.emit(NodeRuntimeEvent.UptimeReward, reward)
+    // })
 
-    this.uptimeRunner.on('cycle', (cycle) => {
-      this.emit(NodeRuntimeEvent.UptimeCycle, cycle)
-    })
+    // this.uptimeRunner.on('cycle', (cycle) => {
+    //   this.emit(NodeRuntimeEvent.UptimeCycle, cycle)
+    // })
 
-    this.uptimeRunner.on('error', (error) => {
-      this.lastError = error.message
-      this.emit(NodeRuntimeEvent.Error, error)
-      this.emit(NodeRuntimeEvent.Status, this.getStatus())
-    })
+    // this.uptimeRunner.on('error', (error) => {
+    //   this.lastError = error.message
+    //   this.emit(NodeRuntimeEvent.Error, error)
+    //   this.emit(NodeRuntimeEvent.Status, this.getStatus())
+    // })
 
     this.miningWorker.on('assignments', (assignments: MiningAssignment[]) => {
       this.emit(NodeRuntimeEvent.MiningAssignments, assignments)
@@ -98,7 +100,8 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       await this.ensureUser()
       await registerDevice()
 
-      this.uptimeRunner.start()
+      // Note: Uptime reporting disabled per backend team - core-node doesn't need it
+      // this.uptimeRunner.start()
       this.miningWorker.start()
       await sleep(5000)
 
@@ -123,7 +126,8 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
     this.setStatus(NodeStatus.Stopping)
     this.running = false
 
-    this.uptimeRunner.stop()
+    // Note: Uptime reporting disabled
+    // this.uptimeRunner.stop()
     await this.miningWorker.stop()
 
     this.setStatus(NodeStatus.Idle)
