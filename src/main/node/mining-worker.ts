@@ -1,6 +1,5 @@
 import log from 'electron-log/main'
 import EventEmitter from 'eventemitter3'
-import lodash from 'lodash'
 import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
@@ -526,8 +525,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         throw new Error(`No URL found for assignment ${assignmentId}`)
       }
 
-      const title = (task as any)?.title || `Assignment ${assignmentId}`
-
       // Crawl content
       log.info(`[mining] Crawling content from ${url} for assignment ${assignmentId}`)
       const startTime = Date.now()
@@ -550,8 +547,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         platform: 'google',
         url,
         timestamp: new Date().toISOString(),
-        ...crawlResult.metadata,
-        title: lodash.get(crawlResult, 'metadata.title', title)
+        ...crawlResult.metadata
       }
 
       // Submit assignment

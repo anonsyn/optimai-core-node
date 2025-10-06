@@ -76,6 +76,67 @@ export interface CrawlResult {
   metadata?: Record<string, unknown>
 }
 
+/**
+ * Extract favicon URL from a webpage
+ * @param url The page URL
+ * @param html Optional HTML content to parse
+ */
+function extractFaviconUrl(url: string, html?: string): string {
+  try {
+    const parsedUrl = new URL(url)
+    const domain = parsedUrl.hostname
+
+    // If we have HTML content, try to extract favicon from link tags
+    if (html) {
+      // Patterns to match various favicon link formats
+      const faviconPatterns = [
+        /<link[^>]*rel=["'](?:shortcut\s+)?icon["'][^>]*href=["']([^"']+)["']/gi,
+        /<link[^>]*href=["']([^"']+)["'][^>]*rel=["'](?:shortcut\s+)?icon["']/gi,
+        /<link[^>]*href=["']([^"']*favicon[^"']*)["'][^>]*rel=["'](?:shortcut\s+)?icon["']/gi,
+        /<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/gi
+      ]
+
+      for (const pattern of faviconPatterns) {
+        const matches = html.match(pattern)
+        if (matches && matches.length > 0) {
+          // Extract href value from the matched link tag
+          const hrefMatch = matches[0].match(/href=["']([^"']+)["']/)
+          if (hrefMatch && hrefMatch[1]) {
+            const faviconPath = hrefMatch[1].trim()
+            if (faviconPath) {
+              // Convert relative URL to absolute
+              if (faviconPath.startsWith('http://') || faviconPath.startsWith('https://')) {
+                return faviconPath
+              }
+              if (faviconPath.startsWith('//')) {
+                return `${parsedUrl.protocol}${faviconPath}`
+              }
+              if (faviconPath.startsWith('/')) {
+                return `${parsedUrl.protocol}//${parsedUrl.host}${faviconPath}`
+              }
+              // Relative path
+              return new URL(faviconPath, url).href
+            }
+          }
+        }
+      }
+    }
+
+    // Fallback to Google's favicon service
+    // This is reliable and works for most domains
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
+  } catch (error) {
+    log.debug('[crawler] Failed to extract favicon URL:', error)
+    // Return Google favicon service as ultimate fallback
+    try {
+      const fallbackDomain = new URL(url).hostname
+      return `https://www.google.com/s2/favicons?domain=${fallbackDomain}&sz=64`
+    } catch {
+      return ''
+    }
+  }
+}
+
 class CrawlerService {
   private baseUrl: string | null = null
   private initialized: boolean = false
@@ -231,9 +292,17 @@ class CrawlerService {
 
       const result = Array.isArray(data?.results) ? data.results[0] : null
 
-      const metadata = result?.metadata
-
+      const metadata = result?.metadata || {}
+      const html = result?.html
       const markdown = result?.markdown?.raw_markdown || ''
+
+      // Extract favicon URL
+      const faviconUrl = extractFaviconUrl(url, html)
+
+      // Add favicon to metadata
+      if (faviconUrl) {
+        metadata.favicon = faviconUrl
+      }
 
       const crawlResult: CrawlResult = {
         markdown,
