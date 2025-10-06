@@ -1,10 +1,9 @@
 import { ipcRenderer } from 'electron'
 
-import type { DeviceInfo } from '../../api/device/type'
-import type { NodeStatusResponse } from '../../node/types'
-import type { SubmitAssignmentRequest } from '../../api/mining/type'
-import type { MiningAssignment } from '../../node/types'
+import type { DeviceInfo } from '../../api/device/types'
+import type { SubmitAssignmentRequest } from '../../api/mining/types'
 import type { MiningWorkerStatus } from '../../node/mining-worker'
+import type { MiningAssignment, NodeStatusResponse } from '../../node/types'
 import type { UptimeData } from '../../storage'
 import { createPreloadEventListener } from '../../utils/ipc'
 import { NodeEvents } from './events'

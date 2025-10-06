@@ -120,7 +120,7 @@ export interface MiningStatsResponse {
     current: number
     previous: number
   }
-  data_points: number
+  data_points: number // This contains total_tasks_completed from DB
   data_storage: number
   data_distribution: {
     video: number
@@ -128,6 +128,11 @@ export interface MiningStatsResponse {
     image: number
     audio: number
   }
+  // New fields added by backend team
+  total_tasks_completed?: number
+  total_tasks_failed?: number
+  total_rewards_earned?: number
+  success_rate?: number
 }
 
 export interface WebSocketMessage {

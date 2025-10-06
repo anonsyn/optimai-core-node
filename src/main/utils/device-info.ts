@@ -3,7 +3,7 @@ import { screen } from 'electron'
 import { machineIdSync } from 'node-machine-id'
 import os from 'os'
 
-import { DeviceType, type DeviceInfo } from '../api/device/type'
+import { DeviceType, type DeviceInfo } from '../api/device/types'
 import { getErrorMessage } from './get-error-message'
 
 function getScreenInfo(): {

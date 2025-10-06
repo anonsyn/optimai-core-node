@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3'
 
-import { DeviceType } from '../api/device/type'
+import { DeviceType } from '../api/device/types'
 import { uptimeApi } from '../api/uptime'
 import type { UptimeData } from '../storage'
 import { deviceStore, rewardStore, uptimeStore, userStore } from '../storage'

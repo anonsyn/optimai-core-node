@@ -55,7 +55,10 @@ export const compactNumberWithUnit = (value: number, options?: CompactNumberOpti
   }
 }
 
-export const withSign = (value: number | undefined) => {
-  if (!value) return '0'
-  return value > 0 ? `+${value}` : value
+export const withSign = (
+  value: number | undefined,
+  options: CompactNumberOptions = { maximumFractionDigits: 2 }
+) => {
+  if (!value && value !== 0) return '0'
+  return value >= 0 ? `+${formatNumber(value, options)}` : formatNumber(value, options)
 }

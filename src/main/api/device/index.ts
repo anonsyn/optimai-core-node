@@ -5,7 +5,7 @@ import type {
   GetDevicesResponse,
   RegisterDeviceRequest,
   RegisterDeviceResponse
-} from './type'
+} from './types'
 
 export const deviceApi = {
   getDevices(params: GetDevicesParams) {
@@ -21,4 +21,4 @@ export const deviceApi = {
   }
 }
 
-export * from './type'
+export * from './types'

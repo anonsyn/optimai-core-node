@@ -12,7 +12,7 @@ import type {
   StartAssignmentResponse,
   SubmitAssignmentRequest,
   SubmitAssignmentResponse
-} from './type'
+} from './types'
 
 export const miningApi = {
   getStats() {
@@ -84,4 +84,4 @@ export type {
   MiningStatsResponse,
   WorkerPreferences
 } from '../../node/types'
-export * from './type'
+export * from './types'

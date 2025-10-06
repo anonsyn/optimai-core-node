@@ -46,11 +46,9 @@ export function NodeProvider({ children }: NodeProviderProps) {
       cleanupFunctionsRef.current.push(assignmentsListener.unsubscribe)
 
       // Mining assignment started
-      const assignmentStartedListener = window.nodeIPC.onMiningAssignmentStarted(
-        (assignmentId) => {
-          dispatch(nodeActions.setMiningAssignmentStarted(assignmentId))
-        }
-      )
+      const assignmentStartedListener = window.nodeIPC.onMiningAssignmentStarted((assignmentId) => {
+        dispatch(nodeActions.setMiningAssignmentStarted(assignmentId))
+      })
       cleanupFunctionsRef.current.push(assignmentStartedListener.unsubscribe)
 
       // Mining assignment completed

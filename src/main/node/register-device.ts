@@ -1,6 +1,6 @@
 import log from 'electron-log/main'
 import { deviceApi } from '../api/device'
-import { DeviceType } from '../api/device/type'
+import { DeviceType } from '../api/device/types'
 import { deviceStore, userStore } from '../storage'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'

@@ -6,38 +6,24 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        up: 'bg-positive/10 text-positive ',
-        unchange: 'bg-accent text-muted-foreground',
-        down: 'bg-destructive/5 text-destructive'
+        success: 'bg-positive/10 text-positive ',
+        default: 'bg-accent text-muted-foreground',
+        destructive: 'bg-destructive/5 text-destructive'
       }
     },
     defaultVariants: {
-      variant: 'unchange'
+      variant: 'default'
     }
   }
 )
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {
-  autoVariant?: number
-}
+    VariantProps<typeof badgeVariants> {}
 
-const Badge = ({ className, children, variant, autoVariant, ...props }: BadgeProps) => {
-  const finalVariant = (() => {
-    if (autoVariant) {
-      if (autoVariant > 0) {
-        return 'up'
-      } else if (autoVariant < 0) {
-        return 'down'
-      } else {
-        return 'unchange'
-      }
-    }
-    return variant
-  })()
+const Badge = ({ className, children, variant, ...props }: BadgeProps) => {
   return (
-    <div className={cn(badgeVariants({ variant: finalVariant, className }))} {...props}>
+    <div className={cn(badgeVariants({ variant, className }))} {...props}>
       {children}
     </div>
   )
