@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
 import { useModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 
@@ -23,6 +29,11 @@ export function AssignmentDetailModal() {
       <DialogContent className="grid-cols-1 sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Result</DialogTitle>
+          {data.sourceUrl && (
+            <DialogDescription className="text-12 truncate text-white/60">
+              {data.sourceUrl}
+            </DialogDescription>
+          )}
         </DialogHeader>
         <AssignmentDetailContent assignmentId={data.assignmentId} />
       </DialogContent>

@@ -47,6 +47,7 @@ export interface ModalSliceState {
   }>
   [Modals.ASSIGNMENT_DETAILS]?: ModalState<{
     assignmentId: string
+    sourceUrl?: string
   }>
 }
 

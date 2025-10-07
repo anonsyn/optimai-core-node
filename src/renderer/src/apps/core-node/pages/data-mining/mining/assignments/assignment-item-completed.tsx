@@ -121,7 +121,7 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
             <h3
               className="text-14 mb-1 line-clamp-2 cursor-pointer font-medium text-white transition-colors hover:text-white/80"
               onClick={() => {
-                openAssignmentDetails({ assignmentId: id })
+                openAssignmentDetails({ assignmentId: id, sourceUrl })
               }}
             >
               {metadataTitle || 'Untitled Page'}
