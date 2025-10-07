@@ -79,7 +79,21 @@ export interface MiningAssignment {
   failure_reason_expires_at?: string | null
   created_at?: string
   updated_at?: string
-  metadata?: Record<string, any>
+  metadata?: {
+    url?: string
+    title?: string
+    timestamp?: string
+    description?: string
+    favicon?: string
+    platform?: string
+    author?: string | null
+    keywords?: string | null
+    preview_image?: string
+    'og:image'?: string
+    'og:title'?: string
+    'og:site_name'?: string
+    [key: string]: any
+  }
   task: {
     id: string
     platform: 'google' | 'twitter'
@@ -92,7 +106,8 @@ export interface MiningAssignment {
       query?: string
     }
     created_at?: string
-    search_query?: string
+    search_query?: string | null
+    search_query_id?: string | null
   }
 }
 
