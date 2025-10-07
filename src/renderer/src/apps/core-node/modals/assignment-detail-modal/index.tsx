@@ -155,62 +155,115 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
                 </Highlight>
               </div>
             ) : (
-              <div className="prose prose-invert max-w-none flex-1 overflow-auto p-6 break-words">
+              <div className="max-w-none flex-1 overflow-auto p-6 break-words">
                 {markdownContent ? (
-                  <ReactMarkdown
-                    components={{
-                      h1: ({ ...props }) => (
-                        <h1 className="text-24 mt-6 mb-4 font-bold text-white" {...props} />
-                      ),
-                      h2: ({ ...props }) => (
-                        <h2 className="text-20 mt-5 mb-3 font-semibold text-white" {...props} />
-                      ),
-                      h3: ({ ...props }) => (
-                        <h3 className="text-18 mt-4 mb-2 font-semibold text-white" {...props} />
-                      ),
-                      p: ({ ...props }) => (
-                        <p className="text-14 mb-4 leading-relaxed text-white/90" {...props} />
-                      ),
-                      a: ({ ...props }) => (
-                        <a
-                          className="text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          {...props}
-                        />
-                      ),
-                      ul: ({ ...props }) => (
-                        <ul className="mb-4 ml-6 list-disc space-y-2" {...props} />
-                      ),
-                      ol: ({ ...props }) => (
-                        <ol className="mb-4 ml-6 list-decimal space-y-2" {...props} />
-                      ),
-                      li: ({ ...props }) => <li className="text-14 text-white/90" {...props} />,
-                      code: ({ className, children, ...props }) => {
-                        const inline = !className
-                        return inline ? (
-                          <code
-                            className="text-13 rounded bg-white/10 px-1.5 py-0.5 font-mono text-white"
+                  <div className="markdown-content">
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ ...props }) => (
+                          <h1
+                            className="text-28 mt-8 mb-6 border-b border-white/10 pb-3 font-bold text-white first:mt-0"
                             {...props}
-                          >
-                            {children}
-                          </code>
-                        ) : (
-                          <code className={cn('text-13', className)} {...props}>
-                            {children}
-                          </code>
-                        )
-                      },
-                      pre: ({ ...props }) => (
-                        <pre
-                          className="mb-4 overflow-x-auto rounded-lg bg-white/5 p-4"
-                          {...props}
-                        />
-                      )
-                    }}
-                  >
-                    {markdownContent}
-                  </ReactMarkdown>
+                          />
+                        ),
+                        h2: ({ ...props }) => (
+                          <h2
+                            className="text-22 mt-7 mb-4 border-b border-white/5 pb-2 font-semibold text-white first:mt-0"
+                            {...props}
+                          />
+                        ),
+                        h3: ({ ...props }) => (
+                          <h3
+                            className="text-18 mt-6 mb-3 font-semibold text-white first:mt-0"
+                            {...props}
+                          />
+                        ),
+                        h4: ({ ...props }) => (
+                          <h4
+                            className="text-16 mt-5 mb-2 font-semibold text-white/95 first:mt-0"
+                            {...props}
+                          />
+                        ),
+                        p: ({ ...props }) => (
+                          <p className="text-15 mb-5 leading-7 text-white/85" {...props} />
+                        ),
+                        a: ({ ...props }) => (
+                          <a
+                            className="text-blue-400 underline decoration-blue-400/40 underline-offset-2 transition-colors hover:text-blue-300 hover:decoration-blue-300/60"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            {...props}
+                          />
+                        ),
+                        ul: ({ ...props }) => (
+                          <ul className="mb-5 ml-6 space-y-2.5 text-white/85" {...props} />
+                        ),
+                        ol: ({ ...props }) => (
+                          <ol className="mb-5 ml-6 space-y-2.5 text-white/85" {...props} />
+                        ),
+                        li: ({ children, ...props }) => (
+                          <li className="text-15 pl-2 leading-7" {...props}>
+                            <span className="inline-block">{children}</span>
+                          </li>
+                        ),
+                        blockquote: ({ ...props }) => (
+                          <blockquote
+                            className="my-5 border-l-4 border-white/20 bg-white/5 py-3 pr-4 pl-5 text-white/75 italic"
+                            {...props}
+                          />
+                        ),
+                        code: ({ className, children, ...props }) => {
+                          const inline = !className
+                          return inline ? (
+                            <code
+                              className="text-13 rounded bg-white/10 px-1.5 py-0.5 font-mono text-yellow-300/90 before:content-[''] after:content-['']"
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          ) : (
+                            <code className={cn('text-13', className)} {...props}>
+                              {children}
+                            </code>
+                          )
+                        },
+                        pre: ({ ...props }) => (
+                          <pre
+                            className="text-14 mb-5 overflow-x-auto rounded-lg border border-white/10 bg-white/5 p-4 leading-6"
+                            {...props}
+                          />
+                        ),
+                        hr: () => <hr className="my-8 border-t border-white/10" />,
+                        table: ({ ...props }) => (
+                          <div className="my-5 overflow-x-auto">
+                            <table
+                              className="text-14 w-full border-collapse text-white/85"
+                              {...props}
+                            />
+                          </div>
+                        ),
+                        thead: ({ ...props }) => <thead className="bg-white/5" {...props} />,
+                        tbody: ({ ...props }) => <tbody {...props} />,
+                        tr: ({ ...props }) => <tr className="border-b border-white/5" {...props} />,
+                        th: ({ ...props }) => (
+                          <th className="px-4 py-3 text-left font-semibold text-white" {...props} />
+                        ),
+                        td: ({ ...props }) => <td className="px-4 py-3 text-white/85" {...props} />,
+                        img: ({ ...props }) => (
+                          <img
+                            className="my-5 max-w-full rounded-lg border border-white/10"
+                            {...props}
+                          />
+                        ),
+                        strong: ({ ...props }) => (
+                          <strong className="font-semibold text-white" {...props} />
+                        ),
+                        em: ({ ...props }) => <em className="text-white/90 italic" {...props} />
+                      }}
+                    >
+                      {markdownContent}
+                    </ReactMarkdown>
+                  </div>
                 ) : (
                   <div className="text-center">
                     <p className="text-14 font-medium text-white/80">No content available</p>
