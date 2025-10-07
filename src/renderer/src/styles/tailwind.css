@@ -135,6 +135,10 @@
   a {
     @apply cursor-pointer;
   }
+
+  :focus-visible {
+    outline: none;
+  }
 }
 
 @utility drag-region {
