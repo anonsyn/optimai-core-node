@@ -1,10 +1,11 @@
 import Token from '@/components/branding/token'
+import { Icon } from '@/components/ui/icon'
 import { formatNumber } from '@/utils/number'
 import { cn } from '@/utils/tw'
 import { MiningAssignment } from '@main/node/types'
 import { formatDistanceToNow } from 'date-fns'
 import lodash from 'lodash'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Globe } from 'lucide-react'
 
 interface AssignmentItemProps {
   assignment: MiningAssignment
@@ -19,9 +20,13 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
 
   // Metadata from assignment level (when completed)
   const metadataTitle = lodash.get(assignment, 'metadata.title', '')
-  const metadataDescription = lodash.get(assignment, 'metadata.description', '') || lodash.get(assignment, 'task.metadata.snippet', '')
+  const metadataDescription =
+    lodash.get(assignment, 'metadata.description', '') ||
+    lodash.get(assignment, 'task.metadata.snippet', '')
   const favicon = lodash.get(assignment, 'metadata.favicon', '')
-  const previewImage = lodash.get(assignment, 'metadata.og:image', '') || lodash.get(assignment, 'metadata.preview_image', '')
+  const previewImage =
+    lodash.get(assignment, 'metadata.og:image', '') ||
+    lodash.get(assignment, 'metadata.preview_image', '')
 
   const getStatusStyles = () => {
     switch (status.toLowerCase()) {
@@ -56,10 +61,14 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
   // Render simple version for non-completed tasks
   if (!isCompleted) {
     return (
-      <div className={cn(
-        "relative overflow-hidden rounded-xl border border-white/5 backdrop-blur-sm transition-all hover:bg-white/[0.03]",
-        isProcessing ? "bg-gradient-to-r from-white/[0.02] via-white/[0.05] to-white/[0.02] bg-[length:200%_100%] animate-shine" : "bg-white/[0.02]"
-      )}>
+      <div
+        className={cn(
+          'relative overflow-hidden rounded-xl border border-white/5 backdrop-blur-sm transition-all hover:bg-white/[0.03]',
+          isProcessing
+            ? 'animate-shine bg-gradient-to-r from-white/[0.02] via-white/[0.05] to-white/[0.02] bg-[length:200%_100%]'
+            : 'bg-white/[0.02]'
+        )}
+      >
         {/* Status Indicator */}
         <div
           className={cn(
@@ -74,17 +83,19 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
         {/* Simple layout for non-completed */}
         <div className="p-4">
           {/* Header: ID and Time */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3 flex items-center justify-between">
             <span className="text-11 font-mono text-white/50">{formatTaskId(id)}</span>
             <span className="text-11 text-white/30">
-              {updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : 'Just now'}
+              {updatedAt
+                ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true })
+                : 'Just now'}
             </span>
           </div>
 
           {/* Main: URL */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="mb-3 flex items-center gap-2">
             <ExternalLink className="size-3.5 text-white/40" />
-            <span className="text-13 text-white/60 truncate" title={sourceUrl}>
+            <span className="text-13 truncate text-white/60" title={sourceUrl}>
               {sourceUrl ? getHostname(sourceUrl) : 'Processing...'}
             </span>
           </div>
@@ -93,7 +104,7 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
           <div className="flex justify-end">
             <div
               className={cn(
-                'text-11 rounded px-2 py-0.5 font-medium inline-block',
+                'text-11 inline-block rounded px-2 py-0.5 font-medium',
                 statusStyles.bgColor,
                 statusStyles.color
               )}
@@ -106,87 +117,89 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
     )
   }
 
-  // Full layout for completed tasks - Clean two-column design
+  // Full layout for completed tasks - Cleaner design
   return (
-    <div className="relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all hover:bg-white/[0.03]">
+    <div className="group relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all hover:bg-white/[0.03]">
       {/* Status Indicator */}
-      <div className="absolute top-0 left-0 h-full w-0.5 bg-green" />
+      <div className="bg-green absolute top-0 left-0 h-full w-0.5" />
 
       <div className="p-4">
-        {/* Header: Full ID and Time */}
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-11 font-mono text-white/60 break-all">{formatTaskId(id, true)}</span>
-          <span className="text-11 text-white/50 ml-2 flex-shrink-0">
-            {updatedAt ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) : 'Just now'}
-          </span>
-        </div>
-
         {/* Main Content - Two column layout */}
-        <div className="flex gap-3 mb-3">
+        <div className="flex gap-3">
           {/* Preview Image Column - 16:9 aspect ratio */}
-          {previewImage && (
-            <div className="flex-shrink-0">
-              <div className="w-56 h-[126px] rounded-lg overflow-hidden bg-white/5">
+          <div className="flex-shrink-0">
+            <div className="flex h-[126px] w-56 items-center justify-center overflow-hidden rounded-lg bg-white/5">
+              {previewImage ? (
                 <img
                   src={previewImage}
                   alt=""
-                  className="w-full h-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Info Column */}
-          <div className="flex-1 min-w-0 space-y-2">
-            {/* Website with favicon */}
-            <div className="flex items-center gap-2">
-              {favicon ? (
-                <img
-                  src={favicon}
-                  alt=""
-                  className="size-4 rounded flex-shrink-0"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    ;(e.target as HTMLImageElement).style.display = 'none'
+                  }}
                 />
               ) : (
-                <ExternalLink className="size-4 text-white/40 flex-shrink-0" />
+                <Icon className="text-white/60" icon="ArticleLine" />
               )}
-              <span className="text-12 text-white/70 truncate">
-                {sourceUrl ? getHostname(sourceUrl) : 'Unknown'}
-              </span>
+            </div>
+          </div>
+
+          {/* Info Column */}
+          <div className="flex min-w-0 flex-1 flex-col">
+            {/* Top section with domain and reward */}
+            <div className="relative mb-2 flex w-full items-start justify-between">
+              {/* Website with favicon */}
+              <div className="flex items-center gap-2">
+                {favicon ? (
+                  <img
+                    src={favicon}
+                    alt=""
+                    className="size-4 flex-shrink-0 rounded-full"
+                    onError={(e) => {
+                      ;(e.target as HTMLImageElement).style.display = 'none'
+                    }}
+                  />
+                ) : (
+                  <div className="bg-accent/50 flex size-4 shrink-0 items-center justify-center rounded-full">
+                    <Globe className="size-3 flex-shrink-0 text-white/60" />
+                  </div>
+                )}
+                <span className="text-11 truncate text-white/80">
+                  {sourceUrl ? getHostname(sourceUrl) : 'Unknown'}
+                </span>
+              </div>
+
+              {/* Reward badge */}
+              <div className="bg-green/10 border-green/20 text-green text-12 absolute top-1/2 right-0 flex -translate-y-1/2 items-center gap-1.5 rounded-full border px-2.5 py-0.5">
+                <span className="font-semibold">
+                  +{formatNumber(reward, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                <Token className="size-3" />
+              </div>
             </div>
 
             {/* Title */}
-            <h3 className="text-14 font-medium text-white/90 line-clamp-1">
+            <h3 className="text-14 mb-1 line-clamp-2 font-medium text-white">
               {metadataTitle || 'Untitled Page'}
             </h3>
 
-            {/* Description */}
+            {/* Description - increased to 3 lines */}
             {metadataDescription && (
-              <p className="text-12 text-white/60 line-clamp-2">
+              <p className="text-12 line-clamp-3 leading-relaxed text-white/80">
                 {metadataDescription}
               </p>
             )}
-          </div>
-        </div>
 
-        {/* Footer: Reward text */}
-        <div className="flex items-center justify-between pt-3 border-t border-white/5">
-          <div className="flex items-center gap-1.5">
-            <span className="text-12 text-white/70">Rewarded</span>
-            <span className="text-13 font-semibold text-white">
-              {formatNumber(reward, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </span>
-            <Token className="size-3.5" />
-          </div>
-          <div
-            className={cn(
-              'text-11 rounded px-2 py-0.5 font-medium',
-              statusStyles.bgColor,
-              statusStyles.color
-            )}
-          >
-            {statusStyles.label}
+            {/* Bottom metadata - subtle */}
+            <div className="mt-auto flex items-center gap-2 pt-2">
+              <span className="text-10 text-white/60">
+                {updatedAt
+                  ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true })
+                  : 'Just now'}
+              </span>
+              <span className="text-10 text-white/60">•</span>
+              <span className="text-10 font-mono text-white/60">{formatTaskId(id)}</span>
+            </div>
           </div>
         </div>
       </div>

@@ -2,6 +2,7 @@ import { cn } from '@/utils/tw'
 import ArrowLeft from '@assets/icons/arrow-left.svg?react'
 import ArrowRight from '@assets/icons/arrow-right.svg?react'
 import ArrowUpRight from '@assets/icons/arrow-up-right.svg?react'
+import ArticleLine from '@assets/icons/article-line.svg?react'
 import BrainCircuit from '@assets/icons/brain-circuit.svg?react'
 import Calendar from '@assets/icons/calendar.svg?react'
 import Check from '@assets/icons/check.svg?react'
@@ -43,8 +44,8 @@ import RotateCcw from '@assets/icons/rotate-ccw.svg?react'
 import Sad from '@assets/icons/sad.svg?react'
 import Search from '@assets/icons/search.svg?react'
 import Settings from '@assets/icons/settings.svg?react'
-import Square from '@assets/icons/square.svg?react'
 import SquarePen from '@assets/icons/square-pen.svg?react'
+import Square from '@assets/icons/square.svg?react'
 import SSD from '@assets/icons/ssd.svg?react'
 import Tag from '@assets/icons/tag.svg?react'
 import TaskFilled from '@assets/icons/task-filled.svg?react'
@@ -58,6 +59,7 @@ import X from '@assets/icons/x.svg?react'
 import { SVGProps } from 'react'
 
 export const Icons = {
+  ArticleLine,
   BrainCircuit,
   CircleCheck,
   Copy,
