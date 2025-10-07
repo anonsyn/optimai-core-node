@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -14,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useGetMiningAssignmentDetailQuery } from '@/queries/mining/use-mining-assignment-detail-query'
 import { cn } from '@/utils/tw'
 import { motion } from 'framer-motion'
-import { AlertCircle, Code2, Eye } from 'lucide-react'
+import { AlertCircle, Code2, Eye, X } from 'lucide-react'
 import { Highlight, themes } from 'prism-react-renderer'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -27,6 +28,10 @@ export function AssignmentDetailModal() {
   return (
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="grid-cols-1 sm:max-w-4xl">
+        <DialogClose className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:pointer-events-none">
+          <X className="size-4" />
+          <span className="sr-only">Close</span>
+        </DialogClose>
         <DialogHeader>
           <DialogTitle>Result</DialogTitle>
           {data.sourceUrl && (
@@ -53,7 +58,7 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
     error,
     refetch
   } = useGetMiningAssignmentDetailQuery(assignmentId)
-  const [markdownMode, setMarkdownMode] = useState<'text' | 'preview'>('preview')
+  const [markdownMode, setMarkdownMode] = useState<'text' | 'preview'>('text')
 
   if (isLoading) {
     return (
@@ -261,10 +266,7 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
                         ),
                         td: ({ ...props }) => <td className="px-4 py-3 text-white/85" {...props} />,
                         img: ({ ...props }) => (
-                          <img
-                            className="my-5 max-w-full rounded-lg border border-white/10"
-                            {...props}
-                          />
+                          <img className="my-5 max-w-full rounded-lg" {...props} />
                         ),
                         strong: ({ ...props }) => (
                           <strong className="font-semibold text-white" {...props} />
