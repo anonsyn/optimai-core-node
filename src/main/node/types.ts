@@ -109,6 +109,15 @@ export interface MiningAssignment {
     search_query?: string | null
     search_query_id?: string | null
   }
+  result?: {
+    id: string
+    content: string // The actual scraped content (markdown or JSON)
+    data_type: string
+    storage_size: number
+    metadata: any
+    created_at: string
+    updated_at: string
+  }
 }
 
 export interface MiningAssignmentsResponse {

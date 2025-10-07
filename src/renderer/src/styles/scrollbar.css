@@ -1,9 +1,13 @@
 ::-webkit-scrollbar {
-  @apply w-[4px];
+  @apply h-[4px] w-[4px];
 }
 
 ::-webkit-scrollbar-thumb {
   @apply rounded-lg bg-white/10;
+}
+
+::-webkit-scrollbar-corner {
+  @apply bg-transparent;
 }
 
 @utility hide-scrollbar {

@@ -1,5 +1,7 @@
 import Token from '@/components/branding/token'
 import { Icon } from '@/components/ui/icon'
+import { useOpenModal } from '@/hooks/modal'
+import { Modals } from '@/store/slices/modals'
 import { formatNumber } from '@/utils/number'
 import { MiningAssignment } from '@main/node/types'
 import { formatDistanceToNow } from 'date-fns'
@@ -15,6 +17,8 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
   const sourceUrl = lodash.get(assignment, 'task.source_url', '')
   const reward = lodash.get(assignment, 'task.reward_amount', 0)
   const updatedAt = lodash.get(assignment, 'updated_at', lodash.get(assignment, 'started_at', ''))
+
+  const openAssignmentDetails = useOpenModal(Modals.ASSIGNMENT_DETAILS)
 
   // Metadata from assignment level (when completed)
   const metadataTitle = lodash.get(assignment, 'metadata.title', '')
@@ -117,8 +121,7 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
             <h3
               className="text-14 mb-1 line-clamp-2 cursor-pointer font-medium text-white transition-colors hover:text-white/80"
               onClick={() => {
-                // TODO: Implement title click action
-                console.log('Title clicked:', { id, title: metadataTitle, sourceUrl })
+                openAssignmentDetails({ assignmentId: id })
               }}
             >
               {metadataTitle || 'Untitled Page'}

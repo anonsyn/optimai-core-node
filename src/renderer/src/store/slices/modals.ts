@@ -9,7 +9,8 @@ export enum Modals {
   ON_BOARDING = 'ON_BOARDING',
   LOGIN = 'LOGIN',
   DOCKER_NOT_INSTALLED = 'DOCKER_NOT_INSTALLED',
-  DOCKER_NOT_RUNNING = 'DOCKER_NOT_RUNNING'
+  DOCKER_NOT_RUNNING = 'DOCKER_NOT_RUNNING',
+  ASSIGNMENT_DETAILS = 'ASSIGNMENT_DETAILS'
 }
 
 export type ModalState<T = undefined> = {
@@ -43,6 +44,9 @@ export interface ModalSliceState {
   }>
   [Modals.DOCKER_NOT_RUNNING]?: ModalState<{
     onRetry: () => Promise<boolean>
+  }>
+  [Modals.ASSIGNMENT_DETAILS]?: ModalState<{
+    assignmentId: string
   }>
 }
 

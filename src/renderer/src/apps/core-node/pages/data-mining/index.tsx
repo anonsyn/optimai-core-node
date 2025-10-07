@@ -1,3 +1,4 @@
+import { AssignmentDetailModal } from '@core-node/modals/assignment-detail-modal'
 import { DataMiningHeader } from './header'
 import { LeftPanel } from './left-panel'
 import { Mining } from './mining'
@@ -30,6 +31,9 @@ const DataMiningPage = () => {
         <LeftPanel />
         <Mining />
       </div>
+
+      {/* Modals */}
+      <AssignmentDetailModal />
     </div>
   )
 }
