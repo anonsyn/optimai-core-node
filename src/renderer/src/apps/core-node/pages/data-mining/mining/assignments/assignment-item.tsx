@@ -128,7 +128,14 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
         <div className="flex gap-3">
           {/* Preview Image Column - 16:9 aspect ratio */}
           <div className="flex-shrink-0">
-            <div className="flex h-[126px] w-56 items-center justify-center overflow-hidden rounded-lg bg-white/5">
+            <div
+              className="flex h-[126px] w-56 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white/5 transition-opacity hover:opacity-80"
+              onClick={() => {
+                if (sourceUrl) {
+                  window.windowIPC.openExternalLink(sourceUrl)
+                }
+              }}
+            >
               {previewImage ? (
                 <img
                   src={previewImage}
@@ -149,7 +156,14 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
             {/* Top section with domain and reward */}
             <div className="relative mb-2 flex w-full items-start justify-between">
               {/* Website with favicon */}
-              <div className="flex items-center gap-2">
+              <div
+                className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-70"
+                onClick={() => {
+                  if (sourceUrl) {
+                    window.windowIPC.openExternalLink(sourceUrl)
+                  }
+                }}
+              >
                 {favicon ? (
                   <img
                     src={favicon}
@@ -179,7 +193,13 @@ export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
             </div>
 
             {/* Title */}
-            <h3 className="text-14 mb-1 line-clamp-2 font-medium text-white">
+            <h3
+              className="text-14 mb-1 line-clamp-2 cursor-pointer font-medium text-white transition-colors hover:text-white/80"
+              onClick={() => {
+                // TODO: Implement title click action
+                console.log('Title clicked:', { id, title: metadataTitle, sourceUrl })
+              }}
+            >
               {metadataTitle || 'Untitled Page'}
             </h3>
 
