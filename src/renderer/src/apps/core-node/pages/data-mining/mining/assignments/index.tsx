@@ -1,6 +1,6 @@
 import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useGetMiningAssignmentsQuery } from '@/queries/mining'
+import { useGetMiningAssignmentsQuery, useGetMiningStatsQuery } from '@/queries/mining'
 import { authSelectors } from '@/store/slices/auth'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { motion } from 'framer-motion'
@@ -11,10 +11,15 @@ import { useSelector } from 'react-redux'
 import { AssignmentItem } from './assignment-item'
 
 export const AssignmentsList = () => {
-  const { data, isLoading, refetch } = useGetMiningAssignmentsQuery({
+  const {
+    data,
+    isLoading,
+    refetch: refetchAssignment
+  } = useGetMiningAssignmentsQuery({
     platforms: ['google'],
     sort_by: 'updated_at'
   })
+  const { refetch: refetchStats } = useGetMiningStatsQuery()
   const walletAddress = useSelector(authSelectors.userAddress)
 
   const [animationParent] = useAutoAnimate()
@@ -25,7 +30,8 @@ export const AssignmentsList = () => {
   useEffect(() => {
     const refetchAssignments = lodash.debounce(
       () => {
-        void refetch()
+        void refetchAssignment()
+        void refetchStats()
         console.log('event emitted')
       },
       300,
@@ -40,7 +46,7 @@ export const AssignmentsList = () => {
       startedListener.unsubscribe()
       completedListener.unsubscribe()
     }
-  }, [refetch])
+  }, [refetchAssignment, refetchStats])
 
   if (isLoading) {
     return (
@@ -104,7 +110,13 @@ export const AssignmentsList = () => {
           {/* Assignment Grid */}
           <div className="grid gap-3 lg:grid-cols-1 xl:grid-cols-2" ref={animationParent}>
             {assignments.map((assignment) => (
-              <AssignmentItem key={assignment.id} assignment={assignment} />
+              <AssignmentItem
+                key={assignment.id}
+                assignment={{
+                  ...assignment
+                  // status: index === 0 ? 'in_progress' : 'not_started'
+                }}
+              />
             ))}
           </div>
         </div>
