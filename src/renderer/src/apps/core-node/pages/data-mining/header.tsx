@@ -2,6 +2,7 @@ import Logo from '@/components/branding/logo'
 import { WindowControlButton, WindowControls } from '@/components/modules/window-controls'
 import { getOS, OS } from '@/utils/os'
 import { motion } from 'framer-motion'
+import packageJson from '../../../../../../../package.json'
 
 export const DataMiningHeader = () => {
   const os = getOS()
@@ -16,12 +17,13 @@ export const DataMiningHeader = () => {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
-        className="no-drag relative z-10 flex items-center"
+        className="no-drag relative z-10 flex items-center gap-2"
         style={{
           paddingLeft: isMac ? '85px' : '20px' // Space for traffic lights on macOS
         }}
       >
         <Logo variant="horizontal" className="h-5 w-auto" />
+        <span className="self-end font-mono text-[8px] text-white/40">v{packageJson.version}</span>
       </motion.div>
 
       <WindowControls className="no-drag relative pr-4">

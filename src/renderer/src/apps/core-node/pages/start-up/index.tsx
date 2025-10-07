@@ -6,6 +6,7 @@ import LoginModal from '@core-node/modals/login-modal'
 import CanvasGlow from '@core-node/pages/start-up/canvas-glow'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
+import packageJson from '../../../../../../../package.json'
 import { StartupProvider, useStartup } from './provider'
 import Status from './status'
 
@@ -56,9 +57,10 @@ const StartUpShell = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="absolute top-8 z-10"
+          className="absolute top-8 z-10 flex flex-col items-center gap-1"
         >
           <Logo variant="horizontal" className="h-8 w-auto" />
+          <span className="text-10 font-mono text-white/60">v{packageJson.version}</span>
         </motion.div>
 
         {/* Status - Main Focus */}
