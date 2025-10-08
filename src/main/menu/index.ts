@@ -99,13 +99,13 @@ export function createApplicationMenu(): Menu {
         {
           label: 'Learn More',
           click: async () => {
-            await shell.openExternal('https://optimai.com')
+            await shell.openExternal('https://optimai.network/')
           }
         },
         {
           label: 'Documentation',
           click: async () => {
-            await shell.openExternal('https://docs.optimai.com')
+            await shell.openExternal('https://docs.optimai.network/')
           }
         },
         { type: 'separator' as const },

@@ -88,6 +88,9 @@ if (!gotTheLock) {
     // Set app user model id for windows
     electronApp.setAppUserModelId('com.electron')
 
+    // Set app name for menu
+    app.name = 'OptimAI Core Node'
+
     // Setup application menu
     setupApplicationMenu()
 
