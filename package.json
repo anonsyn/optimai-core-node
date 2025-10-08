@@ -25,7 +25,7 @@
     "deploy": "npm run build && electron-builder build --publish always"
   },
   "dependencies": {
-    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@formkit/auto-animate": "^0.8.2",
@@ -104,10 +104,10 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.2.0",
-    "electron": "^34.2.0",
-    "electron-builder": "^25.1.8",
+    "electron": "^38.1.2",
+    "electron-builder": "^26.0.12",
     "electron-debug": "^4.1.0",
-    "electron-vite": "^3.0.0",
+    "electron-vite": "^4.0.1",
     "eslint": "^9.20.1",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",

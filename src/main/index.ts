@@ -42,7 +42,7 @@ if (!gotTheLock) {
       if (mainWindow) {
         mainWindow.show()
         if (isMac) {
-          app.dock.show()
+          app.dock?.show()
         }
       }
     }
@@ -75,7 +75,7 @@ if (!gotTheLock) {
       window.focus()
       window.show()
       if (isMac) {
-        app.dock.show()
+        app.dock?.show()
       }
     }
   })
@@ -120,7 +120,7 @@ if (!gotTheLock) {
       if (window) {
         window.show()
         if (isMac) {
-          app.dock.show()
+          app.dock?.show()
         }
       } else {
         const window = createWindow(DEFAULT_WINDOW)

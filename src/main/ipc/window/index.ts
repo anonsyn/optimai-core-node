@@ -12,7 +12,7 @@ class WindowIpcHandler {
       if (window) {
         window.hide()
         if (isMac) {
-          app.dock.hide()
+          app.dock?.hide()
         }
       }
     })
@@ -33,7 +33,7 @@ class WindowIpcHandler {
       if (window) {
         window.hide()
         if (isMac) {
-          app.dock.hide()
+          app.dock?.hide()
         }
       }
     })
