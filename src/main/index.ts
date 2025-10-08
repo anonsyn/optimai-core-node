@@ -8,6 +8,7 @@ import dockerIpcHandler from './ipc/docker'
 import nodeIpcHandler from './ipc/node'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
+import { setupApplicationMenu } from './menu'
 import { getErrorMessage } from './utils/get-error-message'
 import { isMac } from './utils/os'
 import { createWindow } from './window/factory'
@@ -86,6 +87,9 @@ if (!gotTheLock) {
   app.whenReady().then(async () => {
     // Set app user model id for windows
     electronApp.setAppUserModelId('com.electron')
+
+    // Setup application menu
+    setupApplicationMenu()
 
     windowIpcHandler.initialize()
     updaterIpcHandler.initialize()
