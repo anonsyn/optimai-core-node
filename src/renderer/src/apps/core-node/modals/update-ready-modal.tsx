@@ -52,6 +52,8 @@ const UpdateReadyContent = () => {
   const handleUpdate = useCallback(() => {
     if (isUpdating || hasStartedUpdateRef.current) return
 
+    console.log('UPDATE')
+
     setIsUpdating(true)
     hasStartedUpdateRef.current = true
 
@@ -86,15 +88,24 @@ const UpdateReadyContent = () => {
       // Start countdown
       countdownIntervalRef.current = setInterval(() => {
         setCountdown((prev) => {
-          if (prev <= 1) {
-            // Trigger update when countdown reaches 0
+          const newValue = prev - 1
+
+          // Check if countdown finished
+          if (newValue <= 0) {
+            // Clear interval immediately to prevent further ticks
+            if (countdownIntervalRef.current) {
+              clearInterval(countdownIntervalRef.current)
+              countdownIntervalRef.current = null
+            }
+
+            // Trigger update
             if (!hasStartedUpdateRef.current) {
-              hasStartedUpdateRef.current = true
               handleUpdate()
             }
             return 0
           }
-          return prev - 1
+
+          return newValue
         })
       }, 1000)
 

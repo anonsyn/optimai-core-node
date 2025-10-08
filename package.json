@@ -22,7 +22,8 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "deploy": "npm run build && electron-builder build --publish always"
+    "deploy": "npm run build && electron-builder build --publish always",
+    "deploy:mac": "arch -x86_64 yarn deploy"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
