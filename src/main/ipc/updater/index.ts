@@ -16,7 +16,7 @@ class UpdaterIpcHandler {
     autoUpdater.disableWebInstaller = false
     autoUpdater.allowDowngrade = false
     autoUpdater.autoInstallOnAppQuit = true
-    autoUpdater.setFeedURL(process.env['VITE_FEED_URL'] || 'http://127.0.0.1:8080')
+    autoUpdater.setFeedURL(process.env['VITE_FEED_URL'] || 'https://core-node.optimai.network')
 
     autoUpdater.on('checking-for-update', function () {
       logger.info('Checking for update')
