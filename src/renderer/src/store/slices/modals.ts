@@ -10,7 +10,8 @@ export enum Modals {
   LOGIN = 'LOGIN',
   DOCKER_NOT_INSTALLED = 'DOCKER_NOT_INSTALLED',
   DOCKER_NOT_RUNNING = 'DOCKER_NOT_RUNNING',
-  ASSIGNMENT_DETAILS = 'ASSIGNMENT_DETAILS'
+  ASSIGNMENT_DETAILS = 'ASSIGNMENT_DETAILS',
+  UPDATE_READY = 'UPDATE_READY'
 }
 
 export type ModalState<T = undefined> = {
@@ -48,6 +49,10 @@ export interface ModalSliceState {
   [Modals.ASSIGNMENT_DETAILS]?: ModalState<{
     assignmentId: string
     sourceUrl?: string
+  }>
+  [Modals.UPDATE_READY]?: ModalState<{
+    version?: string
+    releaseNotes?: string
   }>
 }
 
