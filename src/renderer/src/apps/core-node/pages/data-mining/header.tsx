@@ -3,6 +3,7 @@ import { WindowControlButton, WindowControls } from '@/components/modules/window
 import { getOS, OS } from '@/utils/os'
 import { motion } from 'framer-motion'
 import packageJson from '../../../../../../../package.json'
+import { NodeStatusIndicator } from './node-status-indicator'
 import { WalletPopover } from './wallet-popover'
 
 export const DataMiningHeader = () => {
@@ -28,6 +29,7 @@ export const DataMiningHeader = () => {
       </motion.div>
 
       <div className="no-drag relative z-10 flex items-center gap-3 pr-4">
+        <NodeStatusIndicator />
         <WalletPopover />
         <WindowControls className="!static flex items-center">
           <WindowControlButton variant="minimize" />
