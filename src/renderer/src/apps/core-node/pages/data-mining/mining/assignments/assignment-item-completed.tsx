@@ -4,7 +4,7 @@ import { useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { formatNumber } from '@/utils/number'
 import { MiningAssignment } from '@main/node/types'
-import { formatDistanceToNow } from 'date-fns'
+import { format } from 'date-fns'
 import lodash from 'lodash'
 import { Globe } from 'lucide-react'
 
@@ -137,13 +137,9 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
 
             {/* Bottom metadata - subtle */}
             <div className="mt-auto flex items-center gap-2 pt-2">
-              <span className="text-10 text-white/60">
-                {updatedAt
-                  ? formatDistanceToNow(new Date(updatedAt), { addSuffix: true })
-                  : 'Just now'}
+              <span className="text-12 text-white/60">
+                {updatedAt ? format(new Date(updatedAt), 'MMM d, yyyy h:mm a') : 'Just now'}
               </span>
-              <span className="text-10 text-white/60">•</span>
-              <span className="text-10 font-mono text-white/60">{formatTaskId(id)}</span>
             </div>
           </div>
         </div>
