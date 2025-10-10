@@ -87,14 +87,6 @@ export const AssignmentsList = () => {
     >
       <ScrollArea className="h-full">
         <div className="p-6">
-          {/* Header */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Icon icon="Pickaxe" className="size-5 text-white/80" />
-              <h2 className="text-24 font-semibold text-white">Assignments</h2>
-            </div>
-          </div>
-
           {/* Assignment Grid */}
           <div className="grid gap-3 lg:grid-cols-1 xl:grid-cols-2" ref={animationParent}>
             {assignments.map((assignment) => (
