@@ -1,24 +1,67 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { nodeSelectors } from '@/store/slices/node'
 import { cn } from '@/utils/tw'
-import { NodeStatus } from '@main/node/types'
+import { MiningStatus, NodeStatus } from '@main/node/types'
 import { useSelector } from 'react-redux'
 
 export const NodeStatusIndicator = () => {
   const status = useSelector(nodeSelectors.status)
   const lastError = useSelector(nodeSelectors.lastError)
+  const miningStatus = useSelector(nodeSelectors.miningStatus)
+  const isProcessing = useSelector(nodeSelectors.isMiningProcessing)
 
   const getStatusConfig = () => {
-    switch (status) {
-      case NodeStatus.Running:
+    // When node is running, check mining status
+    if (status === NodeStatus.Running) {
+      if (miningStatus?.status === MiningStatus.Processing || isProcessing) {
         return {
-          label: 'Active',
+          label: 'Mining',
           dotClass: 'bg-green shadow-[0_0_12px_rgba(34,197,94,0.8)]',
           textClass: 'text-white',
           ringClass: 'bg-green',
           animate: true,
-          tooltip: 'OptimAI is running and earning rewards'
+          tooltip: 'Mining data and earning rewards'
         }
+      }
+
+      if (
+        miningStatus?.status === MiningStatus.Initializing ||
+        miningStatus?.status === MiningStatus.InitializingCrawler
+      ) {
+        return {
+          label: 'Initializing',
+          dotClass: 'bg-yellow shadow-[0_0_12px_rgba(234,179,8,0.8)]',
+          textClass: 'text-white',
+          ringClass: 'bg-yellow',
+          animate: true,
+          tooltip: 'Initializing mining worker...'
+        }
+      }
+
+      if (miningStatus?.status === MiningStatus.Error) {
+        return {
+          label: 'Error',
+          dotClass: 'bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.8)]',
+          textClass: 'text-white',
+          ringClass: 'bg-red-500',
+          animate: false,
+          tooltip: miningStatus?.lastError || 'Mining worker error'
+        }
+      }
+
+      // Running but mining is Ready/Idle
+      return {
+        label: 'Active',
+        dotClass: 'bg-green shadow-[0_0_12px_rgba(34,197,94,0.8)]',
+        textClass: 'text-white',
+        ringClass: 'bg-green',
+        animate: true,
+        tooltip: 'OptimAI is running and ready'
+      }
+    }
+
+    // Other node states
+    switch (status) {
       case NodeStatus.Starting:
         return {
           label: 'Starting up',
@@ -54,7 +97,7 @@ export const NodeStatusIndicator = () => {
           textClass: 'text-white/70',
           ringClass: 'bg-white/40',
           animate: false,
-          tooltip: lastError || 'OptimAI isn’t running'
+          tooltip: lastError || "OptimAI isn't running"
         }
     }
   }
@@ -67,7 +110,7 @@ export const NodeStatusIndicator = () => {
         <TooltipTrigger asChild>
           <button
             type="button"
-            className="bg-accent/30 hover:bg-accent/40 text-13 flex items-center gap-2 rounded-xl border border-white/5 px-4 py-1.5 transition-colors outline-none"
+            className="bg-accent/30 hover:bg-accent/40 text-13 flex items-center gap-2.5 rounded-xl border border-white/5 px-4 py-1.5 transition-colors outline-none"
             onClick={() => {
               // You could add click action here to start/stop node
               console.log('Node status clicked:', status)

@@ -28,7 +28,7 @@ export const DataMiningHeader = () => {
         <span className="self-end font-mono text-[8px] text-white/40">v{packageJson.version}</span>
       </motion.div>
 
-      <div className="no-drag relative z-10 flex items-center gap-3 pr-4">
+      <div className="no-drag relative z-10 flex items-center gap-2 pr-4">
         <NodeStatusIndicator />
         <WalletPopover />
         <WindowControls className="!static flex items-center">
