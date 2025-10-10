@@ -84,8 +84,8 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     // Check Docker availability
     this.dockerAvailable = await this.checkDockerAvailability()
     if (!this.dockerAvailable) {
-      log.error('[mining] Docker is not available - cannot start mining')
-      log.error('[mining] Please install and start Docker from https://docker.com to enable mining')
+      log.error("[mining] Docker isn’t available — can’t start mining")
+      log.error('[mining] Install and open Docker Desktop from https://docker.com to continue')
       this.setStatus(MiningStatus.Error, 'Docker not available')
       this.running = false
       return
@@ -171,10 +171,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       const running = await dockerService.isRunning()
       return running
     } catch (error) {
-      log.error(
-        '[mining] Error checking Docker availability:',
-        getErrorMessage(error, 'Error checking Docker availability')
-      )
+      log.error('[mining] Couldn’t check Docker:', getErrorMessage(error, 'Couldn’t check Docker'))
       return false
     }
   }
@@ -184,9 +181,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       // Set preferences to receive both platforms
       // But we'll only process Google tasks
       await miningApi.setWorkerPreferences(['google'])
-      log.info(
-        '[mining] Worker preferences set to receive all platforms (will process Google only)'
-      )
+      log.info('[mining] Worker preferences saved (processing Google tasks)')
     } catch (error) {
       log.error(
         '[mining] Failed to set worker preferences:',
@@ -225,7 +220,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
         // Handle assignment count in response
         if (response.data?.assigned && response.data.assigned > 0) {
-          log.info(`[mining] Heartbeat assigned ${response.data.assigned} new tasks`)
+          log.info(`[mining] Got ${response.data.assigned} new tasks`)
           // Trigger assignment processing
           void this.processAssignments()
         }
@@ -280,7 +275,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
           throw new Error(`SSE connection failed with status ${response.status}`)
         }
 
-        log.info('[mining] Connected to miner SSE stream')
+        log.info('[mining] Connected to task updates')
         this.sseBackoff = SSE_RETRY_BASE_MS
 
         const reader = response.body.getReader()
@@ -304,10 +299,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
           }
         }
 
-        log.warn('[mining] SSE connection closed')
+        log.warn('[mining] Task updates connection closed')
       } catch (error) {
         if (!controller.signal.aborted) {
-          log.error('[mining] SSE error:', getErrorMessage(error, 'SSE error'))
+          log.error('[mining] Task updates error:', getErrorMessage(error, 'SSE error'))
           this.emit('error', error instanceof Error ? error : new Error(String(error)))
         }
       } finally {
@@ -342,16 +337,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     if (eventType === 'assignment') {
       try {
         const data = JSON.parse(eventData)
-        log.info(
-          `[mining] Assignment event received: ${data.count} tasks, query: ${data.search_query_id}`
-        )
+        log.info(`[mining] New tasks available: ${data.count} (query: ${data.search_query_id})`)
         // Trigger assignment processing
         void this.processAssignments()
       } catch (error) {
-        log.error(
-          '[mining] Failed to parse assignment event data:',
-          getErrorMessage(error, 'Failed to parse assignment event data')
-        )
+        log.error('[mining] Couldn’t read task update:', getErrorMessage(error, 'Parse error'))
         // Still try to process assignments even if parsing fails
         void this.processAssignments()
       }
@@ -526,7 +516,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       }
 
       // Crawl content
-      log.info(`[mining] Crawling content from ${url} for assignment ${assignmentId}`)
+      log.info(`[mining] Collecting content from ${url} for assignment ${assignmentId}`)
       const startTime = Date.now()
 
       const crawlResult = await crawlerService.crawl({
@@ -539,7 +529,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
       const crawlTime = (Date.now() - startTime) / 1000
       log.info(
-        `[mining] Successfully crawled ${crawlResult.markdown.length} chars in ${crawlTime}s for assignment ${assignmentId}`
+        `[mining] Collected ${crawlResult.markdown.length} characters in ${crawlTime}s for assignment ${assignmentId}`
       )
 
       // Prepare metadata
@@ -551,9 +541,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       }
 
       // Submit assignment
-      log.info(
-        `[mining] Submitting assignment ${assignmentId} with ${crawlResult.markdown.length} chars`
-      )
+      log.info(`[mining] Submitting result for assignment ${assignmentId}`)
       const submitRequest: SubmitAssignmentRequest = {
         content: crawlResult.markdown,
         metadata
@@ -561,7 +549,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
       await miningApi.submitAssignment(assignmentId, submitRequest)
 
-      log.info(`[mining] ✓ Assignment ${assignmentId} submitted successfully`)
+      log.info(`[mining] ✓ Assignment ${assignmentId} submitted`)
       this.emit('assignmentCompleted', assignmentId)
     } catch (error) {
       const errorMsg = getErrorMessage(error, `Failed to process assignment ${assignmentId}`)

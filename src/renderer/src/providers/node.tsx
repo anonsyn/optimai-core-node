@@ -23,6 +23,8 @@ export function NodeProvider({ children }: NodeProviderProps) {
     const setupListeners = () => {
       // Node status changes
       const statusListener = window.nodeIPC.onStatusChanged((status) => {
+        console.log('node status change')
+        console.log({ status })
         dispatch(nodeActions.setNodeStatus(status))
       })
       cleanupFunctionsRef.current.push(statusListener.unsubscribe)

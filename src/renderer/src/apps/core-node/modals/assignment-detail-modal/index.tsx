@@ -33,7 +33,7 @@ export function AssignmentDetailModal() {
           <span className="sr-only">Close</span>
         </DialogClose>
         <DialogHeader>
-          <DialogTitle>Result</DialogTitle>
+          <DialogTitle>Assignment Details</DialogTitle>
           {data.sourceUrl && (
             <DialogDescription className="text-12 truncate text-white/60">
               {data.sourceUrl}
@@ -65,7 +65,7 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Icon icon="LoaderCircle" className="size-8 animate-spin text-white/40" />
-          <p className="text-14 text-white/60">Loading assignment details...</p>
+          <p className="text-14 text-white/60">Loading details...</p>
         </div>
       </div>
     )
@@ -77,13 +77,11 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
         <div className="flex flex-col items-center gap-4">
           <AlertCircle className="size-12 text-red-500/60" />
           <div className="text-center">
-            <p className="text-16 mb-2 font-medium text-white">Failed to load assignment details</p>
-            <p className="text-14 text-white/60">
-              {error?.message || 'An error occurred while fetching the data'}
-            </p>
+            <p className="text-16 mb-2 font-medium text-white">We couldn’t load the details</p>
+            <p className="text-14 text-white/60">{error?.message || 'Something went wrong.'}</p>
           </div>
           <Button onClick={() => refetch()} variant="outline">
-            Try Again
+            Try again
           </Button>
         </div>
       </div>
@@ -142,7 +140,7 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
                   theme={themes.vsDark}
                   code={
                     markdownContent ||
-                    '# No content available\n\nThe scraped content for this assignment is not available.'
+                    '# No content available\n\nThe content for this assignment isn’t available.'
                   }
                   language="markdown"
                 >
@@ -280,9 +278,7 @@ const AssignmentDetailContent = ({ assignmentId }: AssignmentDetailContentProps)
                 ) : (
                   <div className="text-center">
                     <p className="text-14 font-medium text-white/80">No content available</p>
-                    <p className="text-12 mt-1 text-white/60">
-                      The scraped content for this assignment is not available.
-                    </p>
+                    <p className="text-12 mt-1 text-white/60">The content isn’t available.</p>
                   </div>
                 )}
               </div>

@@ -175,7 +175,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="py-4 text-center"
           >
             <Icon icon="LoaderCircle" className="mx-auto mb-4 size-8 animate-spin text-white/60" />
-            <p className="text-14 text-white/80">Preparing Docker setup...</p>
+            <p className="text-14 text-white/80">Getting Docker ready...</p>
           </motion.div>
         )}
 
@@ -193,7 +193,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               </div>
               <h3 className="text-16 font-semibold text-white">Download Docker Desktop</h3>
               <p className="text-14 mt-1 text-white/80">
-                {downloadError ? downloadError : "Let's download Docker Desktop for your system"}
+                {downloadError ? downloadError : 'Let’s download Docker Desktop for your computer'}
               </p>
             </div>
 
@@ -219,8 +219,8 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
                 <Download className="text-green size-7" />
               </div>
-              <h3 className="text-16 font-semibold text-white">Download Docker Desktop</h3>
-              <p className="text-14 mt-1 text-white/80">This will take a few minutes</p>
+              <h3 className="text-16 font-semibold text-white">Downloading Docker Desktop</h3>
+              <p className="text-14 mt-1 text-white/80">This may take a few minutes</p>
             </div>
 
             {/* Download Progress */}
@@ -257,9 +257,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
                 <Icon icon="CircleCheck" className="text-positive size-7" />
               </div>
-              <h3 className="text-16 font-semibold text-white">Docker Desktop Ready</h3>
+              <h3 className="text-16 font-semibold text-white">Docker Desktop is Ready</h3>
               <p className="text-14 mt-1 text-white/80">
-                {downloadError ? downloadError : 'Installer is ready to launch'}
+                {downloadError ? downloadError : 'The installer is ready to open'}
               </p>
             </div>
           </motion.div>
@@ -285,16 +285,16 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               )}
 
               <h3 className="text-16 font-semibold text-white">
-                {dockerStatus === 'not-running' ? 'Start Docker Desktop' : 'Installing Docker'}
+                {dockerStatus === 'not-running' ? 'Open Docker Desktop' : 'Installing Docker'}
               </h3>
 
               <p className="text-14 mt-1 text-white/80">
-                {dockerStatus === 'checking' && "We're checking for Docker installation..."}
+                {dockerStatus === 'checking' && 'We’re checking your Docker installation...'}
                 {dockerStatus === 'not-installed' &&
                   (verifyAttempts > 2
-                    ? 'Taking a bit longer. Please complete the installation'
-                    : 'Follow the installer steps to complete')}
-                {dockerStatus === 'not-running' && 'Docker is installed but not running'}
+                    ? 'This is taking a bit longer. Please finish the installation.'
+                    : 'Follow the installer steps to finish.')}
+                {dockerStatus === 'not-running' && 'Docker is installed but not running yet.'}
               </p>
             </div>
 
@@ -310,9 +310,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                   <Folder className="size-4 text-white/80" />
                   <p className="text-14 text-white/80">
                     {getPlatformName() === 'macOS'
-                      ? 'Drag Docker to Applications folder'
+                      ? 'Drag Docker into your Applications folder'
                       : getPlatformName() === 'Windows'
-                        ? 'Run the installer and follow the wizard'
+                        ? 'Run the installer and follow the steps'
                         : 'Run the installation script'}
                   </p>
                 </div>
@@ -330,7 +330,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                   <Rocket className="size-4 text-white/80" />
                   <p className="text-14 text-white/80">
                     Please open Docker Desktop from your{' '}
-                    {getPlatformName() === 'macOS' ? 'Applications' : 'Start Menu'}
+                    {getPlatformName() === 'macOS' ? 'Applications' : 'Start menu'}
                   </p>
                 </div>
               </motion.div>
@@ -355,7 +355,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             >
               <Icon icon="CircleCheck" className="text-positive size-8" />
             </motion.div>
-            <h3 className="text-18 font-semibold text-white">Docker is Ready!</h3>
+            <h3 className="text-18 font-semibold text-white">Docker is ready!</h3>
             <p className="text-14 mt-2 text-white/80">Everything is set up correctly</p>
           </motion.div>
         )}
@@ -382,14 +382,14 @@ export function SetupStep({ onComplete }: SetupStepProps) {
           {state === 'checking' && 'Preparing...'}
           {state === 'no-installer' && `Download for ${getPlatformName()}`}
           {state === 'downloading' && 'Downloading...'}
-          {state === 'has-installer' && 'Open Installer'}
+          {state === 'has-installer' && 'Open installer'}
           {state === 'installing' && (
             <>
               <Icon icon="LoaderCircle" className="size-4 animate-spin" />
-              Verifying Installation...
+              Checking your installation...
             </>
           )}
-          {state === 'docker-ready' && 'Launching Core Node...'}
+          {state === 'docker-ready' && 'Starting OptimAI...'}
         </Button>
       </div>
     </div>

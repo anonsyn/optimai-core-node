@@ -10,15 +10,15 @@ interface MiningLoadingProps {
 }
 
 const statusMessages: Record<string, string> = {
-  [MiningStatus.Idle]: 'Service Initialization',
-  [MiningStatus.Initializing]: 'System Verification',
-  [MiningStatus.InitializingCrawler]: 'Tools Setup'
+  [MiningStatus.Idle]: 'Getting Ready',
+  [MiningStatus.Initializing]: 'Checking System',
+  [MiningStatus.InitializingCrawler]: 'Setting Things Up'
 }
 
 const statusDescriptions: Record<string, string> = {
-  [MiningStatus.Idle]: 'Preparing your local mining environment',
-  [MiningStatus.Initializing]: 'Verifying Docker and system compatibility',
-  [MiningStatus.InitializingCrawler]: 'Initializing data collection services'
+  [MiningStatus.Idle]: 'Getting your device ready',
+  [MiningStatus.Initializing]: 'Making sure everything works with your device',
+  [MiningStatus.InitializingCrawler]: 'Setting up data tools'
 }
 
 export const MiningLoading = ({ status }: MiningLoadingProps) => {
@@ -123,11 +123,8 @@ export const MiningLoading = ({ status }: MiningLoadingProps) => {
             >
               <Info className="text-yellow mt-0.5 h-4 w-4 flex-shrink-0" />
               <div className="text-12 text-white/70">
-                <p className="text-yellow font-medium">First time setup</p>
-                <p className="mt-1">
-                  Initial configuration may take several minutes while we download and set up the
-                  required mining tools.
-                </p>
+                <p className="text-yellow font-medium">First-time setup</p>
+                <p className="mt-1">This can take a few minutes while we download and set up what’s needed.</p>
               </div>
             </motion.div>
           )}

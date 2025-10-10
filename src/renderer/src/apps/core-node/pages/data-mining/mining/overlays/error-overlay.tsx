@@ -80,12 +80,12 @@ export const ErrorOverlay = ({ error }: ErrorOverlayProps) => {
               {isRetrying ? (
                 <>
                   <Icon icon="LoaderCircle" className="size-4 animate-spin" />
-                  Retrying...
+                  Trying again...
                 </>
               ) : (
                 <>
                   <Icon icon="RotateCcw" className="size-4" />
-                  Try Again
+                  Try again
                 </>
               )}
             </Button>

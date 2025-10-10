@@ -74,10 +74,10 @@ function Content() {
         <div className="bg-destructive/10 mx-auto mb-4 flex size-14 items-center justify-center rounded-full">
           <AlertTriangle className="text-destructive size-6" />
         </div>
-        <h3 className="text-16 font-semibold text-white">Open Docker Desktop</h3>
+        <h3 className="text-16 font-semibold text-white">Please open Docker Desktop</h3>
         <p className="text-14 mt-2 text-white/70">
-          Launch Docker Desktop from your applications menu and keep it running so we can finish
-          verification.
+          Open Docker Desktop from your Applications/Start menu and keep it running. We’ll continue
+          once it’s ready.
         </p>
       </motion.div>
 
@@ -87,14 +87,14 @@ function Content() {
           className="from-yellow to-green w-full bg-gradient-to-r text-black hover:opacity-90 disabled:opacity-50"
         >
           <Icon icon="LoaderCircle" className="size-4 animate-spin" />
-          Verifying Docker...
+          Checking Docker...
         </Button>
         <Button
           variant="ghost"
           className="text-12 h-auto w-full text-white/60 hover:text-white"
           onClick={() => window.windowIPC.openExternalLink('https://docs.docker.com/desktop/')}
         >
-          Need help?
+          Get help
         </Button>
       </div>
     </div>

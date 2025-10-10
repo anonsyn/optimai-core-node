@@ -65,11 +65,9 @@ export function DockerNotInstalledModal() {
                   transition={{ delay: 0.1 }}
                   className="relative"
                 >
-                  <DialogTitle className="text-18 text-start">
-                    Let&apos;s Set Up Docker Together
-                  </DialogTitle>
+                  <DialogTitle className="text-18 text-start">Let’s set up Docker</DialogTitle>
                   <DialogDescription className="mt-2">
-                    We&apos;ll download and help you install Docker Desktop
+                    We’ll download and help you install Docker Desktop
                   </DialogDescription>
                 </motion.div>
               </DialogHeader>
@@ -102,7 +100,7 @@ export function DockerNotInstalledModal() {
                     window.windowIPC.openExternalLink('https://docs.docker.com/desktop/')
                   }
                 >
-                  Need help?
+                  Get help
                 </Button>
               </DialogFooter>
             </motion.div>
@@ -178,8 +176,8 @@ export function DockerNotInstalledModal() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <h3 className="text-24 mb-2 font-semibold text-white">Perfect! Docker is Ready</h3>
-                <p className="text-14 text-white/80">Starting OptimAI Core Node...</p>
+                <h3 className="text-24 mb-2 font-semibold text-white">All set! Docker is ready</h3>
+                <p className="text-14 text-white/80">Starting OptimAI...</p>
               </motion.div>
 
               {/* Loading spinner */}

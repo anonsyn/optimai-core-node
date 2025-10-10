@@ -18,45 +18,45 @@ type Step = {
 const steps: Step[] = [
   {
     phase: StartupPhase.INITIALIZING,
-    title: 'System Initialization',
-    description: 'Preparing your local environment and core services',
+    title: 'Getting Things Ready',
+    description: 'We’re setting up your app and checking basics',
     icon: 'CPU',
-    code: '> node.init()'
+    code: '> getting ready...'
   },
   {
     phase: StartupPhase.CHECKING_UPDATES,
-    title: 'Update Verification',
-    description: 'Ensuring you have the latest version installed',
+    title: 'Checking for Updates',
+    description: 'Looking for the latest version',
     icon: 'Globe',
-    code: '> node.checkUpdates()'
+    code: '> checking updates...'
   },
   {
     phase: StartupPhase.CHECKING_DOCKER,
-    title: 'Docker Validation',
-    description: 'Verifying container runtime and daemon status',
+    title: 'Checking Docker',
+    description: 'Making sure Docker is installed and running',
     icon: 'LoaderCircle',
-    code: '> docker.validate()'
+    code: '> checking docker...'
   },
   {
     phase: StartupPhase.CHECKING_AUTH,
-    title: 'Authentication',
-    description: 'Securing your session with encrypted tokens',
+    title: 'Signing You In',
+    description: 'Confirming your account details',
     icon: 'LockOpen',
-    code: '> auth.verify()'
+    code: '> checking account...'
   },
   {
     phase: StartupPhase.STARTING_NODE,
-    title: 'Node Activation',
-    description: 'Starting OptimAI core services and connections',
+    title: 'Starting OptimAI',
+    description: 'Starting services and getting connected',
     icon: 'LoaderCircle',
-    code: '> node.start()'
+    code: '> starting...'
   },
   {
     phase: StartupPhase.COMPLETED,
-    title: 'Launch Ready',
-    description: 'All systems operational and synchronized',
+    title: 'All Set',
+    description: 'You’re good to go',
     icon: 'CircleCheck',
-    code: '> node.ready()'
+    code: '> ready'
   }
 ]
 
@@ -209,7 +209,7 @@ const Status = ({ className, ...props }: StatusProps) => {
                 onClick={retry}
                 className="text-destructive/70 hover:text-destructive text-xs underline underline-offset-2 transition"
               >
-                Try Again
+                Try again
               </button>
             </motion.div>
           )}

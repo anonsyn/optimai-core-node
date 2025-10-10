@@ -115,7 +115,7 @@ export const DeviceInfoCard = () => {
           </CardIcon>
         </CardHeader>
         <CardContent>
-          <div className="text-14 text-white/50">Unable to load device information</div>
+          <div className="text-14 text-white/50">We couldn’t load device info</div>
         </CardContent>
       </Card>
     )

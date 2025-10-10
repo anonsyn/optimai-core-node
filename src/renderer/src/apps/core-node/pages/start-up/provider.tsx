@@ -86,7 +86,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       setPhase(StartupPhase.CHECKING_UPDATES)
       // Small delay to ensure phase transition is visible
       setTimeout(() => {
-        addStatus('Looking for new updates...')
+        addStatus('Checking for updates...')
       }, 100)
 
       const { unsubscribe } = window.updaterIPC.onStateChange((state) => {
@@ -102,7 +102,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         }
 
         if (state.status === 'downloaded') {
-          addStatus('Installing update and restarting...')
+          addStatus('Installing the update and restarting...')
           unsubscribe()
           resolve(true)
           return
@@ -118,7 +118,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     setPhase(StartupPhase.CHECKING_DOCKER)
     // Small delay to ensure phase transition is visible
     await sleep(100)
-    addStatus('Checking Docker requirements...')
+    addStatus('Checking Docker...')
 
     const waitForRetry = async (type: 'installed' | 'running') => {
       await new Promise<void>((resolve) => {
@@ -130,7 +130,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         openModal({
           onRetry: async () => {
-            addStatus('Rechecking Docker requirements...')
+            addStatus('Rechecking Docker...')
 
             try {
               if (type === 'installed') {
@@ -144,7 +144,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
                   return true
                 }
 
-                addStatus('Docker Desktop is still not installed', true)
+                addStatus('Docker Desktop still isn’t installed', true)
                 return false
               }
 
@@ -158,12 +158,12 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
                 return true
               }
 
-              addStatus('Docker Desktop is still not running', true)
+              addStatus('Docker Desktop still isn’t running', true)
               return false
             } catch (retryError) {
               console.error('Docker retry check failed:', retryError)
-              addStatus('Docker check failed', true)
-              setError('Failed to check Docker status')
+              addStatus('Couldn’t check Docker', true)
+              setError('We couldn’t check Docker')
               return false
             }
           }
@@ -182,7 +182,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         const dockerInstalled = await window.dockerIPC.checkInstalled()
         if (!dockerInstalled) {
-          addStatus('Docker Desktop is not installed', true)
+          addStatus('Docker Desktop isn’t installed', true)
           hasRetried = true
           await waitForRetry('installed')
           continue
@@ -190,19 +190,19 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         const dockerRunning = await window.dockerIPC.checkRunning()
         if (!dockerRunning) {
-          addStatus('Docker Desktop is not running', true)
+          addStatus('Docker Desktop isn’t running', true)
           hasRetried = true
           await waitForRetry('running')
           continue
         }
 
-        addStatus('Docker requirements satisfied')
+        addStatus('Docker looks good')
         return true
       }
     } catch (error) {
       console.error('Docker check failed:', error)
-      addStatus('Docker check failed', true)
-      setError('Failed to check Docker status')
+      addStatus('Couldn’t check Docker', true)
+      setError('We couldn’t check Docker')
       return false
     }
   }, [
@@ -219,7 +219,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     setPhase(StartupPhase.CHECKING_AUTH)
     // Small delay to ensure phase transition is visible
     await sleep(100)
-    addStatus('Checking authentication...')
+    addStatus('Checking your account...')
 
     try {
       const accessToken = await sessionManager.getAccessToken()
@@ -240,7 +240,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
 
       dispatch(authActions.setUser(user))
-      addStatus('Authentication successful')
+      addStatus('Signed in')
       return true
     } catch (err) {
       console.error('Authentication check failed:', err)
@@ -255,7 +255,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       setPhase(StartupPhase.STARTING_NODE)
       // Small delay to ensure phase transition is visible
       await sleep(100)
-      addStatus('Starting Node...')
+      addStatus('Starting OptimAI...')
 
       const success = await window.nodeIPC.startNode()
 
@@ -270,7 +270,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       const nodeStatus = await window.nodeIPC.getStatus()
 
       if (nodeStatus?.running) {
-        addStatus('Node started successfully')
+        addStatus('OptimAI started')
         setPhase(StartupPhase.COMPLETED)
         return true
       } else {
@@ -278,8 +278,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
     } catch (err) {
       console.error('Error starting node:', err)
-      addStatus('Starting node failed, please restart the application', true)
-      setError('Failed to start node')
+      addStatus('Couldn’t start OptimAI. Please restart the app.', true)
+      setError('Couldn’t start OptimAI')
       setPhase(StartupPhase.ERROR)
       return false
     }
@@ -371,9 +371,9 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
     } catch (err) {
       console.error('Startup error:', err)
-      setError(err instanceof Error ? err.message : 'Unknown error occurred')
+      setError(err instanceof Error ? err.message : 'Something went wrong')
       setPhase(StartupPhase.ERROR)
-      addStatus('Startup failed', true)
+      addStatus('Something went wrong starting up', true)
     } finally {
       setIsLoading(false)
       isStartingRef.current = false
@@ -390,7 +390,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
   // Retry functionality
   const retry = useCallback(() => {
-    setStatuses([{ message: 'Retrying...' }])
+    setStatuses([{ message: 'Trying again...' }])
     setPhase(StartupPhase.INITIALIZING)
     startApplication()
   }, [startApplication])

@@ -141,9 +141,9 @@ const MiningConstellation = ({ status, className }: MiningConstellationProps) =>
 
       // Show status-based text
       if (statusRef.current === MiningStatus.Idle) {
-        ctx.fillText('INIT', centerX, centerY)
+        ctx.fillText('START', centerX, centerY)
       } else if (statusRef.current === MiningStatus.Initializing) {
-        ctx.fillText('VERIFY', centerX, centerY)
+        ctx.fillText('CHECK', centerX, centerY)
       } else if (statusRef.current === MiningStatus.InitializingCrawler) {
         ctx.fillText('SETUP', centerX, centerY)
       }

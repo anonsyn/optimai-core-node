@@ -77,7 +77,7 @@ export const WalletPopover = () => {
       <PopoverTrigger asChild onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <button
           type="button"
-          className="hover:bg-accent/40 focus-visible:ring-primary text-13 focus-visible:ring-offset-background bg-accent/30 flex items-center gap-2 rounded-xl border border-white/5 px-4 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="bg-accent/30 hover:bg-accent/40 text-13 flex items-center gap-2 rounded-xl border border-white/5 px-4 py-1.5 transition-colors outline-none"
         >
           <Wallet className="size-4 text-white/70" />
           <span className="font-medium text-white">{truncatedAddress || 'Connect Wallet'}</span>

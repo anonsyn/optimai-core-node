@@ -277,7 +277,7 @@ const UpdateReadyContent = () => {
                   ease: 'easeInOut'
                 }}
               >
-                Installing Update
+                Installing the update
               </motion.p>
               <p className="text-14 text-white/60">The application will restart automatically</p>
             </div>

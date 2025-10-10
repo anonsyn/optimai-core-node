@@ -12,21 +12,21 @@ export const NodeStatusIndicator = () => {
     switch (status) {
       case NodeStatus.Running:
         return {
-          label: 'Running',
+          label: 'Active',
           dotClass: 'bg-green shadow-[0_0_12px_rgba(34,197,94,0.8)]',
           textClass: 'text-white',
           ringClass: 'bg-green',
           animate: true,
-          tooltip: 'Node is running and earning rewards'
+          tooltip: 'OptimAI is running and earning rewards'
         }
       case NodeStatus.Starting:
         return {
-          label: 'Starting',
+          label: 'Starting up',
           dotClass: 'bg-yellow shadow-[0_0_12px_rgba(234,179,8,0.8)]',
           textClass: 'text-white',
           ringClass: 'bg-yellow',
           animate: true,
-          tooltip: 'Node is starting up...'
+          tooltip: 'OptimAI is starting up...'
         }
       case NodeStatus.Stopping:
         return {
@@ -35,7 +35,7 @@ export const NodeStatusIndicator = () => {
           textClass: 'text-white',
           ringClass: 'bg-orange-500',
           animate: true,
-          tooltip: 'Node is shutting down...'
+          tooltip: 'OptimAI is stopping...'
         }
       case NodeStatus.Restarting:
         return {
@@ -44,7 +44,7 @@ export const NodeStatusIndicator = () => {
           textClass: 'text-white',
           ringClass: 'bg-blue-500',
           animate: true,
-          tooltip: 'Node is restarting...'
+          tooltip: 'OptimAI is restarting...'
         }
       case NodeStatus.Idle:
       default:
@@ -54,7 +54,7 @@ export const NodeStatusIndicator = () => {
           textClass: 'text-white/70',
           ringClass: 'bg-white/40',
           animate: false,
-          tooltip: lastError || 'Node is not running'
+          tooltip: lastError || 'OptimAI isn’t running'
         }
     }
   }
@@ -67,7 +67,7 @@ export const NodeStatusIndicator = () => {
         <TooltipTrigger asChild>
           <button
             type="button"
-            className="hover:bg-accent/40 focus-visible:ring-primary text-13 focus-visible:ring-offset-background bg-accent/30 flex items-center gap-2 rounded-xl border border-white/5 px-4 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+            className="bg-accent/30 hover:bg-accent/40 text-13 flex items-center gap-2 rounded-xl border border-white/5 px-4 py-1.5 transition-colors outline-none"
             onClick={() => {
               // You could add click action here to start/stop node
               console.log('Node status clicked:', status)

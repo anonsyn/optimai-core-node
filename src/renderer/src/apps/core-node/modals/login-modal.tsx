@@ -31,16 +31,16 @@ function LoginModal() {
     <Dialog open={open}>
       <DialogContent className="flex min-h-[min(70svh,414px)] flex-col overflow-auto md:min-h-[min(70svh,520px)]">
         <DialogHeader>
-          <DialogTitle className="text-28">Login</DialogTitle>
+          <DialogTitle className="text-28">Sign in</DialogTitle>
           <DialogDescription className="text-16 font-normal text-white/80">
-            Don&apos;t have an account?&nbsp;
+            Don’t have an account?&nbsp;
             <a
               className="webkit-text-clip bg-main bg-clip-text font-medium"
               href={EXTERNAL_LINKS.DASHBOARD.REGISTER}
               target="_blank"
               rel="noreferrer"
             >
-              Register Now
+              Create account
             </a>
           </DialogDescription>
         </DialogHeader>
@@ -126,7 +126,7 @@ const LoginForm = () => {
         return window.nodeIPC.startNode()
       })
       .then(() => {
-        toastSuccess('Login successful')
+        toastSuccess('Signed in')
         onSuccess?.()
         closeModal()
       })
@@ -192,7 +192,7 @@ const LoginForm = () => {
             Forgot password
           </Button>
           <SubmitButton className="mt-auto" loading={isPending}>
-            Access My Account
+            Sign in
           </SubmitButton>
         </form>
       </Form>
