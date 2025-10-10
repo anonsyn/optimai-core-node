@@ -11,7 +11,7 @@ export const DataMiningHeader = () => {
   const isMac = os === OS.MAC
 
   return (
-    <div className="relative z-40 flex h-12 items-center justify-between border-b border-white/5">
+    <div className="relative z-[51] flex h-12 items-center justify-between border-b border-white/5">
       <div className="drag-region absolute inset-0" />
 
       {/* Logo - positioned after traffic lights on macOS */}

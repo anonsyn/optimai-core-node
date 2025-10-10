@@ -255,7 +255,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       setPhase(StartupPhase.STARTING_NODE)
       // Small delay to ensure phase transition is visible
       await sleep(100)
-      addStatus('Starting OptimAI...')
+      addStatus('Starting Node...')
 
       const success = await window.nodeIPC.startNode()
 

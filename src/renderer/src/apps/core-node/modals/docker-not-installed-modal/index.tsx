@@ -177,7 +177,7 @@ export function DockerNotInstalledModal() {
                 transition={{ delay: 0.3 }}
               >
                 <h3 className="text-24 mb-2 font-semibold text-white">All set! Docker is ready</h3>
-                <p className="text-14 text-white/80">Starting OptimAI...</p>
+                <p className="text-14 text-white/80">Starting Node...</p>
               </motion.div>
 
               {/* Loading spinner */}

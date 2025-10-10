@@ -98,7 +98,7 @@ export const NodeStatusIndicator = () => {
             <span className={cn('font-medium', config.textClass)}>{config.label}</span>
           </button>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent className="[z-index:60]">
           <p className="text-12">{config.tooltip}</p>
         </TooltipContent>
       </Tooltip>

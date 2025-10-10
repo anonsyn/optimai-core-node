@@ -389,7 +389,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               Checking your installation...
             </>
           )}
-          {state === 'docker-ready' && 'Starting OptimAI...'}
+          {state === 'docker-ready' && 'Starting Node...'}
         </Button>
       </div>
     </div>

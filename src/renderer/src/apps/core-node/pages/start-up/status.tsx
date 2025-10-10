@@ -46,7 +46,7 @@ const steps: Step[] = [
   },
   {
     phase: StartupPhase.STARTING_NODE,
-    title: 'Starting OptimAI',
+    title: 'Starting Node',
     description: 'Starting services and getting connected',
     icon: 'LoaderCircle',
     code: '> starting...'
