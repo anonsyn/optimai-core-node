@@ -1,13 +1,10 @@
 import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useGetMiningAssignmentsQuery, useGetMiningStatsQuery } from '@/queries/mining'
-import { authSelectors } from '@/store/slices/auth'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { motion } from 'framer-motion'
 import lodash from 'lodash'
-import { Wallet } from 'lucide-react'
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { AssignmentItem } from './assignment-item'
 
 export const AssignmentsList = () => {
@@ -20,7 +17,6 @@ export const AssignmentsList = () => {
     sort_by: 'updated_at'
   })
   const { refetch: refetchStats } = useGetMiningStatsQuery()
-  const walletAddress = useSelector(authSelectors.userAddress)
 
   const [animationParent] = useAutoAnimate()
 
@@ -97,14 +93,6 @@ export const AssignmentsList = () => {
               <Icon icon="Pickaxe" className="size-5 text-white/80" />
               <h2 className="text-24 font-semibold text-white">Assignments</h2>
             </div>
-            {walletAddress && (
-              <div className="bg-secondary/50 flex items-center gap-2 rounded-2xl px-4 py-2">
-                <Wallet className="size-4 text-white/60" />
-                <span className="text-13 font-mono text-white/60">
-                  {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Assignment Grid */}
