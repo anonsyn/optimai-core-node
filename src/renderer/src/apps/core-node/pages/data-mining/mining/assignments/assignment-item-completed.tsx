@@ -31,11 +31,6 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
     lodash.get(assignment, 'metadata.og:image', '') ||
     lodash.get(assignment, 'metadata.preview_image', '')
 
-  const formatTaskId = (id: string, full = false) => {
-    if (full) return id
-    return id.slice(0, 6) + '...' + id.slice(-4)
-  }
-
   const getHostname = (url: string) => {
     try {
       return new URL(url).hostname.replace('www.', '')

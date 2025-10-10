@@ -9,7 +9,6 @@ interface AssignmentItemProcessingProps {
 }
 
 export const AssignmentItemProcessing = ({ assignment }: AssignmentItemProcessingProps) => {
-  const id = lodash.get(assignment, 'id', '')
   const status = lodash.get(assignment, 'status', '')
   const sourceUrl = lodash.get(assignment, 'task.source_url', '')
   const updatedAt = lodash.get(assignment, 'updated_at', lodash.get(assignment, 'started_at', ''))
@@ -27,11 +26,6 @@ export const AssignmentItemProcessing = ({ assignment }: AssignmentItemProcessin
       default:
         return { label: 'Pending' }
     }
-  }
-
-  const formatTaskId = (id: string, full = false) => {
-    if (full) return id
-    return id.slice(0, 6) + '...' + id.slice(-4)
   }
 
   const getHostname = (url: string) => {
