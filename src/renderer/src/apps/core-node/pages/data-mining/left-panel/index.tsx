@@ -21,12 +21,6 @@ export const LeftPanel = () => {
     <div className="relative h-full w-[420px] flex-shrink-0 border-r border-white/5">
       <ScrollArea className="h-full w-full">
         <div className="space-y-4 p-5">
-          {/* Header */}
-          <div className="mb-4">
-            <h1 className="text-24 font-semibold text-white">Mining Dashboard</h1>
-            <p className="text-14 mt-1 text-white/60">Real-time performance monitoring</p>
-          </div>
-
           {/* Mining Performance Hero */}
           <Card>
             <CardHeader>
