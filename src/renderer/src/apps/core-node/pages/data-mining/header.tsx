@@ -1,19 +1,16 @@
 import Logo from '@/components/branding/logo'
 import { WindowControlButton, WindowControls } from '@/components/modules/window-controls'
-import { authSelectors } from '@/store/slices/auth'
 import { getOS, OS } from '@/utils/os'
 import { motion } from 'framer-motion'
-import { Wallet } from 'lucide-react'
-import { useSelector } from 'react-redux'
 import packageJson from '../../../../../../../package.json'
+import { WalletPopover } from './wallet-popover'
 
 export const DataMiningHeader = () => {
   const os = getOS()
   const isMac = os === OS.MAC
-  const walletAddress = useSelector(authSelectors.userAddress)
 
   return (
-    <div className="relative z-40 flex h-13 items-center justify-between border-b border-white/5">
+    <div className="relative z-40 flex h-12 items-center justify-between border-b border-white/5">
       <div className="drag-region absolute inset-0" />
 
       {/* Logo - positioned after traffic lights on macOS */}
@@ -31,14 +28,7 @@ export const DataMiningHeader = () => {
       </motion.div>
 
       <div className="no-drag relative z-10 flex items-center gap-3 pr-4">
-        {walletAddress && (
-          <div className="bg-secondary/50 flex items-center gap-2 rounded-2xl px-4 py-1.5">
-            <Wallet className="size-4 text-white/60" />
-            <span className="text-13 font-mono text-white/60">
-              {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-            </span>
-          </div>
-        )}
+        <WalletPopover />
         <WindowControls className="!static flex items-center">
           <WindowControlButton variant="minimize" />
           <WindowControlButton variant="maximize" />

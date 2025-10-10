@@ -87,7 +87,7 @@ export const DeviceInfoCard = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Node Information</CardTitle>
+          <CardTitle>Device Information</CardTitle>
           <CardIcon>
             <Monitor className="size-4" />
           </CardIcon>
@@ -109,7 +109,7 @@ export const DeviceInfoCard = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Node Information</CardTitle>
+          <CardTitle>Device Information</CardTitle>
           <CardIcon>
             <Monitor className="size-4" />
           </CardIcon>
@@ -124,7 +124,7 @@ export const DeviceInfoCard = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Node Information</CardTitle>
+        <CardTitle>Device Information</CardTitle>
         <CardIcon>
           <Monitor className="size-4" />
         </CardIcon>

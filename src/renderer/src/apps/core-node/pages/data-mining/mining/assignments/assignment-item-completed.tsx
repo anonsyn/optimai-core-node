@@ -23,6 +23,7 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
   // Metadata from assignment level (when completed)
   const metadataTitle = lodash.get(assignment, 'metadata.title', '')
   const metadataDescription =
+    lodash.get(assignment, 'metadata.og:description', '') ||
     lodash.get(assignment, 'metadata.description', '') ||
     lodash.get(assignment, 'task.metadata.snippet', '')
   const favicon = lodash.get(assignment, 'metadata.favicon', '')
