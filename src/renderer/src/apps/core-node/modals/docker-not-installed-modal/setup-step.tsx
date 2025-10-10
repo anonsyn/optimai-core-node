@@ -43,8 +43,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
   useEffect(() => {
     if (state !== 'installing') return
 
-    let interval: NodeJS.Timeout
-    let timeoutId: NodeJS.Timeout
+    let interval: NodeJS.Timeout | undefined
 
     const checkDocker = async () => {
       try {
@@ -79,29 +78,21 @@ export function SetupStep({ onComplete }: SetupStepProps) {
       setDockerStatus('checking')
       const success = await checkDocker()
 
-      if (success) {
-        // Wait a bit then call onComplete
-        timeoutId = setTimeout(() => {
-          onComplete()
-        }, 2000)
-      } else {
-        // Continue polling every 15 seconds
-        interval = setInterval(async () => {
-          setVerifyAttempts((prev) => prev + 1)
-          const success = await checkDocker()
+      if (success) return
 
-          if (success) {
-            clearInterval(interval)
-            timeoutId = setTimeout(() => {
-              onComplete()
-            }, 2000)
-          }
-        }, 15000)
-      }
+      // Continue polling every 15 seconds
+      interval = setInterval(async () => {
+        setVerifyAttempts((prev) => prev + 1)
+        const success = await checkDocker()
+
+        if (success) {
+          clearInterval(interval)
+        }
+      }, 15000)
     }
 
     // Wait a bit before starting to check (give user time to start installation)
-    const initialDelay = setTimeout(() => {
+    const initialDelay: NodeJS.Timeout = setTimeout(() => {
       startVerifying()
     }, 3000)
 
@@ -109,9 +100,21 @@ export function SetupStep({ onComplete }: SetupStepProps) {
     return () => {
       clearTimeout(initialDelay)
       if (interval) clearInterval(interval)
-      if (timeoutId) clearTimeout(timeoutId)
     }
-  }, [state, onComplete])
+  }, [state])
+
+  useEffect(() => {
+    if (state !== 'docker-ready' || dockerStatus !== 'running') {
+      return
+    }
+
+    const timeoutId = setTimeout(() => {
+      onComplete()
+    }, 1000)
+
+    return () => clearTimeout(timeoutId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, dockerStatus])
 
   const startDownload = async () => {
     setState('downloading')
