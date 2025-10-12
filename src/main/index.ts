@@ -1,7 +1,6 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, Menu, nativeImage, nativeTheme, Tray } from 'electron'
+import { app, nativeTheme } from 'electron'
 import log from 'electron-log/main'
-import icon from '../../resources/icon.png?asset'
 import authIpcHandler from './ipc/auth'
 import crawl4AiIpcHandler from './ipc/crawl4ai'
 import dockerIpcHandler from './ipc/docker'
@@ -28,44 +27,44 @@ log.info(logFolder)
 if (!gotTheLock) {
   app.quit()
 } else {
-  let tray: Tray | null = null
+  // let tray: Tray | null = null
 
-  function createTray() {
-    if (is.dev) {
-      return null
-    }
+  // function createTray() {
+  //   if (is.dev) {
+  //     return null
+  //   }
 
-    const trayIcon = nativeImage.createFromPath(icon)
-    tray = new Tray(trayIcon.resize({ width: 16, height: 16 }))
+  //   const trayIcon = nativeImage.createFromPath(icon)
+  //   tray = new Tray(trayIcon.resize({ width: 16, height: 16 }))
 
-    const showApp = () => {
-      const mainWindow = windowManager.getVisibleWindow()
-      if (mainWindow) {
-        mainWindow.show()
-        if (isMac) {
-          app.dock?.show()
-        }
-      }
-    }
+  //   const showApp = () => {
+  //     const mainWindow = windowManager.getVisibleWindow()
+  //     if (mainWindow) {
+  //       mainWindow.show()
+  //       if (isMac) {
+  //         app.dock?.show()
+  //       }
+  //     }
+  //   }
 
-    const contextMenu = Menu.buildFromTemplate([
-      {
-        label: 'Show App',
-        click: showApp
-      },
-      {
-        label: 'Quit',
-        click: () => {
-          app.quit()
-        }
-      }
-    ])
+  //   const contextMenu = Menu.buildFromTemplate([
+  //     {
+  //       label: 'Show App',
+  //       click: showApp
+  //     },
+  //     {
+  //       label: 'Quit',
+  //       click: () => {
+  //         app.quit()
+  //       }
+  //     }
+  //   ])
 
-    tray.setToolTip('OptimAI Core Node')
-    tray.setContextMenu(contextMenu)
+  //   tray.setToolTip('OptimAI Core Node')
+  //   tray.setContextMenu(contextMenu)
 
-    return tray
-  }
+  //   return tray
+  // }
 
   app.on('second-instance', () => {
     const window = windowManager.getVisibleWindow()
@@ -109,9 +108,9 @@ if (!gotTheLock) {
       window.webContents.openDevTools({ mode: 'undocked' })
     }
 
-    if (!tray || tray.isDestroyed()) {
-      tray = createTray()
-    }
+    // if (!tray || tray.isDestroyed()) {
+    //   tray = createTray()
+    // }
 
     // Default open or close DevTools by F12 in development
     // and ignore CommandOrControl + R in production.
@@ -138,7 +137,7 @@ if (!gotTheLock) {
     app.on('before-quit', async () => {
       try {
         windowManager.destroyAllWindows()
-        tray?.destroy()
+        // tray?.destroy()
         await nodeIpcHandler.cleanup()
       } catch (error) {
         console.error('destroy error', getErrorMessage(error, 'destroy error'))

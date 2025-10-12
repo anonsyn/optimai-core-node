@@ -20,13 +20,13 @@ export const LeftPanel = () => {
   return (
     <div className="relative h-full w-[420px] flex-shrink-0 border-r border-white/5">
       <ScrollArea className="h-full w-full">
-        <div className="space-y-4 p-5">
+        <div className="space-y-3 p-5">
           {/* Mining Performance Hero */}
           <Card>
             <CardHeader>
               <CardTitle>Total Rewards</CardTitle>
               <CardIcon>
-                <Sparkle className="size-4" />
+                <Sparkle className="size-4.5" />
               </CardIcon>
             </CardHeader>
             <CardContent>

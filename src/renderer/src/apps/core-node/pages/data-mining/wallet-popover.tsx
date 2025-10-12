@@ -77,123 +77,104 @@ export const WalletPopover = () => {
       <PopoverTrigger asChild onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <button
           type="button"
-          className="bg-accent/30 hover:bg-accent/40 text-13 flex items-center gap-2 rounded-xl border border-white/5 px-4 py-1.5 transition-colors outline-none"
+          className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2 rounded-xl border border-white/5 px-4 transition-colors outline-none"
         >
-          <Wallet className="size-4 text-white/70" />
+          <Wallet className="size-4.5 text-white" />
           <span className="font-medium text-white">{truncatedAddress || 'Connect Wallet'}</span>
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="bg-background w-[340px] overflow-hidden border-white/5 p-0 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+        className="bg-background w-[480px] overflow-hidden border-white/5 p-0 shadow-[0_4px_4px_12px_rgba(0,0,0,0.1)]"
         align="end"
         sideOffset={12}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {/* Header Section */}
-        <div className="bg-accent/50 p-4">
+        <div
+          className="bg-secondary/50 p-4"
+          style={{
+            backgroundImage: 'linear-gradient(0deg, #222623 0%, #222623 100%)'
+          }}
+        >
           <div className="relative">
             <div className="flex items-center gap-3">
-              <Avatar className="bg-raydial-10 size-12 border border-white/10">
-                <AvatarFallback className="text-15 bg-transparent font-semibold text-white">
+              <Avatar className="size-12 border border-white/5 bg-[#2D302D]">
+                <AvatarFallback className="text-20 bg-transparent font-semibold text-white">
                   {initials}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="text-16 truncate font-semibold text-white">
+                <p className="text-18 truncate font-semibold text-white">
                   {user?.display_name || 'OptimAI Operator'}
                 </p>
-                <p className="text-14 truncate text-white/60">{user?.email}</p>
+                <p className="text-14 truncate text-white/50">{user?.email}</p>
               </div>
             </div>
           </div>
 
           {/* Social Connections */}
-          <div className="mt-3 flex items-center gap-2">
-            {user?.twitter && (
-              <div className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/5 px-2 py-1">
-                <Icon icon="Twitter" className="size-3 text-white/60" />
-                <span className="text-12 text-white/60">@{user.twitter.username}</span>
-              </div>
-            )}
-            {user?.telegram && (
-              <div className="flex items-center gap-1.5 rounded-full border border-white/5 bg-white/5 px-2 py-1">
-                <Icon icon="Telegram" className="size-3 text-white/60" />
-                <span className="text-12 text-white/60">{user.telegram.first_name}</span>
-              </div>
-            )}
-            {!user?.twitter && !user?.telegram && (
-              <span className="text-12 text-white/60">No social accounts connected</span>
-            )}
-          </div>
+          {Boolean(user?.twitter || user?.telegram) && (
+            <div className="mt-5 flex items-center gap-2">
+              {user?.twitter && (
+                <div className="bg-background flex h-10 items-center justify-center gap-2 rounded-full border border-white/5 px-4">
+                  <Icon icon="Twitter" className="size-4.5 text-white" />
+                  <span className="text-16 font-medium text-white/60">
+                    @{user.twitter.username}
+                  </span>
+                </div>
+              )}
+              {user?.telegram && (
+                <div className="bg-background flex h-10 items-center justify-center gap-2 rounded-full border border-white/5 px-4">
+                  <Icon icon="Telegram" className="size-4.5 text-white" />
+                  <span className="text-16 font-medium text-white/60">
+                    {user.telegram.first_name}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="relative space-y-4 p-4">
-          {/* Wallet Section */}
-          <div>
-            <div className="group relative overflow-hidden rounded-lg bg-gradient-to-r from-white/5 to-white/3 p-3">
-              <div className="flex items-center gap-3">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-white/5">
-                  <Wallet className="size-4 text-white/60" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  {walletAddress ? (
-                    <>
-                      <p className="text-12 text-white/60">Address</p>
-                      <p className="text-14 truncate font-mono font-medium text-white">
-                        {truncatedAddress}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-14 text-white/60">No wallet connected</p>
-                  )}
-                </div>
-                {walletAddress && (
-                  <CopyButton
-                    textToCopy={walletAddress}
-                    className="text-white/60 transition-colors hover:text-white/80"
-                    iconClassName="size-4"
-                  />
-                )}
+        <div className="relative p-5">
+          <div className="space-y-3">
+            <div className="bg-secondary/50 flex w-full items-center justify-center gap-2.5 rounded-xl p-4">
+              <div className="bg-accent flex size-10 items-center justify-center rounded-lg">
+                <Wallet className="size-4.5 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-14 leading-normal text-white/50">Address</p>
+                <p className="text-16 leading-normal font-semibold text-white">
+                  {truncatedAddress}
+                </p>
+              </div>
+              {walletAddress && <CopyButton textToCopy={walletAddress} iconClassName="size-6" />}
+            </div>
+            <div className="bg-secondary/50 flex w-full items-center justify-center gap-2.5 rounded-xl p-4">
+              <div className="bg-accent flex size-10 items-center justify-center rounded-lg">
+                <Icon icon="Calendar" className="size-4.5 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="text-14 leading-normal text-white/50">Member Since</p>
+                <p className="text-16 leading-normal font-semibold text-white">
+                  {joinedLabel || '--'}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Member Since */}
-          <div>
-            <div className="rounded-lg bg-gradient-to-r from-white/5 to-white/3 p-3">
-              <div className="flex items-center gap-3">
-                <div className="flex size-8 items-center justify-center rounded-lg bg-white/5">
-                  <Icon icon="Calendar" className="size-4 text-white/60" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-12 text-white/60">Member Since</p>
-                  <p className="text-14 font-medium text-white">{joinedLabel || 'Unknown'}</p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Quick Actions */}
-          <div className="border-t border-white/5 pt-4">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="primary"
-                size="sm"
-                className="flex-1"
-                onClick={() => window.windowIPC.openExternalLink('https://optimai.xyz/dashboard')}
-              >
-                View Dashboard
-              </Button>
-              {!walletAddress && (
-                <button
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-12 flex-1 rounded-lg px-3 py-2.5 font-medium transition-all"
-                  onClick={() => window.windowIPC.openExternalLink('https://optimai.xyz/wallet')}
-                >
-                  Connect Wallet
-                </button>
-              )}
-            </div>
+          <div className="pt-8">
+            <Button
+              variant="primary"
+              size="sm"
+              className="w-full"
+              onClick={() => window.windowIPC.openExternalLink('https://optimai.xyz/dashboard')}
+            >
+              View Dashboard
+            </Button>
           </div>
         </div>
       </PopoverContent>

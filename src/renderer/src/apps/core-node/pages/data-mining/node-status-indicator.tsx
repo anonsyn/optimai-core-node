@@ -110,11 +110,7 @@ export const NodeStatusIndicator = () => {
         <TooltipTrigger asChild>
           <button
             type="button"
-            className="bg-accent/30 hover:bg-accent/40 text-13 flex items-center gap-2.5 rounded-xl border border-white/5 px-4 py-1.5 transition-colors outline-none"
-            onClick={() => {
-              // You could add click action here to start/stop node
-              console.log('Node status clicked:', status)
-            }}
+            className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2.5 rounded-xl border border-white/5 px-4 transition-colors outline-none"
           >
             <div className="relative flex items-center justify-center">
               {/* Animated rings for active states - double pulse effect */}
@@ -125,13 +121,9 @@ export const NodeStatusIndicator = () => {
                       'absolute size-3.5 animate-ping rounded-full opacity-30',
                       config.ringClass
                     )}
-                  />
-                  <div
-                    className={cn(
-                      'absolute size-2.5 animate-ping rounded-full opacity-50',
-                      config.ringClass
-                    )}
-                    style={{ animationDelay: '150ms' }}
+                    style={{
+                      animationDuration: '2s'
+                    }}
                   />
                 </>
               )}

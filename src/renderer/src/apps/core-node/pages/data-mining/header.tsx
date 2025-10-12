@@ -11,7 +11,7 @@ export const DataMiningHeader = () => {
   const isMac = os === OS.MAC
 
   return (
-    <div className="relative z-[51] flex h-12 items-center justify-between border-b border-white/5">
+    <div className="relative z-[51] flex h-16 shrink-0 items-center justify-between border-b border-white/5">
       <div className="drag-region absolute inset-0" />
 
       {/* Logo - positioned after traffic lights on macOS */}
@@ -19,13 +19,13 @@ export const DataMiningHeader = () => {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
-        className="no-drag relative z-10 flex items-center gap-2"
+        className="relative z-10 flex items-center gap-2"
         style={{
           paddingLeft: isMac ? '85px' : '20px' // Space for traffic lights on macOS
         }}
       >
-        <Logo variant="horizontal" className="h-5 w-auto" />
-        <span className="self-end font-mono text-[8px] text-white/40">v{packageJson.version}</span>
+        <Logo variant="horizontal" className="h-6 w-auto" />
+        <span className="text-12 self-end font-mono text-white/50">v{packageJson.version}</span>
       </motion.div>
 
       <div className="no-drag relative z-10 flex items-center gap-2 pr-4">

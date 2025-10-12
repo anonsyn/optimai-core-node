@@ -40,7 +40,7 @@ const CopyButton = ({
         <TooltipTrigger asChild>
           <button
             className={cn(
-              "data-[state='copied']:text-positive transition-opacity hover:opacity-60 data-[state='copied']:!opacity-100",
+              "data-[state='copied']:text-positive opacity-60 transition-opacity data-[state='copied']:!opacity-100",
               className
             )}
             onClick={handleCopy}

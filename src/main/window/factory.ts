@@ -9,7 +9,7 @@ export const createWindow = (windowType: WindowType) => {
   const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize
 
   // Traffic light positioning constants
-  const HEADER_HEIGHT = 40
+  const HEADER_HEIGHT = 52
   const TRAFFIC_LIGHT_HEIGHT = 12
   const TRAFFIC_LIGHT_LEFT_MARGIN = 16
   const TRAFFIC_LIGHT_Y = (HEADER_HEIGHT - TRAFFIC_LIGHT_HEIGHT) / 2

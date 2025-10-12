@@ -6,10 +6,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn(
-        'bg-secondary/60 rounded-xl border border-white/4 p-4 backdrop-blur-xl xl:p-5',
-        className
-      )}
+      className={cn('bg-secondary/50 rounded-xl border border-white/4 p-4', className)}
       {...props}
     />
   )
@@ -47,7 +44,7 @@ const CardDescription = React.forwardRef<
 CardDescription.displayName = 'CardDescription'
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn('pt-4', className)} {...props} />
+  ({ className, ...props }, ref) => <div ref={ref} className={cn('pt-5', className)} {...props} />
 )
 CardContent.displayName = 'CardContent'
 
@@ -55,7 +52,7 @@ const CardIcon = ({ className, children, ...props }: React.HTMLAttributes<HTMLDi
   return (
     <div
       className={cn(
-        'relative size-9 flex-shrink-0 self-center justify-self-end rounded-full',
+        'relative size-10 flex-shrink-0 self-center justify-self-end rounded-full',
         className
       )}
       {...props}
