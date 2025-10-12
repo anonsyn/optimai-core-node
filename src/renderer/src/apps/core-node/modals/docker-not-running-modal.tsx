@@ -90,7 +90,7 @@ function Content() {
           Checking Docker...
         </Button>
         <Button
-          variant="ghost"
+          variant="outline"
           className="text-12 h-auto w-full text-white/60 hover:text-white"
           onClick={() => window.windowIPC.openExternalLink('https://docs.docker.com/desktop/')}
         >
