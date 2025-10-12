@@ -51,16 +51,16 @@ const StartUpShell = () => {
       </div>
 
       {/* Main Content - Centered */}
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center px-6">
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center px-6 pt-15">
         {/* Logo - Small and subtle */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="absolute top-8 z-10 flex flex-col items-center gap-1"
+          className="absolute top-18 z-10 flex flex-col items-center gap-2"
         >
-          <Logo variant="horizontal" className="h-8 w-auto" />
-          <span className="text-10 font-mono text-white/60">v{packageJson.version}</span>
+          <Logo variant="horizontal" className="h-[42px] w-auto" />
+          <span className="text-16 font-mono text-white/60">v{packageJson.version}</span>
         </motion.div>
 
         {/* Status - Main Focus */}

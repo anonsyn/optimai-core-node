@@ -19,10 +19,7 @@ import {
 import { useNavigate } from 'react-router'
 
 // Types
-export interface StatusMessage {
-  message: string
-  error?: boolean
-}
+// Removed StatusMessage and status tracking per request
 
 export enum StartupPhase {
   INITIALIZING = 'initializing',
@@ -37,7 +34,6 @@ export enum StartupPhase {
 interface StartupContextValue {
   // State
   phase: StartupPhase
-  statuses: StatusMessage[]
   isLoading: boolean
   error: string | null
 
@@ -56,7 +52,6 @@ interface StartupProviderProps {
 
 export const StartupProvider = ({ children }: StartupProviderProps) => {
   const [phase, setPhase] = useState<StartupPhase>(StartupPhase.INITIALIZING)
-  const [statuses, setStatuses] = useState<StatusMessage[]>([{ message: 'Getting ready...' }])
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -75,23 +70,17 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const closeDockerNotRunningModal = useCloseModal(Modals.DOCKER_NOT_RUNNING)
   const isStartingRef = useRef(false)
 
-  // Add a status message
-  const addStatus = useCallback((message: string, isError = false) => {
-    setStatuses((prev) => [...prev, { message, error: isError }])
-  }, [])
+  // Status messages removed; rely on phase and error only
 
   // Check for updates
   const checkForUpdates = useCallback(async (): Promise<boolean> => {
     return new Promise<boolean>((resolve) => {
       setPhase(StartupPhase.CHECKING_UPDATES)
       // Small delay to ensure phase transition is visible
-      setTimeout(() => {
-        addStatus('Checking for updates...')
-      }, 100)
+      // UI status feed removed; keep phase transitions only
 
       const { unsubscribe } = window.updaterIPC.onStateChange((state) => {
         if (state.status === 'downloading') {
-          addStatus('Downloading the latest version...')
           return
         }
 
@@ -102,7 +91,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         }
 
         if (state.status === 'downloaded') {
-          addStatus('Installing the update and restarting...')
           unsubscribe()
           resolve(true)
           return
@@ -111,14 +99,14 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
       window.updaterIPC.checkForUpdateAndNotify()
     })
-  }, [addStatus])
+  }, [])
 
   // Check Docker requirements
   const checkDockerRequirements = useCallback(async (): Promise<boolean> => {
     setPhase(StartupPhase.CHECKING_DOCKER)
     // Small delay to ensure phase transition is visible
     await sleep(100)
-    addStatus('Checking Docker...')
+    // status feed removed
 
     const waitForRetry = async (type: 'installed' | 'running') => {
       await new Promise<void>((resolve) => {
@@ -130,7 +118,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         openModal({
           onRetry: async () => {
-            addStatus('Rechecking Docker...')
+            // status feed removed
 
             try {
               if (type === 'installed') {
@@ -144,7 +132,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
                   return true
                 }
 
-                addStatus('Docker Desktop still isn’t installed', true)
+                // status feed removed
                 return false
               }
 
@@ -158,11 +146,10 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
                 return true
               }
 
-              addStatus('Docker Desktop still isn’t running', true)
+              // status feed removed
               return false
             } catch (retryError) {
               console.error('Docker retry check failed:', retryError)
-              addStatus('Couldn’t check Docker', true)
               setError('We couldn’t check Docker')
               return false
             }
@@ -182,7 +169,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         const dockerInstalled = await window.dockerIPC.checkInstalled()
         if (!dockerInstalled) {
-          addStatus('Docker Desktop isn’t installed', true)
           hasRetried = true
           await waitForRetry('installed')
           continue
@@ -190,23 +176,19 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
         const dockerRunning = await window.dockerIPC.checkRunning()
         if (!dockerRunning) {
-          addStatus('Docker Desktop isn’t running', true)
           hasRetried = true
           await waitForRetry('running')
           continue
         }
 
-        addStatus('Docker looks good')
         return true
       }
     } catch (error) {
       console.error('Docker check failed:', error)
-      addStatus('Couldn’t check Docker', true)
       setError('We couldn’t check Docker')
       return false
     }
   }, [
-    addStatus,
     closeDockerNotInstalledModal,
     closeDockerNotRunningModal,
     openDockerNotInstalledModal,
@@ -219,7 +201,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     setPhase(StartupPhase.CHECKING_AUTH)
     // Small delay to ensure phase transition is visible
     await sleep(100)
-    addStatus('Checking your account...')
+    // status feed removed
 
     try {
       const accessToken = await sessionManager.getAccessToken()
@@ -240,14 +222,12 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
 
       dispatch(authActions.setUser(user))
-      addStatus('Signed in')
       return true
     } catch (err) {
       console.error('Authentication check failed:', err)
-      addStatus('Please sign in to continue')
       return false
     }
-  }, [addStatus, dispatch, refetchCurrentUser])
+  }, [dispatch, refetchCurrentUser])
 
   // Start the node
   const startNode = useCallback(async (): Promise<boolean> => {
@@ -255,7 +235,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       setPhase(StartupPhase.STARTING_NODE)
       // Small delay to ensure phase transition is visible
       await sleep(100)
-      addStatus('Starting Node...')
 
       const success = await window.nodeIPC.startNode()
 
@@ -270,7 +249,6 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       const nodeStatus = await window.nodeIPC.getStatus()
 
       if (nodeStatus?.running) {
-        addStatus('OptimAI started')
         setPhase(StartupPhase.COMPLETED)
         return true
       } else {
@@ -278,12 +256,11 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
     } catch (err) {
       console.error('Error starting node:', err)
-      addStatus('Couldn’t start OptimAI. Please restart the app.', true)
       setError('Couldn’t start OptimAI')
       setPhase(StartupPhase.ERROR)
       return false
     }
-  }, [addStatus])
+  }, [])
 
   // Minimum delay between phase transitions for smooth animations
   const PHASE_TRANSITION_DELAY = 1500 // 1.5 seconds minimum per phase
@@ -373,24 +350,14 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       console.error('Startup error:', err)
       setError(err instanceof Error ? err.message : 'Something went wrong')
       setPhase(StartupPhase.ERROR)
-      addStatus('Something went wrong starting up', true)
     } finally {
       setIsLoading(false)
       isStartingRef.current = false
     }
-  }, [
-    checkForUpdates,
-    checkDockerRequirements,
-    checkAuth,
-    startNode,
-    openLoginModal,
-    navigate,
-    addStatus
-  ])
+  }, [checkForUpdates, checkDockerRequirements, checkAuth, startNode, openLoginModal, navigate])
 
   // Retry functionality
   const retry = useCallback(() => {
-    setStatuses([{ message: 'Trying again...' }])
     setPhase(StartupPhase.INITIALIZING)
     startApplication()
   }, [startApplication])
@@ -403,13 +370,12 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   const value = useMemo<StartupContextValue>(
     () => ({
       phase,
-      statuses,
       isLoading,
       error,
       retry,
       canRetry: phase === StartupPhase.ERROR
     }),
-    [phase, statuses, isLoading, error, retry]
+    [phase, isLoading, error, retry]
   )
 
   return <StartupContext.Provider value={value}>{children}</StartupContext.Provider>
