@@ -162,9 +162,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col">
       {/* Content Area */}
-      <div className="flex-1 space-y-6">
+      <div className="min-h-[200px] flex-1 space-y-6">
         {/* Status Display */}
         {state === 'checking' && (
           <motion.div
@@ -191,9 +191,11 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
                 <Download className="text-green size-7" />
               </div>
-              <h3 className="text-16 font-semibold text-white">Download Docker Desktop</h3>
-              <p className="text-14 mt-1 text-white/80">
-                {downloadError ? downloadError : 'Let’s download Docker Desktop for your computer'}
+              <h3 className="text-16 font-semibold text-white">Set Up Your Node Environment</h3>
+              <p className="text-14 mt-1 text-balance text-white/80">
+                {downloadError
+                  ? downloadError
+                  : 'Download Docker Desktop — it’s the foundation for running your OptimAI Node locally.'}
               </p>
             </div>
 
@@ -257,9 +259,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
                 <Icon icon="CircleCheck" className="text-positive size-7" />
               </div>
-              <h3 className="text-16 font-semibold text-white">Docker Desktop is Ready</h3>
+              <h3 className="text-16 font-semibold text-white">Download Complete!</h3>
               <p className="text-14 mt-1 text-white/80">
-                {downloadError ? downloadError : 'The installer is ready to open'}
+                Docker Desktop is ready - click Install Now to begin installation
               </p>
             </div>
           </motion.div>
@@ -382,7 +384,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
           {state === 'checking' && 'Preparing...'}
           {state === 'no-installer' && `Download for ${getPlatformName()}`}
           {state === 'downloading' && 'Downloading...'}
-          {state === 'has-installer' && 'Open installer'}
+          {state === 'has-installer' && 'Install Now'}
           {state === 'installing' && (
             <>
               <Icon icon="LoaderCircle" className="size-4 animate-spin" />
@@ -390,6 +392,13 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             </>
           )}
           {state === 'docker-ready' && 'Starting Node...'}
+        </Button>
+        <Button
+          variant="outline"
+          className="mt-2 w-full"
+          onClick={() => window.windowIPC.openExternalLink('https://docs.docker.com/desktop/')}
+        >
+          Get help
         </Button>
       </div>
     </div>
