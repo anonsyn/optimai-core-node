@@ -23,11 +23,11 @@ interface DeviceInfoItemProps {
 }
 
 const DeviceInfoItem = ({ icon, label, value, className }: DeviceInfoItemProps) => (
-  <div className={cn('flex items-center gap-3 py-2', className)}>
-    <div className="flex size-8 items-center justify-center rounded-lg bg-white/5">{icon}</div>
+  <div className={cn('flex items-center gap-3', className)}>
+    <div className="flex size-9 items-center justify-center rounded-lg bg-white/10">{icon}</div>
     <div className="flex flex-col">
-      <span className="text-12 text-white/50">{label}</span>
-      <span className="text-14 font-medium text-white">{value}</span>
+      <span className="text-14 tracking-tight text-white/50">{label}</span>
+      <span className="text-16 font-medium tracking-tight text-white">{value}</span>
     </div>
   </div>
 )
@@ -35,6 +35,17 @@ const DeviceInfoItem = ({ icon, label, value, className }: DeviceInfoItemProps) 
 export const DeviceInfoCard = () => {
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null)
   const [loading, setLoading] = useState(true)
+
+  const deviceId = (() => {
+    const id = deviceInfo?.device_id || deviceInfo?.machine_id
+    if (!id) return null
+
+    if (id.length < 12) {
+      return id
+    }
+
+    return `${id.slice(0, 5)}...${id.slice(-5)}`
+  })()
 
   useEffect(() => {
     window.nodeIPC
@@ -130,28 +141,28 @@ export const DeviceInfoCard = () => {
         </CardIcon>
       </CardHeader>
       <CardContent className="pt-3">
-        <div className="space-y-1">
+        <div className="space-y-5">
           {/* System Information */}
-          <div className="mb-3">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="text-10 font-medium tracking-wider text-white/40 uppercase">
+          <div>
+            <div className="mb-3 flex items-center gap-2">
+              <span className="text-13 font-semibold tracking-tight text-white/50 uppercase">
                 System
               </span>
-              <div className="h-px flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-white/10" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-6">
               <DeviceInfoItem
-                icon={<Monitor className="size-4 text-blue-400" />}
+                icon={<Monitor className="size-4 text-white" />}
                 label="Operating System"
                 value={getOsName(deviceInfo.os_name, deviceInfo.os_version)}
               />
               <DeviceInfoItem
-                icon={<Cpu className="size-4 text-purple-400" />}
+                icon={<Cpu className="size-4 text-white" />}
                 label="Processor"
                 value={formatCores(deviceInfo.cpu_cores)}
               />
               <DeviceInfoItem
-                icon={<HardDrive className="size-4 text-green-400" />}
+                icon={<HardDrive className="size-4 text-white" />}
                 label="Memory"
                 value={formatMemory(deviceInfo.memory_gb)}
               />
@@ -160,29 +171,29 @@ export const DeviceInfoCard = () => {
 
           {/* Display Information */}
           {(deviceInfo.screen_width_px || deviceInfo.screen_height_px) && (
-            <div className="mb-3">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="text-10 font-medium tracking-wider text-white/40 uppercase">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-13 font-semibold tracking-tight text-white/50 uppercase">
                   Display
                 </span>
-                <div className="h-px flex-1 bg-white/5" />
+                <div className="h-px flex-1 bg-white/10" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-6">
                 <DeviceInfoItem
-                  icon={<Smartphone className="size-4 text-cyan-400" />}
+                  icon={<Smartphone className="size-4 text-white" />}
                   label="Resolution"
                   value={formatResolution(deviceInfo.screen_width_px, deviceInfo.screen_height_px)}
                 />
                 {deviceInfo.color_depth && (
                   <DeviceInfoItem
-                    icon={<Palette className="size-4 text-pink-400" />}
+                    icon={<Palette className="size-4 text-white" />}
                     label="Color Depth"
                     value={`${deviceInfo.color_depth}-bit`}
                   />
                 )}
                 {deviceInfo.scale_factor && deviceInfo.scale_factor !== 1 && (
                   <DeviceInfoItem
-                    icon={<Zap className="size-4 text-yellow-400" />}
+                    icon={<Zap className="size-4 text-white" />}
                     label="Display Scale"
                     value={`${deviceInfo.scale_factor}x`}
                   />
@@ -193,15 +204,15 @@ export const DeviceInfoCard = () => {
 
           {/* Graphics */}
           {(deviceInfo.webgl_vendor || deviceInfo.webgl_renderer) && (
-            <div className="mb-3">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="text-10 font-medium tracking-wider text-white/40 uppercase">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-13 font-semibold tracking-tight text-white/50 uppercase">
                   Graphics
                 </span>
-                <div className="h-px flex-1 bg-white/5" />
+                <div className="h-px flex-1 bg-white/10" />
               </div>
               <DeviceInfoItem
-                icon={<Zap className="size-4 text-orange-400" />}
+                icon={<Zap className="size-4 text-white" />}
                 label="GPU"
                 value={formatGPU(deviceInfo.webgl_vendor, deviceInfo.webgl_renderer)}
               />
@@ -210,24 +221,24 @@ export const DeviceInfoCard = () => {
 
           {/* Environment */}
           {(deviceInfo.language || deviceInfo.timezone) && (
-            <div className="mb-3">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="text-10 font-medium tracking-wider text-white/40 uppercase">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-13 font-semibold tracking-tight text-white/50 uppercase">
                   Environment
                 </span>
-                <div className="h-px flex-1 bg-white/5" />
+                <div className="h-px flex-1 bg-white/10" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-6">
                 {deviceInfo.language && (
                   <DeviceInfoItem
-                    icon={<Languages className="size-4 text-indigo-400" />}
+                    icon={<Languages className="size-4 text-white" />}
                     label="Language"
                     value={deviceInfo.language.toUpperCase()}
                   />
                 )}
                 {deviceInfo.timezone && (
                   <DeviceInfoItem
-                    icon={<Globe className="size-4 text-teal-400" />}
+                    icon={<Globe className="size-4 text-white" />}
                     label="Timezone"
                     value={deviceInfo.timezone}
                   />
@@ -239,11 +250,9 @@ export const DeviceInfoCard = () => {
 
         {/* Device ID Footer */}
         {(deviceInfo.device_id || deviceInfo.machine_id) && (
-          <div className="mt-4 flex items-center gap-2 rounded-lg bg-gradient-to-r from-white/5 to-white/3 px-3 py-2">
-            <Fingerprint className="size-3.5 text-white/50" />
-            <span className="text-11 font-mono text-white/50">
-              {(deviceInfo.device_id || deviceInfo.machine_id)?.slice(0, 12)}...
-            </span>
+          <div className="mt-5 flex h-10 items-center gap-2 rounded-lg bg-white/5 px-3">
+            <Fingerprint className="size-4.5 text-white/50" />
+            <span className="text-14 font-mono font-medium text-white/50">{deviceId}</span>
           </div>
         )}
       </CardContent>
