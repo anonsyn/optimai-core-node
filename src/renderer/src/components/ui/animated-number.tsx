@@ -9,9 +9,7 @@ interface AnimatedNumberProps {
 }
 
 const AnimatedNumber = ({ value, format }: AnimatedNumberProps) => {
-  return (
-    <NumberFlow value={value || 0} trend="increasing" format={format || balanceFormatOptions} />
-  )
+  return <NumberFlow value={value || 0} trend={1} format={format || balanceFormatOptions} />
 }
 
 export default AnimatedNumber

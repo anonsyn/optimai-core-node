@@ -1,8 +1,10 @@
+import AnimatedNumber from '@/components/ui/animated-number'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { motion } from 'framer-motion'
-import { Container, Download, Folder, Rocket, Zap } from 'lucide-react'
+import { Container, Download, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { useDebounce } from 'use-debounce'
 
 interface SetupStepProps {
   onComplete: () => void
@@ -24,6 +26,8 @@ export function SetupStep({ onComplete }: SetupStepProps) {
   const [downloadError, setDownloadError] = useState<string | null>(null)
   const [verifyAttempts, setVerifyAttempts] = useState(0)
   const [dockerStatus, setDockerStatus] = useState<DockerStatus>('checking')
+
+  const [debouncedProgress] = useDebounce(downloadProgress, 400, { maxWait: 1000 })
 
   useEffect(() => {
     // Check if installer already exists on mount
@@ -226,7 +230,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             </div>
 
             {/* Download Progress */}
-            <div className="rounded-xl bg-white/5 p-4">
+            {/* <div className="rounded-xl bg-white/5 p-4">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-14 text-white/80">Progress</span>
                 <span className="text-14 font-bold text-white">
@@ -234,7 +238,6 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                 </span>
               </div>
 
-              {/* Progress Bar */}
               <div className="relative h-2 overflow-hidden rounded-full bg-white/10">
                 <motion.div
                   className="from-yellow to-green absolute inset-y-0 left-0 rounded-full bg-gradient-to-r"
@@ -243,7 +246,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                   transition={{ duration: 0.3, ease: 'easeOut' }}
                 />
               </div>
-            </div>
+            </div> */}
           </motion.div>
         )}
 
@@ -287,7 +290,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               )}
 
               <h3 className="text-16 font-semibold text-white">
-                {dockerStatus === 'not-running' ? 'Open Docker Desktop' : 'Installing Docker'}
+                {dockerStatus === 'not-running'
+                  ? 'Start Docker to Finish Setup'
+                  : 'Installing Docker'}
               </h3>
 
               <p className="text-14 mt-1 text-white/80">
@@ -296,12 +301,13 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                   (verifyAttempts > 2
                     ? 'This is taking a bit longer. Please finish the installation.'
                     : 'Follow the installer steps to finish.')}
-                {dockerStatus === 'not-running' && 'Docker is installed but not running yet.'}
+                {dockerStatus === 'not-running' &&
+                  'Everything’s installed. Just launch Docker Desktop to complete setup.'}
               </p>
             </div>
 
             {/* Dynamic Guide Content */}
-            {(dockerStatus === 'checking' || dockerStatus === 'not-installed') && (
+            {/* {(dockerStatus === 'checking' || dockerStatus === 'not-installed') && (
               <motion.div
                 key="not-installed"
                 initial={{ opacity: 0 }}
@@ -336,7 +342,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                   </p>
                 </div>
               </motion.div>
-            )}
+            )} */}
           </motion.div>
         )}
 
@@ -383,7 +389,22 @@ export function SetupStep({ onComplete }: SetupStepProps) {
         >
           {state === 'checking' && 'Preparing...'}
           {state === 'no-installer' && `Download for ${getPlatformName()}`}
-          {state === 'downloading' && 'Downloading...'}
+          {state === 'downloading' && (
+            <>
+              <span>Downloading...</span>
+              <span className="tabular-nums">
+                {' '}
+                <AnimatedNumber
+                  value={debouncedProgress}
+                  format={{
+                    maximumFractionDigits: 0,
+                    minimumIntegerDigits: 2
+                  }}
+                />
+                %
+              </span>
+            </>
+          )}
           {state === 'has-installer' && 'Install Now'}
           {state === 'installing' && (
             <>
