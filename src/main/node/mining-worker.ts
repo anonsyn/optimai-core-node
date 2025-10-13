@@ -84,7 +84,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     // Check Docker availability
     this.dockerAvailable = await this.checkDockerAvailability()
     if (!this.dockerAvailable) {
-      log.error("[mining] Docker isn’t available — can’t start mining")
+      log.error('[mining] Docker isn’t available — can’t start mining')
       log.error('[mining] Install and open Docker Desktop from https://docker.com to continue')
       this.setStatus(MiningStatus.Error, 'Docker not available')
       this.running = false
@@ -403,7 +403,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         this.dockerAvailable = environmentHealthy
 
         if (!environmentHealthy) {
-          const reason = !dockerAvailable ? 'Docker not available' : 'Crawler container stopped'
+          const reason = !dockerAvailable ? 'Docker not available' : 'Data fetcher is not running'
           const containerInfo = !dockerAvailable ? '' : ` (${crawl4AiService.getContainerName()})`
           log.warn(`[mining] ${reason}${containerInfo} - stopping mining worker`)
           this.setStatus(MiningStatus.Error, reason)

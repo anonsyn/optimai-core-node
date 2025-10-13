@@ -2,6 +2,8 @@ import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { authActions } from '@/store/slices/auth'
 import { AssignmentDetailModal } from '@core-node/modals/assignment-detail-modal'
+import { MiningErrorModal } from '@core-node/modals/mining-error-modal'
+import { MiningStoppedModal } from '@core-node/modals/mining-stopped-modal'
 import { useEffect } from 'react'
 import { DataMiningHeader } from './header'
 import { LeftPanel } from './left-panel'
@@ -49,6 +51,8 @@ const DataMiningPage = () => {
 
       {/* Modals */}
       <AssignmentDetailModal />
+      <MiningStoppedModal />
+      <MiningErrorModal />
     </div>
   )
 }

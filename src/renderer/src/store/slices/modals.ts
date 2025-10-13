@@ -11,7 +11,9 @@ export enum Modals {
   DOCKER_NOT_INSTALLED = 'DOCKER_NOT_INSTALLED',
   DOCKER_NOT_RUNNING = 'DOCKER_NOT_RUNNING',
   ASSIGNMENT_DETAILS = 'ASSIGNMENT_DETAILS',
-  UPDATE_READY = 'UPDATE_READY'
+  UPDATE_READY = 'UPDATE_READY',
+  MINING_STOPPED = 'MINING_STOPPED',
+  MINING_ERROR = 'MINING_ERROR'
 }
 
 export type ModalState<T = undefined> = {
@@ -53,6 +55,10 @@ export interface ModalSliceState {
   [Modals.UPDATE_READY]?: ModalState<{
     version?: string
     releaseNotes?: string
+  }>
+  [Modals.MINING_STOPPED]?: ModalState
+  [Modals.MINING_ERROR]?: ModalState<{
+    error: string
   }>
 }
 
