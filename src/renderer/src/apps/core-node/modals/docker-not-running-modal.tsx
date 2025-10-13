@@ -91,6 +91,7 @@ function Content() {
         </Button>
         <Button
           variant="outline"
+          className="w-full"
           onClick={() => window.windowIPC.openExternalLink('https://docs.docker.com/desktop/')}
         >
           Get help
