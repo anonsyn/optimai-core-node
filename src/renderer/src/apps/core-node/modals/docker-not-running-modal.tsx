@@ -71,17 +71,17 @@ function Content() {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="bg-destructive/10 mx-auto mb-4 flex size-14 items-center justify-center rounded-full">
-          <AlertTriangle className="text-destructive size-6" />
+        <div className="bg-destructive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
+          <AlertTriangle className="text-destructive size-7" />
         </div>
-        <h3 className="text-16 font-semibold text-white">Please open Docker Desktop</h3>
-        <p className="text-14 mt-2 text-white/70">
+        <h3 className="text-20 font-semibold text-white">Please open Docker Desktop</h3>
+        <p className="text-16 mt-1 text-balance text-white/50">
           Open Docker Desktop from your Applications/Start menu and keep it running. We’ll continue
           once it’s ready.
         </p>
       </motion.div>
 
-      <div className="space-y-2 pt-12">
+      <div className="space-y-2 pt-15">
         <Button
           disabled
           className="from-yellow to-green w-full bg-gradient-to-r text-black hover:opacity-90 disabled:opacity-50"

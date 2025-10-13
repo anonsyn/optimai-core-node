@@ -168,7 +168,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
   return (
     <div className="flex flex-col">
       {/* Content Area */}
-      <div className="min-h-[200px] flex-1 space-y-6">
+      <div className="min-h-[240px] flex-1 space-y-6">
         {/* Status Display */}
         {state === 'checking' && (
           <motion.div
@@ -192,11 +192,11 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="space-y-4"
           >
             <div className="text-center">
-              <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
+              <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
                 <Download className="text-green size-7" />
               </div>
-              <h3 className="text-16 font-semibold text-white">Set Up Your Node Environment</h3>
-              <p className="text-14 mt-1 text-balance text-white/80">
+              <h3 className="text-20 font-semibold text-white">Set Up Your Node Environment</h3>
+              <p className="text-16 mt-1 text-balance text-white/50">
                 {downloadError
                   ? downloadError
                   : 'Download Docker Desktop — it’s the foundation for running your OptimAI Node locally.'}
@@ -204,12 +204,12 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             </div>
 
             {/* Download Info */}
-            <div className="rounded-xl bg-white/5 p-4">
+            {/* <div className="rounded-xl bg-white/5 p-4">
               <div className="space-y-2 text-center">
-                <p className="text-12 text-white/80">Download size: ~600MB</p>
-                <p className="text-12 text-white/80">Estimated time: 2-5 minutes</p>
+                <p className="text-14 text-white/80">Download size: ~600MB</p>
+                <p className="text-14 text-white/80">Estimated time: 2-5 minutes</p>
               </div>
-            </div>
+            </div> */}
           </motion.div>
         )}
 
@@ -222,11 +222,47 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="space-y-4"
           >
             <div className="mb-3 text-center">
-              <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
-                <Download className="text-green size-7" />
+              <div className="bg-background relative mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
+                <div className="bg-secondary flex size-11 items-center justify-center rounded-full">
+                  <Download className="size-6 text-white" />
+                </div>
+                <svg
+                  className="absolute inset-0 size-full -rotate-90"
+                  viewBox="0 0 72 72"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <defs>
+                    <linearGradient
+                      id="paint0_linear_3216_1118"
+                      x1="-30"
+                      y1="31.7308"
+                      x2="30"
+                      y2="31.7308"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stopColor="#F6F655" />
+                      <stop offset="1" stopColor="#5EED87" />
+                    </linearGradient>
+                  </defs>
+                  {/* Progress circle */}
+                  <motion.circle
+                    cx="36"
+                    cy="36"
+                    r="30"
+                    stroke="url(#paint0_linear_3216_1118)"
+                    strokeWidth="4"
+                    fill="none"
+                    strokeLinecap="round"
+                    initial={{ strokeDasharray: 188.5, strokeDashoffset: 188.5 }}
+                    animate={{
+                      strokeDashoffset: 188.5 - (188.5 * downloadProgress) / 100
+                    }}
+                    transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  />
+                </svg>
               </div>
-              <h3 className="text-16 font-semibold text-white">Downloading Docker Desktop</h3>
-              <p className="text-14 mt-1 text-white/80">This may take a few minutes</p>
+              <h3 className="text-20 font-semibold text-white">Downloading Docker Desktop</h3>
+              <p className="text-16 mt-1 text-balance text-white/50">This may take a few minutes</p>
             </div>
 
             {/* Download Progress */}
@@ -259,11 +295,11 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="space-y-4"
           >
             <div className="text-center">
-              <div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
+              <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
                 <Icon icon="CircleCheck" className="text-positive size-7" />
               </div>
-              <h3 className="text-16 font-semibold text-white">Download Complete!</h3>
-              <p className="text-14 mt-1 text-white/80">
+              <h3 className="text-20 font-semibold text-white">Download Complete!</h3>
+              <p className="text-16 mt-1 text-balance text-white/50">
                 Docker Desktop is ready - click Install Now to begin installation
               </p>
             </div>
@@ -280,22 +316,22 @@ export function SetupStep({ onComplete }: SetupStepProps) {
           >
             <div className="text-center">
               {dockerStatus === 'not-running' ? (
-                <div className="bg-warning/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
+                <div className="bg-warning/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
                   <Zap className="text-warning size-7" />
                 </div>
               ) : (
-                <motion.div className="bg-positive/10 mx-auto mb-3 flex size-14 items-center justify-center rounded-full">
+                <motion.div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
                   <Container className="text-green size-7" />
                 </motion.div>
               )}
 
-              <h3 className="text-16 font-semibold text-white">
+              <h3 className="text-20 font-semibold text-white">
                 {dockerStatus === 'not-running'
                   ? 'Start Docker to Finish Setup'
                   : 'Installing Docker'}
               </h3>
 
-              <p className="text-14 mt-1 text-white/80">
+              <p className="text-16 mt-1 text-balance text-white/50">
                 {dockerStatus === 'checking' && 'We’re checking your Docker installation...'}
                 {dockerStatus === 'not-installed' &&
                   (verifyAttempts > 2
@@ -363,8 +399,10 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             >
               <Icon icon="CircleCheck" className="text-positive size-8" />
             </motion.div>
-            <h3 className="text-18 font-semibold text-white">Docker is ready!</h3>
-            <p className="text-14 mt-2 text-white/80">Everything is set up correctly</p>
+            <h3 className="text-20 font-semibold text-white">Docker is ready!</h3>
+            <p className="text-16 mt-1 text-balance text-white/50">
+              Everything is set up correctly
+            </p>
           </motion.div>
         )}
       </div>

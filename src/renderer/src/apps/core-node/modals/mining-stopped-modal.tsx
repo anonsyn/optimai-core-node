@@ -3,7 +3,6 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
 import { useIsModalOpen } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
-import { cn } from '@/utils/tw'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
@@ -14,7 +13,7 @@ export function MiningStoppedModal() {
   return (
     <Dialog open={open}>
       <DialogContent
-        className={cn('overflow-hidden sm:max-w-sm')}
+        className="overflow-hidden sm:max-w-[452px]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -47,17 +46,17 @@ function Content() {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="bg-destructive/10 mx-auto mb-4 flex size-14 items-center justify-center rounded-full">
+        <div className="bg-destructive/10 mx-auto mb-6 flex size-14 items-center justify-center rounded-full">
           <AlertTriangle className="text-destructive size-6" />
         </div>
-        <h3 className="text-18 font-semibold text-white">Mining Stopped</h3>
-        <p className="text-14 mt-2 text-white/70">
+        <h3 className="text-20 font-semibold text-white">Mining Stopped</h3>
+        <p className="text-16 mt-1 text-balance text-white/50">
           Mining is currently stopped. Start mining to begin processing assignments and earning
           rewards.
         </p>
       </motion.div>
 
-      <div className="space-y-2 pt-8">
+      <div className="space-y-2 pt-15">
         <Button className="w-full" onClick={handleStart} disabled={isStarting}>
           {isStarting ? (
             <>

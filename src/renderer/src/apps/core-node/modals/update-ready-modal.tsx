@@ -15,7 +15,7 @@ export function UpdateReadyModal() {
   return (
     <Dialog open={open}>
       <DialogContent
-        className="overflow-hidden"
+        className="overflow-hidden sm:max-w-[452px]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -155,7 +155,7 @@ const UpdateReadyContent = () => {
         </p>
       </motion.div>
 
-      <div className="space-y-2.5 pt-8">
+      <div className="space-y-2 pt-15">
         <Button className="w-full" onClick={handleUpdate} disabled={isUpdating}>
           {isUpdating ? (
             <>

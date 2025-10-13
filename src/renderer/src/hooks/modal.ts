@@ -43,7 +43,7 @@ export const useIsModalOpen = <T extends ModalType>(modal: T) => {
 }
 
 export const useModalData = <T extends ModalType>(modal: T) => {
-  return useAppSelector((state) => selectModalData(state, modal)) as ModalData<T>
+  return (useAppSelector((state) => selectModalData(state, modal)) || {}) as ModalData<T>
 }
 
 export const useUpdateModalData = <T extends ModalType>(modal: T) => {

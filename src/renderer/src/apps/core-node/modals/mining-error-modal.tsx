@@ -1,20 +1,19 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
-import { useIsModalOpen, useModalData } from '@/hooks/modal'
+import { useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
-import { cn } from '@/utils/tw'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 
 export function MiningErrorModal() {
-  const open = useIsModalOpen(Modals.MINING_ERROR)
+  const open = true
 
   return (
     <Dialog open={open}>
       <DialogContent
-        className={cn('overflow-hidden sm:max-w-sm')}
+        className="overflow-hidden sm:max-w-[452px]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
@@ -58,14 +57,14 @@ function Content() {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="bg-destructive/10 mx-auto mb-4 flex size-14 items-center justify-center rounded-full">
-          <AlertTriangle className="text-destructive size-6" />
+        <div className="bg-destructive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
+          <AlertTriangle className="text-destructive size-7" />
         </div>
-        <h3 className="text-18 font-semibold text-white">Mining Error</h3>
-        <p className="text-14 mt-2 text-white/70">{getErrorMessage()}</p>
+        <h3 className="text-20 font-semibold text-white">Mining Error</h3>
+        <p className="text-16 mt-1 text-white/70">{getErrorMessage()}</p>
       </motion.div>
 
-      <div className="space-y-2 pt-8">
+      <div className="space-y-2 pt-15">
         <Button onClick={handleRetry} disabled={isRetrying} className="w-full">
           {isRetrying ? (
             <>
