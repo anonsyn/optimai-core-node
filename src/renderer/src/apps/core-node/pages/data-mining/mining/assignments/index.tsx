@@ -47,31 +47,54 @@ export const AssignmentsList = () => {
   if (isLoading) {
     return (
       <div className="flex h-full w-full items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center gap-4"
-        >
-          <Icon icon="LoaderCircle" className="size-8 animate-spin text-white/30" />
-          <p className="text-13 text-white/40">Loading assignments...</p>
-        </motion.div>
+        <div className="h-8 w-8 animate-spin [&>svg]:size-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="100"
+            height="100"
+            viewBox="0 0 100 100"
+            fill="none"
+          >
+            <circle
+              cx="50"
+              cy="50"
+              r="47"
+              stroke="url(#paint0_linear_9584_89948)"
+              strokeWidth="6"
+            />
+            <defs>
+              <linearGradient
+                id="paint0_linear_9584_89948"
+                x1="10.4496"
+                y1="9.71026"
+                x2="84.9731"
+                y2="87.6347"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#FFFF33" />
+                <stop offset="1" stopColor="#33FF4B" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span className="sr-only">Loading...</span>
+        </div>
       </div>
     )
   }
 
   if (assignments.length === 0) {
     return (
-      <div className="flex h-full w-full items-center justify-center">
+      <div className="flex h-full w-full justify-center pt-48">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col items-center gap-3 text-center"
+          className="flex flex-col items-center gap-5 text-center"
         >
           <Icon icon="Pickaxe" className="size-8 text-white/60" />
           <div>
-            <p className="text-18 font-medium text-white">No assignments yet</p>
-            <p className="text-14 mt-1 text-white/60">Tasks will appear here when available</p>
+            <p className="text-20 font-medium text-white">No assignments yet</p>
+            <p className="text-16 mt-1 text-white/50">Tasks will appear here when available</p>
           </div>
         </motion.div>
       </div>
@@ -86,15 +109,14 @@ export const AssignmentsList = () => {
       transition={{ duration: 0.8 }}
     >
       <ScrollArea className="h-full">
-        <div className="p-6">
-          {/* Assignment Grid */}
-          <div className="grid gap-3 lg:grid-cols-1 xl:grid-cols-2" ref={animationParent}>
+        <div className="p-5">
+          <div className="grid grid-cols-1 gap-4" ref={animationParent}>
             {assignments.map((assignment) => (
               <AssignmentItem
                 key={assignment.id}
                 assignment={{
                   ...assignment
-                  // status: index === 0 ? 'in_progress' : 'not_started'
+                  // status: 'not_started'
                 }}
               />
             ))}

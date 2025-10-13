@@ -18,7 +18,7 @@ export const LeftPanel = () => {
   const changeAmount = (totalRewards * percentageChange) / 100
 
   return (
-    <div className="relative h-full w-[420px] flex-shrink-0 border-r border-white/5">
+    <div className="bg-background relative h-full w-[420px] flex-shrink-0 border-r border-white/5">
       <ScrollArea className="h-full w-full">
         <div className="space-y-3 p-5">
           {/* Mining Performance Hero */}

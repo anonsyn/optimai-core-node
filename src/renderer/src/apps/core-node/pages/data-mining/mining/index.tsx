@@ -43,7 +43,7 @@ export const Mining = () => {
 
   // Group 1: Loading states
   if (isLoadingStatus(miningStatus.status)) {
-    return <MiningLoading status={miningStatus} />
+    return <MiningLoading />
   }
 
   // Group 2: Operational states

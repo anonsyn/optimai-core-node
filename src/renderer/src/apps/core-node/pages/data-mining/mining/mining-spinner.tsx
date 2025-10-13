@@ -1,55 +1,24 @@
-import { MiningStatus } from '@main/node/types'
 import { motion } from 'framer-motion'
 import { memo, useEffect, useRef } from 'react'
 
 interface MiningSpinnerProps {
-  status: MiningStatus
   className?: string
 }
 
-const MiningSpinner = ({ status, className }: MiningSpinnerProps) => {
+const MiningSpinner = ({ className }: MiningSpinnerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animationRef = useRef<number>(0)
   const rotationRef = useRef(0)
-  const statusRef = useRef(status)
 
   // Status-specific configurations
-  const getStatusConfig = (currentStatus: MiningStatus) => {
-    switch (currentStatus) {
-      case MiningStatus.Idle:
-        return {
-          speed: 0.005, // Slower rotation
-          barCount: 24, // More bars
-          activeBarCount: 6,
-          pulseSpeed: 0.5
-        }
-      case MiningStatus.Initializing:
-        return {
-          speed: 0.008,
-          barCount: 24,
-          activeBarCount: 12,
-          pulseSpeed: 1
-        }
-      case MiningStatus.InitializingCrawler:
-        return {
-          speed: 0.01,
-          barCount: 24,
-          activeBarCount: 18,
-          pulseSpeed: 1.5
-        }
-      default:
-        return {
-          speed: 0.005,
-          barCount: 24,
-          activeBarCount: 6,
-          pulseSpeed: 0.5
-        }
+  const getStatusConfig = () => {
+    return {
+      speed: 0.01,
+      barCount: 24,
+      activeBarCount: 18,
+      pulseSpeed: 1.5
     }
   }
-
-  useEffect(() => {
-    statusRef.current = status
-  }, [status])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -68,7 +37,7 @@ const MiningSpinner = ({ status, className }: MiningSpinnerProps) => {
       // Clear canvas
       ctx.clearRect(0, 0, rect.width, rect.height)
 
-      const config = getStatusConfig(statusRef.current)
+      const config = getStatusConfig()
       const centerX = rect.width / 2
       const centerY = rect.height / 2
       const radius = 60
@@ -132,7 +101,7 @@ const MiningSpinner = ({ status, className }: MiningSpinnerProps) => {
       ctx.save()
 
       // Scale and position
-      const scale = 0.25 // Increased from 0.2
+      const scale = 0.2 // Increased from 0.2
       const logoWidth = 183 * scale
       const logoHeight = 161 * scale
       ctx.translate(centerX - logoWidth / 2, centerY - logoHeight / 2)

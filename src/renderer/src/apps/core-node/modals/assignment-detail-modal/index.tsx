@@ -35,9 +35,7 @@ export function AssignmentDetailModal() {
         <DialogHeader>
           <DialogTitle>Assignment Details</DialogTitle>
           {data.sourceUrl && (
-            <DialogDescription className="text-12 truncate text-white/60">
-              {data.sourceUrl}
-            </DialogDescription>
+            <DialogDescription className="truncate">{data.sourceUrl}</DialogDescription>
           )}
         </DialogHeader>
         <AssignmentDetailContent assignmentId={data.assignmentId} />

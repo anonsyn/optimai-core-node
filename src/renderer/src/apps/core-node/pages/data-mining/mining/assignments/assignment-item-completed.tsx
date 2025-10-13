@@ -1,12 +1,14 @@
 import Token from '@/components/branding/token'
-import { Icon } from '@/components/ui/icon'
 import { useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { formatNumber } from '@/utils/number'
 import { MiningAssignment } from '@main/node/types'
 import { format } from 'date-fns'
 import lodash from 'lodash'
-import { Globe } from 'lucide-react'
+import { Clock, Newspaper, ScanSearch } from 'lucide-react'
+import Domain from './domain'
+import PreviewImage from './preview-image'
+import StatusIndicator from './status-indicator'
 
 interface AssignmentItemCompletedProps {
   assignment: MiningAssignment
@@ -31,112 +33,84 @@ export const AssignmentItemCompleted = ({ assignment }: AssignmentItemCompletedP
     lodash.get(assignment, 'metadata.og:image', '') ||
     lodash.get(assignment, 'metadata.preview_image', '')
 
-  const getHostname = (url: string) => {
-    try {
-      return new URL(url).hostname.replace('www.', '')
-    } catch {
-      return url
+  const handleOpenUrl = () => {
+    if (sourceUrl) {
+      window.windowIPC.openExternalLink(sourceUrl)
     }
   }
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all hover:bg-white/[0.03]">
-      {/* Status Indicator */}
-      <div className="bg-green absolute top-0 left-0 h-full w-0.5" />
-
-      <div className="p-4">
-        {/* Main Content - Two column layout */}
+    <div className="bg-secondary/40 relative overflow-hidden rounded-xl border border-white/4 backdrop-blur-[10px]">
+      {/* Header */}
+      <div className="flex h-12 items-center justify-between bg-white/[0.08] px-4">
         <div className="flex items-center gap-3">
-          {/* Preview Image Column - 16:9 aspect ratio */}
-          <div className="flex-shrink-0">
-            <div
-              className="flex h-[126px] w-56 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-white/5 transition-opacity hover:opacity-80"
-              onClick={() => {
-                if (sourceUrl) {
-                  window.windowIPC.openExternalLink(sourceUrl)
-                }
-              }}
-            >
-              {previewImage ? (
-                <img
-                  src={previewImage}
-                  alt=""
-                  className="h-full w-full object-cover"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              ) : (
-                <Icon className="text-white/60" icon="ArticleLine" />
-              )}
-            </div>
+          {/* Status Indicator */}
+          <StatusIndicator />
+
+          {/* Reward Badge */}
+          <div className="bg-background/60 flex h-9 items-center gap-1 rounded-full border border-white/10 px-3 py-1">
+            <span className="text-14 font-bold text-white">
+              +{formatNumber(reward, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+            </span>
+            <Token className="size-4" />
           </div>
+        </div>
 
-          {/* Info Column */}
-          <div className="flex min-w-0 flex-1 flex-col">
-            {/* Top section with domain and reward */}
-            <div className="relative mb-2 flex w-full items-start justify-between">
-              {/* Website with favicon */}
-              <div
-                className="flex cursor-pointer items-center gap-2 transition-opacity hover:opacity-70"
-                onClick={() => {
-                  if (sourceUrl) {
-                    window.windowIPC.openExternalLink(sourceUrl)
-                  }
-                }}
-              >
-                {favicon ? (
-                  <img
-                    src={favicon}
-                    alt=""
-                    className="size-4 flex-shrink-0 rounded-full"
-                    onError={(e) => {
-                      ;(e.target as HTMLImageElement).style.display = 'none'
-                    }}
-                  />
-                ) : (
-                  <div className="bg-accent/50 flex size-4 shrink-0 items-center justify-center rounded-full">
-                    <Globe className="size-3 flex-shrink-0 text-white/60" />
-                  </div>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => openAssignmentDetails({ assignmentId: id, sourceUrl })}
+            className="bg-background/50 hover:bg-background/70 flex size-8 items-center justify-center rounded-md text-white/50 transition-colors hover:text-white"
+          >
+            <ScanSearch className="size-4" />
+          </button>
+          <button
+            onClick={handleOpenUrl}
+            className="bg-background/50 hover:bg-background/70 flex size-8 items-center justify-center rounded-md text-white/50 transition-colors hover:text-white"
+          >
+            <Newspaper className="size-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div
+        className="bg-raydial-05 relative flex flex-col gap-3 p-4"
+        style={{
+          boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.32) inset'
+        }}
+      >
+        <div className="relative flex gap-[18px]">
+          <PreviewImage src={previewImage} />
+
+          {/* Content Details */}
+          <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
+            <div className="flex flex-col gap-1">
+              <Domain sourceUrl={sourceUrl} favicon={favicon} />
+
+              <div className="flex flex-col leading-[1.5]">
+                <h3 className="text-16 line-clamp-1 font-semibold tracking-tight text-white">
+                  {metadataTitle || 'Untitled Page'}
+                </h3>
+                {metadataDescription && (
+                  <p className="text-14 line-clamp-2 text-white/80">{metadataDescription}</p>
                 )}
-                <span className="text-11 truncate text-white/80">
-                  {sourceUrl ? getHostname(sourceUrl) : 'Unknown'}
-                </span>
-              </div>
-
-              {/* Reward badge */}
-              <div className="bg-green/10 border-green/20 text-green text-12 absolute top-1/2 right-0 flex -translate-y-1/2 items-center gap-1.5 rounded-full border px-2.5 py-0.5">
-                <span className="font-semibold">
-                  +{formatNumber(reward, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <Token className="size-3" />
               </div>
             </div>
 
-            {/* Title */}
-            <h3
-              className="text-14 mb-1 line-clamp-2 cursor-pointer font-medium text-white transition-colors hover:text-white/80"
-              onClick={() => {
-                openAssignmentDetails({ assignmentId: id, sourceUrl })
-              }}
-            >
-              {metadataTitle || 'Untitled Page'}
-            </h3>
-
-            {/* Description - increased to 3 lines */}
-            {metadataDescription && (
-              <p className="text-12 line-clamp-3 leading-relaxed text-white/80">
-                {metadataDescription}
-              </p>
-            )}
-
-            {/* Bottom metadata - subtle */}
-            <div className="mt-auto flex items-center gap-2 pt-2">
-              <span className="text-12 text-white/60">
-                {updatedAt ? format(new Date(updatedAt), 'MMM d, yyyy h:mm a') : 'Just now'}
+            {/* Content Footer - Timestamp */}
+            <div className="flex items-center gap-2 opacity-50">
+              <Clock className="size-4 text-white" />
+              <span className="text-14 text-white">
+                {updatedAt ? format(new Date(updatedAt), 'MMM dd, yyyy h:mm a') : 'Just now'}
               </span>
             </div>
           </div>
+        </div>
+
+        <div className="text-12 bg-background/50 flex h-8 items-center gap-1 rounded-lg px-3 font-normal text-white">
+          <span className="opacity-50">Source:</span>
+          <span className="truncate opacity-50">{sourceUrl}</span>
         </div>
       </div>
     </div>
