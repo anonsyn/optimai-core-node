@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
-import { useModalData } from '@/hooks/modal'
+import { useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 
 export function MiningErrorModal() {
-  const open = true
+  const open = useIsModalOpen(Modals.MINING_ERROR)
 
   return (
     <Dialog open={open}>
