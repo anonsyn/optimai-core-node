@@ -3,7 +3,6 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
 import { useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
-import { cn } from '@/utils/tw'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 import { useEffect } from 'react'
@@ -14,7 +13,7 @@ export function DockerNotRunningModal() {
   return (
     <Dialog open={open}>
       <DialogContent
-        className={cn('overflow-hidden sm:max-w-sm')}
+        className="overflow-hidden sm:max-w-[452px]"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
