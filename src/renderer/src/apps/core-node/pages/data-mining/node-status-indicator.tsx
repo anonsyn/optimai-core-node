@@ -134,7 +134,7 @@ export const NodeStatusIndicator = () => {
           </button>
         </TooltipTrigger>
         <TooltipContent className="[z-index:60]">
-          <p className="text-12">{config.tooltip}</p>
+          <p className="text-16">{config.tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

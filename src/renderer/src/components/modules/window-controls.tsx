@@ -5,7 +5,7 @@ import { cva, VariantProps } from 'class-variance-authority'
 import { motion } from 'framer-motion'
 
 const buttonVariants = cva(
-  'flex items-center justify-center transition-colors duration-200 group',
+  'flex items-center justify-center transition-colors duration-200 group rounded-md',
   {
     variants: {
       variant: {
