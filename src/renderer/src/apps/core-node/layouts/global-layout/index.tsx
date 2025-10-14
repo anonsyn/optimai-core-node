@@ -21,7 +21,7 @@ const Providers = ({ children }: PropsWithChildren) => {
 
 const App = () => {
   return (
-    <div className="bg-core-node h-screen w-screen overflow-x-hidden">
+    <div className="bg-core-node h-screen w-screen overflow-x-hidden rounded-xl">
       <Outlet />
     </div>
   )

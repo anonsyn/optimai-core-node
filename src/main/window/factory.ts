@@ -56,6 +56,7 @@ export const createWindow = (windowType: WindowType) => {
     maximizable: false,
     fullscreenable: false,
     resizable: false,
+    roundedCorners: true,
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: TRAFFIC_LIGHT_LEFT_MARGIN, y: TRAFFIC_LIGHT_Y },
     autoHideMenuBar: true,
