@@ -31,9 +31,9 @@ export const DataMiningHeader = () => {
       <div className="no-drag relative z-10 flex items-center gap-2 pr-4">
         <NodeStatusIndicator />
         <WalletPopover />
-        <WindowControls className="!static flex items-center">
+        <WindowControls className="!static flex items-center pl-6">
           <WindowControlButton variant="minimize" />
-          <WindowControlButton variant="maximize" />
+          {/* <WindowControlButton variant="maximize" disabled /> */}
           <WindowControlButton variant="close" />
         </WindowControls>
       </div>

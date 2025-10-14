@@ -5,7 +5,7 @@ import { cva, VariantProps } from 'class-variance-authority'
 import { motion } from 'framer-motion'
 
 const buttonVariants = cva(
-  'flex items-center justify-center transition-colors duration-200 group rounded-md',
+  'flex items-center justify-center transition-colors duration-200 group rounded-md disabled:opacity-40 disabled:pointer-events-none',
   {
     variants: {
       variant: {
@@ -98,6 +98,7 @@ const WindowControlButton = ({
           'size-4.5',
           'text-white/80',
           'transition-colors duration-200',
+          disabled && 'text-white/50',
           variant === 'close' ? 'group-hover:text-destructive' : 'group-hover:text-white'
         )}
         icon={icons[variant]}

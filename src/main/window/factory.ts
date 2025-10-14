@@ -14,10 +14,34 @@ export const createWindow = (windowType: WindowType) => {
   const TRAFFIC_LIGHT_LEFT_MARGIN = 16
   const TRAFFIC_LIGHT_Y = (HEADER_HEIGHT - TRAFFIC_LIGHT_HEIGHT) / 2
 
+  function getWindowSize(
+    screenWidth: number,
+    screenHeight: number,
+    baseWidth = 1200,
+    baseHeight = 800,
+    minWidth = 1000,
+    margin = 80
+  ) {
+    const ratio = baseWidth / baseHeight
+    let width = Math.min(screenWidth - margin, baseWidth)
+    let height = width / ratio
+
+    if (height > screenHeight - margin) {
+      height = screenHeight - margin
+      width = height * ratio
+    }
+
+    if (width < minWidth) {
+      width = minWidth
+      height = width / ratio
+    }
+
+    return { width, height }
+  }
+
   const windowOptions: Record<WindowType, Partial<BrowserWindowConstructorOptions>> = {
     [WindowType.CoreNode]: {
-      width: Math.min(screenWidth, 1200),
-      height: Math.min(screenHeight, 800)
+      ...getWindowSize(screenWidth, screenHeight)
     }
   }
 
@@ -31,6 +55,7 @@ export const createWindow = (windowType: WindowType) => {
     height: Math.min(screenHeight, 800),
     maximizable: false,
     fullscreenable: false,
+    resizable: false,
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: TRAFFIC_LIGHT_LEFT_MARGIN, y: TRAFFIC_LIGHT_Y },
     autoHideMenuBar: true,
