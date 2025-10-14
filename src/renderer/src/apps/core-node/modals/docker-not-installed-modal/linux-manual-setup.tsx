@@ -9,15 +9,21 @@ interface LinuxManualSetupProps {
 
 export function LinuxManualSetup({ onComplete }: LinuxManualSetupProps) {
   const [isChecking, setIsChecking] = useState(false)
+  const [attempts, setAttempts] = useState(0)
+  const maxAttempts = 3
 
   useEffect(() => {
     if (!isChecking) return
 
     let cancelled = false
     let interval: NodeJS.Timeout | null = null
+    let currentAttempt = 0
 
     const pollDocker = async () => {
       if (cancelled) return
+
+      currentAttempt++
+      setAttempts(currentAttempt)
 
       try {
         const isInstalled = await window.dockerIPC.checkInstalled()
@@ -32,9 +38,26 @@ export function LinuxManualSetup({ onComplete }: LinuxManualSetupProps) {
             clearInterval(interval)
             interval = null
           }
+          return
+        }
+
+        // Stop after max attempts
+        if (currentAttempt >= maxAttempts) {
+          setIsChecking(false)
+          if (interval) {
+            clearInterval(interval)
+            interval = null
+          }
         }
       } catch (error) {
         console.error('Docker installation verification failed:', error)
+        if (currentAttempt >= maxAttempts) {
+          setIsChecking(false)
+          if (interval) {
+            clearInterval(interval)
+            interval = null
+          }
+        }
       }
     }
 
@@ -49,6 +72,7 @@ export function LinuxManualSetup({ onComplete }: LinuxManualSetupProps) {
 
   const handleCheckInstallation = () => {
     setIsChecking(true)
+    setAttempts(0)
   }
 
   return (
@@ -65,8 +89,9 @@ export function LinuxManualSetup({ onComplete }: LinuxManualSetupProps) {
         </div>
         <h3 className="text-20 font-semibold text-white">Install Docker on Linux</h3>
         <p className="text-16 mt-2 text-balance text-white/50">
-          Docker installation on Linux varies by distribution. Follow the official guide to install
-          Docker Desktop, then we&rsquo;ll continue automatically.
+          {attempts >= maxAttempts && !isChecking
+            ? 'Docker not found. Make sure Docker is installed and running, then try again.'
+            : 'Docker installation on Linux varies by distribution. Follow the official guide to install Docker Desktop.'}
         </p>
       </motion.div>
 
