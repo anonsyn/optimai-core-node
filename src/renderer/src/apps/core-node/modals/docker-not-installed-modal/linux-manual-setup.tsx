@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { motion } from 'framer-motion'
-import { ExternalLink } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 interface LinuxManualSetupProps {
@@ -61,8 +60,8 @@ export function LinuxManualSetup({ onComplete }: LinuxManualSetupProps) {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-          <ExternalLink className="text-green size-7" />
+        <div className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full bg-white/10">
+          <Icon icon="Docker" className="size-8 text-white/80" />
         </div>
         <h3 className="text-20 font-semibold text-white">Install Docker on Linux</h3>
         <p className="text-16 mt-2 text-balance text-white/50">

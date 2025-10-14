@@ -13,6 +13,7 @@ import Copy from '@assets/icons/copy.svg?react'
 import CPU from '@assets/icons/cpu.svg?react'
 import DataOperatorFilled from '@assets/icons/data-operator-filled.svg?react'
 import DataOperatorOutlined from '@assets/icons/data-operator-outlined.svg?react'
+import Docker from '@assets/icons/docker.svg?react'
 import Extension from '@assets/icons/extension.svg?react'
 import EyeOff from '@assets/icons/eye-off.svg?react'
 import Eye from '@assets/icons/eye.svg?react'
@@ -92,6 +93,7 @@ export const Icons = {
   NodeOperatorFilled,
   DataOperatorOutlined,
   DataOperatorFilled,
+  Docker,
   RefOutlined,
   RefFilled,
   Hexagon,
