@@ -1,5 +1,5 @@
 import { GetMiningAssignmentsParams, miningApi } from '@/api/mining'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 const QUERY_KEY = 'mining-assignments'
 export const getMiningAssignmentsQueryKey = (params?: GetMiningAssignmentsParams) => [
@@ -33,6 +33,7 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
     refetchInterval: 60000, // Refresh every 5 seconds
     staleTime: 1000 * 5, // Consider data stale after 5 seconds
     retry: options?.retry ?? false,
-    enabled: options?.enabled ?? true
+    enabled: options?.enabled ?? true,
+    placeholderData: keepPreviousData
   })
 }
