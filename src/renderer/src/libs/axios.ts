@@ -85,7 +85,7 @@ const serializeParams = (params?: Record<string, unknown> | URLSearchParams | st
  * @param baseURL - The base URL for the axios instance
  * @param options - Additional options for customizing the instance
  */
-function createAuthenticatedClient(
+function createApiClient(
   baseURL: string,
   options: {
     skipAuth?: boolean
@@ -209,14 +209,10 @@ function createAuthenticatedClient(
  * Main API client for general backend operations
  * Points to the main OptimAI API server
  */
-export const apiClient = createAuthenticatedClient(BASE_API_URL)
+export const apiClient = createApiClient(BASE_API_URL)
 
 /**
  * Miner/On-chain API client for blockchain and mining operations
  * Points to the on-chain service
  */
-export const minerClient = createAuthenticatedClient(BASE_MINER_URL, {
-  customHeaders: {
-    'X-Service': 'miner'
-  }
-})
+export const minerClient = createApiClient(BASE_MINER_URL)
