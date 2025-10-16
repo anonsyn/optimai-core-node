@@ -6,11 +6,12 @@ import {
   Cpu,
   Fingerprint,
   Globe,
-  HardDrive,
   Languages,
+  MemoryStick,
   Monitor,
   Palette,
-  Smartphone,
+  Proportions,
+  Scaling,
   Zap
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -162,7 +163,7 @@ export const DeviceInfoCard = () => {
                 value={formatCores(deviceInfo.cpu_cores)}
               />
               <DeviceInfoItem
-                icon={<HardDrive className="size-4 text-white" />}
+                icon={<MemoryStick className="size-4 text-white" />}
                 label="Memory"
                 value={formatMemory(deviceInfo.memory_gb)}
               />
@@ -180,7 +181,7 @@ export const DeviceInfoCard = () => {
               </div>
               <div className="space-y-6">
                 <DeviceInfoItem
-                  icon={<Smartphone className="size-4 text-white" />}
+                  icon={<Proportions className="size-4 text-white" />}
                   label="Resolution"
                   value={formatResolution(deviceInfo.screen_width_px, deviceInfo.screen_height_px)}
                 />
@@ -193,7 +194,7 @@ export const DeviceInfoCard = () => {
                 )}
                 {deviceInfo.scale_factor && deviceInfo.scale_factor !== 1 && (
                   <DeviceInfoItem
-                    icon={<Zap className="size-4 text-white" />}
+                    icon={<Scaling className="size-4 text-white" />}
                     label="Display Scale"
                     value={`${deviceInfo.scale_factor}x`}
                   />
