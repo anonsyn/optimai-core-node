@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button/button'
 import { CopyButton } from '@/components/ui/button/copy-button'
 import { Icon } from '@/components/ui/icon'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { EXTERNAL_LINKS } from '@/configs/links'
 import { authSelectors } from '@/store/slices/auth'
 import { Wallet } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -171,7 +172,7 @@ export const WalletPopover = () => {
               variant="primary"
               size="sm"
               className="w-full"
-              onClick={() => window.windowIPC.openExternalLink('https://optimai.xyz/dashboard')}
+              onClick={() => window.windowIPC.openExternalLink(EXTERNAL_LINKS.DASHBOARD.HOME)}
             >
               View Dashboard
             </Button>
