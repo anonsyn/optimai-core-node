@@ -1,3 +1,4 @@
+import { authApi } from '@/api/auth'
 import { Button, SubmitButton } from '@/components/ui/button'
 import {
   Dialog,
@@ -11,7 +12,6 @@ import { Icon } from '@/components/ui/icon'
 import { InputCustomize, Password } from '@/components/ui/input'
 import { toastError, toastSuccess } from '@/components/ui/toast'
 import { EXTERNAL_LINKS } from '@/configs/links'
-import { authApi } from '@/api/auth'
 import { useCloseModal, useIsModalOpen, useModalData } from '@/hooks/modal'
 import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
@@ -21,6 +21,7 @@ import { getErrorMessage } from '@/utils/get-error-message'
 import { sessionManager } from '@/utils/session-manager'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -58,6 +59,7 @@ const signInSchema = z.object({
 type FormValue = z.infer<typeof signInSchema>
 
 const LoginForm = () => {
+  const [loading, setLoading] = useState(false)
   const form = useForm<FormValue>({
     mode: 'all',
     resolver: zodResolver(signInSchema),
@@ -77,7 +79,7 @@ const LoginForm = () => {
     enabled: false
   })
 
-  const { mutateAsync: signIn, isPending } = useMutation({
+  const { mutateAsync: signIn } = useMutation({
     mutationFn: async (formValue: FormValue) => {
       const { verifier, challenge } = await generatePkceChallenge()
 
@@ -118,6 +120,7 @@ const LoginForm = () => {
   })
 
   const handleSubmit = async (formValue: FormValue) => {
+    setLoading(true)
     return signIn(formValue)
       .then((user) => {
         dispatch(authActions.setUser(user))
@@ -133,6 +136,9 @@ const LoginForm = () => {
       .catch((err) => {
         const message = getErrorMessage(err)
         toastError(message)
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }
 
@@ -191,7 +197,7 @@ const LoginForm = () => {
           >
             Forgot password
           </Button>
-          <SubmitButton className="mt-auto" loading={isPending}>
+          <SubmitButton className="mt-auto" loading={loading}>
             Sign in
           </SubmitButton>
         </form>
