@@ -24,7 +24,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
   const [state, setState] = useState<SetupState>('checking')
   const [downloadProgress, setDownloadProgress] = useState(0)
   const [downloadError, setDownloadError] = useState<string | null>(null)
-  const [verifyAttempts, setVerifyAttempts] = useState(0)
+  // const [verifyAttempts, setVerifyAttempts] = useState(0)
   const [dockerStatus, setDockerStatus] = useState<DockerStatus>('checking')
 
   const [debouncedProgress] = useDebounce(downloadProgress, 400, { maxWait: 1000 })
@@ -86,7 +86,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
 
       // Continue polling every 15 seconds
       interval = setInterval(async () => {
-        setVerifyAttempts((prev) => prev + 1)
+        // setVerifyAttempts((prev) => prev + 1)
         const success = await checkDocker()
 
         if (success) {
@@ -151,7 +151,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
     const success = await window.dockerIPC.openInstaller()
     if (success) {
       setState('installing')
-      setVerifyAttempts(0)
+      // setVerifyAttempts(0)
       setDockerStatus('checking')
     } else {
       setDownloadError('Failed to open installer. Please open it manually from Downloads.')
@@ -195,11 +195,11 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
                 <Download className="text-green size-7" />
               </div>
-              <h3 className="text-20 font-semibold text-white">Set Up Your Node Environment</h3>
+              <h3 className="text-20 font-semibold text-white">Setting up your Node</h3>
               <p className="text-16 mt-1 text-balance text-white/50">
                 {downloadError
                   ? downloadError
-                  : 'Download Docker Desktop — it’s the foundation for running your OptimAI Node locally.'}
+                  : 'We’ll help you get started by downloading Docker Desktop, so your node can run smoothly on your device'}
               </p>
             </div>
 
@@ -261,8 +261,10 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                   />
                 </svg>
               </div>
-              <h3 className="text-20 font-semibold text-white">Downloading Docker Desktop</h3>
-              <p className="text-16 mt-1 text-balance text-white/50">This may take a few minutes</p>
+              <h3 className="text-20 font-semibold text-white">Download in Progress</h3>
+              <p className="text-16 mt-1 text-balance text-white/50">
+                It won’t take long, we’re fetching the files you need{' '}
+              </p>
             </div>
 
             {/* Download Progress */}
@@ -298,9 +300,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
                 <Icon icon="CircleCheck" className="text-positive size-7" />
               </div>
-              <h3 className="text-20 font-semibold text-white">Download Complete!</h3>
+              <h3 className="text-20 font-semibold text-white">Download Complete</h3>
               <p className="text-16 mt-1 text-balance text-white/50">
-                Docker Desktop is ready - click Install Now to begin installation
+                Nice work, we’re ready to install Docker so your node can start soon
               </p>
             </div>
           </motion.div>
@@ -334,9 +336,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
               <p className="text-16 mt-1 text-balance text-white/50">
                 {dockerStatus === 'checking' && 'We’re checking your Docker installation...'}
                 {dockerStatus === 'not-installed' &&
-                  (verifyAttempts > 2
-                    ? 'This is taking a bit longer. Please finish the installation.'
-                    : 'Follow the installer steps to finish.')}
+                  'The installation is underway, we’ll notify you when it’s ready to go'}
                 {dockerStatus === 'not-running' &&
                   'Everything’s installed. Just launch Docker Desktop to complete setup.'}
               </p>
@@ -429,9 +429,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
           {state === 'no-installer' && `Download for ${getPlatformName()}`}
           {state === 'downloading' && (
             <>
-              <span>Downloading...</span>
               <span className="tabular-nums">
-                {' '}
                 <AnimatedNumber
                   value={debouncedProgress}
                   format={{
@@ -439,8 +437,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                     minimumIntegerDigits: 2
                   }}
                 />
-                %
+                %{' '}
               </span>
+              <span>Complete</span>
             </>
           )}
           {state === 'has-installer' && 'Install Now'}
