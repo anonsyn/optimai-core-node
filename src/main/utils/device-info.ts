@@ -2,8 +2,9 @@ import crypto from 'crypto'
 import { screen } from 'electron'
 import { machineIdSync } from 'node-machine-id'
 import os from 'os'
+import * as si from 'systeminformation'
 
-import { DeviceType, type DeviceInfo } from '../api/device/types'
+import { DeviceType, type DeviceInfo, type GPUInfo, type GPUType } from '../api/device/types'
 import { getErrorMessage } from './get-error-message'
 
 function getScreenInfo(): {
@@ -106,12 +107,57 @@ function hashMachineId(machineId: string): string {
   return crypto.createHash('sha256').update(machineId).digest('hex')
 }
 
+async function getGPUInfo(): Promise<GPUInfo | undefined> {
+  try {
+    const graphics = await si.graphics()
+
+    if (!graphics.controllers || graphics.controllers.length === 0) {
+      return undefined
+    }
+
+    // Get the primary GPU (usually the first one)
+    const primaryGPU = graphics.controllers[0]
+
+    // Determine GPU type based on vendor and model
+    let gpuType: GPUType | undefined
+    const vendor = primaryGPU.vendor?.toLowerCase() || ''
+    const model = primaryGPU.model?.toLowerCase() || ''
+
+    if (
+      vendor.includes('nvidia') ||
+      vendor.includes('amd') ||
+      model.includes('radeon') ||
+      model.includes('geforce')
+    ) {
+      gpuType = 'discrete'
+    } else if (vendor.includes('intel') && (model.includes('uhd') || model.includes('iris'))) {
+      gpuType = 'integrated'
+    } else if (vendor.includes('apple') || model.includes('apple')) {
+      gpuType = 'integrated' // Apple Silicon GPUs are integrated
+    }
+
+    // Convert VRAM from MB to GB
+    const vramGB = primaryGPU.vram ? Math.round((primaryGPU.vram / 1024) * 10) / 10 : undefined
+
+    return {
+      vendor: primaryGPU.vendor || undefined,
+      model: primaryGPU.model || undefined,
+      vram_gb: vramGB,
+      type: gpuType
+    }
+  } catch (error) {
+    console.error('Failed to read GPU info:', getErrorMessage(error, 'Failed to read GPU info'))
+    return undefined
+  }
+}
+
 export async function getFullDeviceInfo(): Promise<{
   deviceInfo: DeviceInfo
 }> {
   const { cpu_cores, memory_gb } = getSystemInfo()
   const screenInfo = getScreenInfo()
   const machineId = getMachineId()
+  const gpuInfo = await getGPUInfo()
 
   const deviceInfo: DeviceInfo = {
     cpu_cores,
@@ -126,6 +172,10 @@ export async function getFullDeviceInfo(): Promise<{
 
   if (machineId) {
     deviceInfo.machine_id = hashMachineId(machineId)
+  }
+
+  if (gpuInfo) {
+    deviceInfo.gpu = gpuInfo
   }
 
   return {

@@ -26,6 +26,19 @@ export const browserName = {
 
 export type BrowserName = (typeof browserName)[keyof typeof browserName]
 
+export type GPUType = 'discrete' | 'integrated' | 'mobile'
+
+export interface GPUInfo {
+  /** GPU vendor/manufacturer (e.g., "NVIDIA", "AMD", "Intel", "Apple") */
+  vendor?: string
+  /** GPU model name (e.g., "GeForce RTX 3080", "M1 Max", "Radeon RX 6800") */
+  model?: string
+  /** GPU VRAM in gigabytes */
+  vram_gb?: number
+  /** GPU type classification */
+  type?: GPUType
+}
+
 export interface DeviceInfo {
   // Level 1: Generated Unique Identifiers
   machine_id?: string // Desktop only (from node-machine-id)
@@ -38,6 +51,9 @@ export interface DeviceInfo {
   // Level 2: Raw Device Characteristics
   cpu_cores?: number // Optional: Available in most environments
   memory_gb?: number // Optional: Not always available
+
+  // Level 2.5: GPU Information
+  gpu?: GPUInfo // Optional: GPU specifications (vendor, model, VRAM, type)
 
   // Level 3: Display Information
   screen_width_px: number

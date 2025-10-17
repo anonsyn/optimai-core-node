@@ -13,14 +13,13 @@ class NodeIpcHandler {
       this.broadcast(NodeEvents.OnNodeStatusChanged, status)
     })
 
-    // Uptime event handlers disabled per backend team
-    // nodeRuntime.on(NodeRuntimeEvent.UptimeReward, (reward) => {
-    //   this.broadcast(NodeEvents.OnUptimeReward, reward)
-    // })
+    nodeRuntime.on(NodeRuntimeEvent.UptimeReward, (reward) => {
+      this.broadcast(NodeEvents.OnUptimeReward, reward)
+    })
 
-    // nodeRuntime.on(NodeRuntimeEvent.UptimeCycle, (cycle) => {
-    //   this.broadcast(NodeEvents.OnUptimeCycle, cycle)
-    // })
+    nodeRuntime.on(NodeRuntimeEvent.UptimeCycle, (cycle) => {
+      this.broadcast(NodeEvents.OnUptimeCycle, cycle)
+    })
 
     nodeRuntime.on(NodeRuntimeEvent.MiningAssignments, (assignments) => {
       console.log('NEW MINING ASSIGNMENTS')
