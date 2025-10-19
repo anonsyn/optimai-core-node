@@ -5,6 +5,7 @@ export type GetMiningAssignmentsParams = {
   offset?: number
   statuses?: string[]
   created_after?: string
+  device_id?: string
 }
 
 export type StartAssignmentResponse = {

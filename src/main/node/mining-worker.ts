@@ -428,11 +428,20 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     this.processing = true
 
     try {
+      // Get device ID to fetch only assignments for this device (optional)
+      const deviceId = deviceStore.getDeviceId()
+      if (deviceId) {
+        log.info(`[mining] Fetching assignments for device: ${deviceId}`)
+      } else {
+        log.warn('[mining] No device ID found, fetching all user assignments')
+      }
+
       // Fetch assignments
       const { data } = await miningApi.getAssignments({
         statuses: ['not_started', 'in_progress'],
         limit: 30,
-        platforms: 'google' // Only fetch Google platform tasks
+        platforms: 'google', // Only fetch Google platform tasks
+        ...(deviceId && { device_id: deviceId }) // Only include device_id if set
       })
 
       const assignments = data?.assignments ?? []
