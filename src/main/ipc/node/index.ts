@@ -1,7 +1,9 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
 
+import { deviceApi } from '../../api/device'
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
+import { deviceStore } from '../../storage'
 import { getFullDeviceInfo } from '../../utils/device-info'
 import { getErrorMessage } from '../../utils/get-error-message'
 import windowManager from '../../window/manager'
@@ -78,6 +80,17 @@ class NodeIpcHandler {
 
     ipcMain.handle(NodeEvents.GetDeviceInfo, async () => {
       return getFullDeviceInfo()
+    })
+
+    ipcMain.handle(NodeEvents.GetDeviceDetails, async () => {
+      try {
+        const deviceId = deviceStore.getDeviceId()
+        const response = await deviceApi.getDeviceById(deviceId)
+        return response.data.detail
+      } catch (error) {
+        log.error('Failed to fetch device details:', getErrorMessage(error))
+        throw error
+      }
     })
 
     ipcMain.handle(NodeEvents.CompleteMiningAssignment, async () => {

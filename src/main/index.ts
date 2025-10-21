@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, nativeTheme } from 'electron'
 import log from 'electron-log/main'

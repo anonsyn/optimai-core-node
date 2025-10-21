@@ -92,6 +92,8 @@ export interface DeviceDetail {
   ip_address: string
   country: string
   country_code2: string
+  latitude: number | null
+  longitude: number | null
   status?: string
 }
 

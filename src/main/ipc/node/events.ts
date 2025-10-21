@@ -5,6 +5,7 @@ export const NodeEvents = {
   GetStatus: 'node:get-status',
   GetMiningStatus: 'node:get-mining-status',
   GetDeviceInfo: 'node:get-device-info',
+  GetDeviceDetails: 'node:get-device-details',
   CompleteMiningAssignment: 'node:complete-mining-assignment',
 
   OnNodeStatusChanged: 'node:on-status-changed',
