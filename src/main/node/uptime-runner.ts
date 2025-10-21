@@ -18,7 +18,7 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
   private running = false
   private timer: NodeJS.Timeout | null = null
   private inFlight = false
-  private readonly intervalMs = 10000
+  private readonly intervalMs = 600000 // 10 minutes
 
   start() {
     if (this.running) {
