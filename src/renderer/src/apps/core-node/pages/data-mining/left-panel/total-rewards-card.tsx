@@ -1,5 +1,5 @@
 import Token from '@/components/branding/token'
-import { Card, CardIcon, CardTitle } from '@/components/ui/card'
+import { Card, CardHeader, CardIcon, CardTitle } from '@/components/ui/card'
 import DeltaBadge from '@/components/ui/delta-badge'
 import { useGetMiningStatsQuery } from '@/queries/mining'
 import NumberFlow from '@number-flow/react'
@@ -39,7 +39,7 @@ export const TotalRewardsCard = () => {
   const uptimePercentageChange = stats?.uptime_reward?.percentage_change || 0
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="w-full overflow-hidden">
       {/* World Map Section */}
       <div className="border-b border-white/5">
         <WorldMap latitude={deviceDetail?.latitude} longitude={deviceDetail?.longitude} />
@@ -47,12 +47,12 @@ export const TotalRewardsCard = () => {
 
       {/* Total Rewards Header and Stats */}
       <div className="px-4 py-3">
-        <div className="flex items-center justify-between mb-4">
-          <CardTitle className="text-base">Total Rewards</CardTitle>
+        <CardHeader className="mb-4 -mx-4 -mt-3 px-0 py-0">
+          <CardTitle>Total Rewards</CardTitle>
           <CardIcon>
             <Sparkle className="size-4.5" />
           </CardIcon>
-        </div>
+        </CardHeader>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export const TotalRewardsCard = () => {
       <div className="flex divide-x divide-white/5 border-t border-white/5">
         {/* Task Reward */}
         <div className="flex-1 px-5 py-4">
-          <p className="text-xs text-white/50 mb-3">Task Reward</p>
+          <p className="text-sm text-white/50 mb-3">Task Reward</p>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Token className="size-[18px] flex-shrink-0" />
@@ -95,7 +95,7 @@ export const TotalRewardsCard = () => {
 
         {/* Uptime Reward */}
         <div className="flex-1 px-5 py-4">
-          <p className="text-xs text-white/50 mb-3">Uptime Reward</p>
+          <p className="text-sm text-white/50 mb-3">Uptime Reward</p>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Token className="size-[18px] flex-shrink-0" />

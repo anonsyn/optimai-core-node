@@ -114,7 +114,7 @@ export const DeviceInfoCard = () => {
   }
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Device Information</CardTitle>
         <CardIcon>
