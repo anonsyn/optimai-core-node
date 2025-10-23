@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardIcon, CardTitle } from '@/components
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalDeviceInfoQuery } from '@/queries/device'
 import { cn } from '@/utils/tw'
-import { Cpu, Fingerprint, Globe, MemoryStick, Monitor } from 'lucide-react'
+import { Cpu, Fingerprint, Globe, Info, MemoryStick, Monitor } from 'lucide-react'
 
 interface DeviceInfoItemProps {
   icon: React.ReactNode
@@ -61,7 +61,7 @@ export const DeviceInfoCard = () => {
         <CardHeader>
           <CardTitle>Device Information</CardTitle>
           <CardIcon>
-            <Monitor className="size-4" />
+            <Info className="size-4.5" />
           </CardIcon>
         </CardHeader>
         <CardContent>
@@ -82,7 +82,7 @@ export const DeviceInfoCard = () => {
         <CardHeader>
           <CardTitle>Device Information</CardTitle>
           <CardIcon>
-            <Monitor className="size-4" />
+            <Info className="size-4.5" />
           </CardIcon>
         </CardHeader>
         <CardContent>
@@ -97,7 +97,7 @@ export const DeviceInfoCard = () => {
       <CardHeader>
         <CardTitle>Device Information</CardTitle>
         <CardIcon>
-          <Monitor className="size-4" />
+          <Info className="size-4.5" />
         </CardIcon>
       </CardHeader>
       <CardContent className="pt-3">

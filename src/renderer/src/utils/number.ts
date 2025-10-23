@@ -1,4 +1,4 @@
-interface CompactNumberOptions {
+export interface CompactNumberOptions {
   minimumFractionDigits?: number
   maximumFractionDigits?: number
 }
@@ -20,10 +20,6 @@ export const padStart = (value: number, length: number) => {
   return value.toString().padStart(length, '0')
 }
 
-interface CompactNumberOptions {
-  minimumFractionDigits?: number
-  maximumFractionDigits?: number
-}
 export const compactNumber = (value: number, options?: CompactNumberOptions) => {
   const formatter = new Intl.NumberFormat('en-US', {
     notation: 'compact',

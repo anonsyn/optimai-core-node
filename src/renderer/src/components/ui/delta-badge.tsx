@@ -1,13 +1,14 @@
 import { Badge } from '@/components/ui/badge'
-import { withSign } from '@/utils/number'
-import { useMemo } from 'react'
+import { CompactNumberOptions, withSign } from '@/utils/number'
+import { ComponentProps, useMemo } from 'react'
 
-export interface DeltaBadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DeltaBadgeProps extends ComponentProps<typeof Badge> {
   value?: number
   percentage?: number
   formatLabel?: () => string
+  options?: CompactNumberOptions
 }
-const DeltaBadge = ({ value, percentage, formatLabel, ...props }: DeltaBadgeProps) => {
+const DeltaBadge = ({ value, percentage, formatLabel, options, ...props }: DeltaBadgeProps) => {
   const variant = useMemo(() => {
     if (value) {
       if (value > 0) {
@@ -23,7 +24,7 @@ const DeltaBadge = ({ value, percentage, formatLabel, ...props }: DeltaBadgeProp
 
   const label = formatLabel
     ? formatLabel()
-    : `${withSign(value)} ${percentage ? `(${percentage}%)` : ''}`
+    : `${withSign(value, options)} ${percentage ? `(${percentage}%)` : ''}`
 
   return (
     <Badge {...props} variant={variant}>

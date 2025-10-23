@@ -83,12 +83,12 @@ export const TotalRewardsCard = () => {
       <div className="flex divide-x divide-white/4 border-t border-white/4">
         {items.map((item, index) => {
           return (
-            <div key={index} className="flex-1 px-5 py-4">
-              <p className="mb-3 text-sm text-white/50">{item.label}</p>
-              <div className="flex items-center gap-2">
+            <div key={index} className="flex-1 py-4 pr-4 pl-5">
+              <p className="text-14 leading-normal text-white/50">{item.label}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1">
-                  <Token className="size-[18px] flex-shrink-0" />
-                  <span className="text-xl font-medium text-white tabular-nums">
+                  <Token className="size-4.5 flex-shrink-0" />
+                  <span className="text-20 leading-tight font-medium text-white tabular-nums">
                     <NumberFlow
                       value={item.reward}
                       format={{
@@ -98,7 +98,15 @@ export const TotalRewardsCard = () => {
                     />
                   </span>
                 </div>
-                <DeltaBadge value={item.changeAmount} percentage={item.changePercentage} />
+                <DeltaBadge
+                  className="text-14 mt-1 leading-normal whitespace-nowrap"
+                  value={item.changeAmount}
+                  options={{
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 2
+                  }}
+                  text
+                />
               </div>
             </div>
           )

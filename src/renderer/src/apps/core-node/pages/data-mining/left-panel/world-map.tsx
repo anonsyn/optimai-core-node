@@ -64,9 +64,9 @@ export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
         {hasValidLocation && (
           <Marker coordinates={[finalLongitude, finalLatitude]}>
             {/* Outer ring */}
-            <circle r={4} fill="none" stroke="#ffffff" strokeWidth={1.5} />
+            <circle r={4} fill="none" stroke="#ffffff" strokeWidth={1.5} strokeOpacity={0.4} />
             {/* Inner dot */}
-            <circle r={2} fill="#ffffff" fillOpacity={0.4} />
+            <circle r={2} fill="#ffffff" />
           </Marker>
         )}
       </ComposableMap>
