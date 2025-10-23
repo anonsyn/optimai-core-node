@@ -170,4 +170,6 @@ export interface LocalDeviceInfo {
   memory_gb: number
   os_name: string
   os_version: string
+  latitude?: number
+  longitude?: number
 }

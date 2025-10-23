@@ -98,7 +98,9 @@ class NodeIpcHandler {
           cpu_cores: deviceInfo.cpu_cores || 0,
           memory_gb: deviceInfo.memory_gb || 0,
           os_name: deviceInfo.os_name || 'Unknown',
-          os_version: deviceInfo.os_version || 'Unknown'
+          os_version: deviceInfo.os_version || 'Unknown',
+          latitude: ipGeoResult.latitude,
+          longitude: ipGeoResult.longitude
         }
 
         return localDeviceInfo

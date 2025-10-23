@@ -1,6 +1,7 @@
 import Token from '@/components/branding/token'
 import { Card, CardContent, CardHeader, CardIcon, CardTitle } from '@/components/ui/card'
 import DeltaBadge from '@/components/ui/delta-badge'
+import { useLocalDeviceInfoQuery } from '@/queries/device/use-local-device-info-query'
 import { useGetMiningStatsQuery } from '@/queries/mining'
 import NumberFlow from '@number-flow/react'
 import { Sparkle } from 'lucide-react'
@@ -8,6 +9,7 @@ import { WorldMap } from './world-map'
 
 export const TotalRewardsCard = () => {
   const { data: stats } = useGetMiningStatsQuery()
+  const { data: deviceInfo } = useLocalDeviceInfoQuery()
 
   // Total Rewards
   const totalRewards = stats?.total_rewards?.amount || 0
@@ -42,7 +44,10 @@ export const TotalRewardsCard = () => {
   return (
     <Card className="w-full overflow-hidden p-0">
       <div className="border-b border-white/4">
-        <WorldMap latitude={null} longitude={null} />
+        <WorldMap
+          latitude={deviceInfo?.latitude || null}
+          longitude={deviceInfo?.longitude || null}
+        />
       </div>
 
       <div className="px-4 py-3">

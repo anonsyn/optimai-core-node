@@ -46,18 +46,21 @@ The `NodeRuntime` class orchestrates all node operations in TypeScript:
 **Key Components**:
 
 1. **NodeRuntime** (`node-runtime.ts`): Central coordinator
+
    - Manages lifecycle: `start()`, `stop()`, `restartMining()`
    - Emits events to renderer via IPC bridge
    - Coordinates UptimeRunner and MiningWorker
    - Handles authentication and device registration
 
 2. **UptimeRunner** (`uptime-runner.ts`): Availability tracking
+
    - Polls `/api/uptime/online` every 10 seconds
    - Tracks uptime cycles and emits reward events
    - Stores cycle data in encrypted local storage
    - Emits: `reward`, `cycle`, `error`
 
 3. **MiningWorker** (`mining-worker.ts`): Web scraping task executor
+
    - Fetches assignments from `/api/mining/assignments`
    - Uses Docker + Playwright crawler to scrape websites
    - Processes assignments via PQueue (controlled concurrency)
@@ -70,6 +73,7 @@ The `NodeRuntime` class orchestrates all node operations in TypeScript:
    - Required before uptime/mining can begin
 
 **NodeRuntime Events** (broadcast to renderer):
+
 - `status` - Node status changes (Idle, Starting, Running, Stopping)
 - `uptime-reward` - Uptime reward earned
 - `uptime-cycle` - Uptime cycle updated
@@ -83,16 +87,19 @@ The `NodeRuntime` class orchestrates all node operations in TypeScript:
 ### Mining Task Flow
 
 1. **Assignment Fetch**:
+
    - `MiningWorker` polls `/api/mining/assignments` every 30s
    - Filters by device_id to get relevant assignments
    - Assignments include: URL, platform, search query, metadata
 
 2. **Docker Initialization**:
+
    - Checks Docker availability on startup
    - Downloads `crawl4ai` Docker image if needed
    - Initializes crawler service with Playwright
 
 3. **Task Processing**:
+
    - Assignments queued in PQueue (concurrency control)
    - Each assignment processed by crawler service
    - Browser automation via Playwright in Docker container
@@ -100,6 +107,7 @@ The `NodeRuntime` class orchestrates all node operations in TypeScript:
    - Measures execution time
 
 4. **Result Submission**:
+
    - `POST /api/mining/assignments/:id/submit` with content/metadata
    - Backend validates and credits rewards
    - If failed: Can abandon with reason (invalid link, site down, etc.)
@@ -111,21 +119,25 @@ The `NodeRuntime` class orchestrates all node operations in TypeScript:
 ### Services (`src/main/services/`)
 
 **docker-service.ts**: Docker management
+
 - Checks Docker availability and version
 - Pulls/manages `crawl4ai` Docker images
 - Monitors Docker daemon health
 
 **crawler-service.ts**: Playwright-based web scraping
+
 - Initializes browser in Docker container
 - Executes scraping tasks with timeout handling
 - Handles Twitter-specific scraping logic
 - Returns structured content + metadata
 
 **crawl4ai-service.ts**: Legacy crawler (being phased out)
+
 - Python-based crawler using crawl4ai library
 - Still used for fallback scenarios
 
 **download-service.ts**: File download utilities
+
 - Used for Docker installer downloads on Windows/macOS
 - Progress tracking with event emitters
 
@@ -144,11 +156,13 @@ Storage location: `app.getPath('userData')/node/`
 ### IPC Communication
 
 **Pattern**: Three-file structure per feature
+
 1. `events.ts` - Event name constants
 2. `index.ts` - Main process handlers (`ipcMain.handle()`)
 3. `preload.ts` - Context bridge API exposure
 
 **Node IPC** (`src/main/ipc/node/`):
+
 - `startNode()` - Start node runtime
 - `stopNode()` - Stop node runtime
 - `restartMining()` - Restart mining worker
@@ -161,18 +175,21 @@ Storage location: `app.getPath('userData')/node/`
 A pnpm workspace containing browser injection scripts:
 
 **Packages**:
+
 - `@xagent/scroll` - Auto-scroll functionality for crawling
 - `@xagent/terminal` - Terminal UI components
 - `@xagent/utils` - Shared utilities
 - `@xagent/styles` - Shared styles
 
 **Development**:
+
 - Workspace managed by root yarn with injections/pnpm
 - Use `yarn build:injections` to build all packages
 - Individual package: `cd injections && pnpm --filter @xagent/scroll build`
 - Dev mode: `yarn dev` runs both Electron and injections dev servers with hot reload
 
 **Integration**:
+
 - Built injections bundled with Electron app
 - Loaded into web pages by crawler service
 - Enable dynamic behavior injection during scraping
@@ -180,11 +197,13 @@ A pnpm workspace containing browser injection scripts:
 ### State Management (Renderer)
 
 **Redux Store** (`src/renderer/src/store/`):
+
 - Slices: `auth`, `modals`, `header`, `online`, `checkin`, `node`
 - Only `auth` slice persisted to localStorage
 - Node slice tracks runtime status and mining assignments
 
 **TanStack Query**:
+
 - Central client in `src/renderer/src/queries/client.ts`
 - 10s stale time, 1hr garbage collection time
 - Queries organized by domain: `auth/`, `daily-tasks/`, `dashboard/`, `missions/`, `node-avail/`, `proxy/`, `referral/`
@@ -195,6 +214,7 @@ A pnpm workspace containing browser injection scripts:
 Two separate env files required:
 
 **`.env`** (Application config):
+
 - `VITE_API_URL` - Backend API endpoint (default: https://api.optimai.network)
 - `VITE_DASHBOARD_URL` - Web dashboard URL
 - `VITE_CLIENT_APP_ID` - OAuth client ID
@@ -205,6 +225,7 @@ Two separate env files required:
 - Copy from `.env.example` and fill in required values
 
 **`electron-builder.env`** (Build/signing only):
+
 - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` for code signing
 - Only needed when publishing releases
 - Copy from `electron-builder.env.example`
@@ -212,6 +233,7 @@ Two separate env files required:
 ### Path Aliases
 
 Configured in `electron.vite.config.ts`:
+
 - `@/` → `src/renderer/src/` (renderer code)
 - `@assets/` → `src/renderer/src/assets/` (images, animations)
 - `@main/` → `src/main/` (main process utilities)
@@ -223,12 +245,14 @@ Always use aliases instead of relative paths like `../../../`.
 ### Mining Requirements
 
 **Docker Dependency**:
+
 - Docker Desktop must be installed and running
 - Mining worker checks Docker on startup
 - If Docker unavailable: mining status set to Error
 - Downloads: https://docker.com
 
 **Crawler Image**:
+
 - Uses `crawl4ai` Docker image from Docker Hub
 - Auto-downloaded on first mining start
 - Contains Playwright + Chromium for web scraping
@@ -266,6 +290,7 @@ Always use aliases instead of relative paths like `../../../`.
 ### Working with Node Runtime
 
 **Adding New Features**:
+
 1. Add service methods in `src/main/api/{feature}/`
 2. Update `NodeRuntime` or create new worker class
 3. Add event emitters for renderer updates
@@ -274,6 +299,7 @@ Always use aliases instead of relative paths like `../../../`.
 6. Update renderer components to consume events
 
 **Testing Mining Locally**:
+
 1. Ensure Docker Desktop is running
 2. Start app: `yarn dev:electron`
 3. Monitor logs: `app.getPath('logs')`
@@ -283,12 +309,14 @@ Always use aliases instead of relative paths like `../../../`.
 ### Working with Injections
 
 **Development Flow**:
+
 1. Make changes in `injections/packages/{package}/`
 2. Run `yarn dev` (hot reload enabled)
 3. Test in Electron app's web views
 4. Build: `yarn build:injections`
 
 **Adding New Injection**:
+
 1. Create package in `injections/packages/{name}/`
 2. Add to pnpm workspace in root `package.json`
 3. Export from injection packages
@@ -316,18 +344,21 @@ Always use aliases instead of relative paths like `../../../`.
 ### Known Patterns
 
 **Event-Driven Architecture**:
+
 - NodeRuntime extends EventEmitter
 - All status changes emit events
 - Renderer subscribes via IPC event listeners
 - Redux actions dispatched from IPC handlers
 
 **Error Handling**:
+
 - All async operations wrapped in try-catch
 - Errors emitted via EventEmitter
 - Status transitions include error state
 - UI displays error modals for critical failures
 
 **Retry Logic**:
+
 - Mining assignments retry on failure (with backoff)
 - Uptime polling retries indefinitely
 - Docker checks retry with exponential backoff
@@ -336,18 +367,21 @@ Always use aliases instead of relative paths like `../../../`.
 ### Common Issues
 
 **Mining Won't Start**:
+
 1. Check Docker is running: `docker ps`
 2. Check Docker service availability
 3. View logs for specific error
 4. Restart Docker Desktop
 
 **Uptime Not Tracking**:
+
 1. Verify network connection
 2. Check token validity (may need re-login)
 3. View uptime runner logs
 4. Check device registration status
 
 **Build Failures**:
+
 1. Clean: `rm -rf out dist`
 2. Rebuild injections: `yarn build:injections`
 3. Check TypeScript errors: `yarn typecheck`
@@ -358,20 +392,24 @@ Always use aliases instead of relative paths like `../../../`.
 The runtime calls OptimAI backend services:
 
 **Authentication**:
+
 - `POST /auth/login` - Login with email/password
 - `GET /auth/me` - Get current user profile
 - `POST /auth/refresh` - Refresh access token
 
 **Node Control** (deprecated - now handled internally):
+
 - Endpoints existed in older versions
 - Now all control is local via NodeRuntime
 
 **Uptime**:
+
 - `POST /api/uptime/online` - Report online status
 - `GET /api/uptime/progress` - Get uptime progress
 - `GET /api/uptime/rewards` - Get uptime reward history
 
 **Mining**:
+
 - `GET /api/mining/assignments` - Fetch available assignments
 - `POST /api/mining/assignments/:id/start` - Mark assignment started
 - `POST /api/mining/assignments/:id/submit` - Submit assignment result
@@ -379,5 +417,6 @@ The runtime calls OptimAI backend services:
 - `GET /api/mining/stats` - Get mining statistics
 
 **Device**:
+
 - `POST /devices` - Register device
 - `GET /devices/me` - Get current device info

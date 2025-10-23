@@ -9,6 +9,8 @@ export interface IpGeolocation {
   country_code: string
   city?: string
   region?: string
+  latitude?: number
+  longitude?: number
 }
 
 /**
@@ -22,7 +24,7 @@ export async function getIpGeolocation(): Promise<IpGeolocation> {
     const response = await axios.get('http://ip-api.com/json/', {
       timeout: 5000,
       params: {
-        fields: 'status,message,country,countryCode,region,city,query'
+        fields: 'status,message,country,countryCode,region,city,query,lat,lon'
       }
     })
 
@@ -35,7 +37,9 @@ export async function getIpGeolocation(): Promise<IpGeolocation> {
       country: response.data.country || 'Unknown',
       country_code: response.data.countryCode || 'XX',
       city: response.data.city,
-      region: response.data.region
+      region: response.data.region,
+      latitude: response.data.lat,
+      longitude: response.data.lon
     }
   } catch (error) {
     log.warn('[ip-geolocation] Failed to fetch IP geolocation:', getErrorMessage(error))
