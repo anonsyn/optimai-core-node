@@ -11,16 +11,18 @@ interface LocationMapProps {
  * Simple SVG-based mini map showing device location
  * For production, consider using Leaflet (react-leaflet)
  */
-export const LocationMap = ({
-  latitude,
-  longitude,
-  country,
-  className = ''
-}: LocationMapProps) => {
+export const LocationMap = ({ latitude, longitude, country, className = '' }: LocationMapProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    if (!canvasRef.current || latitude === null || latitude === undefined || longitude === null || longitude === undefined) return
+    if (
+      !canvasRef.current ||
+      latitude === null ||
+      latitude === undefined ||
+      longitude === null ||
+      longitude === undefined
+    )
+      return
 
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
@@ -86,29 +88,32 @@ export const LocationMap = ({
     ctx.textAlign = 'center'
     ctx.fillText(`${(latitude as number).toFixed(2)}°`, x, y - markerRadius - 15)
     ctx.fillText(`${(longitude as number).toFixed(2)}°`, x, y + markerRadius + 20)
-
   }, [latitude, longitude])
 
   if (latitude === null || longitude === null) {
     return (
-      <div className={`w-full h-32 rounded-lg bg-white/5 flex items-center justify-center ${className}`}>
+      <div
+        className={`flex h-32 w-full items-center justify-center rounded-lg bg-white/5 ${className}`}
+      >
         <span className="text-12 text-white/50">No location data available</span>
       </div>
     )
   }
 
   return (
-    <div className={`w-full rounded-lg overflow-hidden border border-white/10 ${className}`}>
+    <div className={`w-full overflow-hidden rounded-lg border border-white/10 ${className}`}>
       <canvas
         ref={canvasRef}
         width={320}
         height={160}
-        className="w-full h-auto block bg-[#1a1a1a]"
+        className="block h-auto w-full bg-[#1a1a1a]"
       />
       <div className="bg-white/5 px-3 py-2 text-center">
         <p className="text-11 text-white/50">
           {country && <span>{country} • </span>}
-          <span className="font-mono">{latitude?.toFixed(4)}°, {longitude?.toFixed(4)}°</span>
+          <span className="font-mono">
+            {latitude?.toFixed(4)}°, {longitude?.toFixed(4)}°
+          </span>
         </p>
       </div>
     </div>

@@ -4,24 +4,10 @@ import DeltaBadge from '@/components/ui/delta-badge'
 import { useGetMiningStatsQuery } from '@/queries/mining'
 import NumberFlow from '@number-flow/react'
 import { Sparkle } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import type { DeviceDetail } from '@main/api/device/types'
 import { WorldMap } from './world-map'
 
 export const TotalRewardsCard = () => {
   const { data: stats } = useGetMiningStatsQuery()
-  const [deviceDetail, setDeviceDetail] = useState<DeviceDetail | null>(null)
-
-  useEffect(() => {
-    window.nodeIPC.getDeviceDetails()
-      .then((detail) => {
-        console.log('TotalRewardsCard - Device details fetched:', detail)
-        setDeviceDetail(detail)
-      })
-      .catch((error) => {
-        console.error('TotalRewardsCard - Failed to fetch device details:', error)
-      })
-  }, [])
 
   // Total Rewards
   const totalRewards = stats?.total_rewards?.amount || 0
@@ -42,12 +28,12 @@ export const TotalRewardsCard = () => {
     <Card className="w-full overflow-hidden">
       {/* World Map Section */}
       <div className="border-b border-white/5">
-        <WorldMap latitude={deviceDetail?.latitude} longitude={deviceDetail?.longitude} />
+        <WorldMap latitude={null} longitude={null} />
       </div>
 
       {/* Total Rewards Header and Stats */}
       <div className="px-4 py-3">
-        <CardHeader className="mb-4 -mx-4 -mt-3 px-0 py-0">
+        <CardHeader className="-mx-4 -mt-3 mb-4 px-0 py-0">
           <CardTitle>Total Rewards</CardTitle>
           <CardIcon>
             <Sparkle className="size-4.5" />
@@ -75,7 +61,7 @@ export const TotalRewardsCard = () => {
       <div className="flex divide-x divide-white/5 border-t border-white/5">
         {/* Task Reward */}
         <div className="flex-1 px-5 py-4">
-          <p className="text-sm text-white/50 mb-3">Task Reward</p>
+          <p className="mb-3 text-sm text-white/50">Task Reward</p>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Token className="size-[18px] flex-shrink-0" />
@@ -95,7 +81,7 @@ export const TotalRewardsCard = () => {
 
         {/* Uptime Reward */}
         <div className="flex-1 px-5 py-4">
-          <p className="text-sm text-white/50 mb-3">Uptime Reward</p>
+          <p className="mb-3 text-sm text-white/50">Uptime Reward</p>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Token className="size-[18px] flex-shrink-0" />
