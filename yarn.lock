@@ -1997,37 +1997,10 @@
     lightningcss "1.29.2"
     tailwindcss "4.0.14"
 
-"@tanstack/query-core@5.74.7":
-  version "5.74.7"
-  resolved "https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.74.7.tgz"
-  integrity sha512-X3StkN/Y6KGHndTjJf8H8th7AX4bKfbRpiVhVqevf0QWlxl6DhyJ0TYG3R0LARa/+xqDwzU9mA4pbJxzPCI29A==
-
 "@tanstack/query-core@5.87.1":
   version "5.87.1"
   resolved "https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.87.1.tgz"
   integrity sha512-HOFHVvhOCprrWvtccSzc7+RNqpnLlZ5R6lTmngb8aq7b4rc2/jDT0w+vLdQ4lD9bNtQ+/A4GsFXy030Gk4ollA==
-
-"@tanstack/query-persist-client-core@5.74.7":
-  version "5.74.7"
-  resolved "https://registry.npmjs.org/@tanstack/query-persist-client-core/-/query-persist-client-core-5.74.7.tgz"
-  integrity sha512-jMramengZsDBCp8Hys8vPvy+qENN43z2O9Z16mG0iXb/mYxG/4Y6FFOBv/kTK+9416oGAFvtszxANTb9luvb9g==
-  dependencies:
-    "@tanstack/query-core" "5.74.7"
-
-"@tanstack/query-sync-storage-persister@^5.74.7":
-  version "5.74.7"
-  resolved "https://registry.npmjs.org/@tanstack/query-sync-storage-persister/-/query-sync-storage-persister-5.74.7.tgz"
-  integrity sha512-xwDzMwyH1Y0QVMKHCoR1tpUPDpLW4zQ6dD8QraN1xTi95KCk0ujrFNzU266jd5ktqt/g1xScbd3HeKIICD6t3w==
-  dependencies:
-    "@tanstack/query-core" "5.74.7"
-    "@tanstack/query-persist-client-core" "5.74.7"
-
-"@tanstack/react-query-persist-client@^5.74.7":
-  version "5.74.7"
-  resolved "https://registry.npmjs.org/@tanstack/react-query-persist-client/-/react-query-persist-client-5.74.7.tgz"
-  integrity sha512-0/znLQyc7TtAoZf31tDOjgdlj7meD7qVPXgK3Vr++zExQ+tcNfiIsSrS1RS6AKtUIHVl1MVZRdt3MPnthxAmNA==
-  dependencies:
-    "@tanstack/query-persist-client-core" "5.74.7"
 
 "@tanstack/react-query@^5.74.4":
   version "5.87.1"

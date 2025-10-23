@@ -90,9 +90,9 @@ export function NodeProvider({ children }: NodeProviderProps) {
         dispatch(nodeActions.setNodeStatus(status))
 
         // Get device info to set device ID
-        const { deviceInfo } = await window.nodeIPC.getDeviceInfo()
-        if (deviceInfo?.device_id) {
-          dispatch(nodeActions.setDeviceId(deviceInfo.device_id))
+        const localDeviceInfo = await window.nodeIPC.getLocalDeviceInfo()
+        if (localDeviceInfo?.device_id) {
+          dispatch(nodeActions.setDeviceId(localDeviceInfo.device_id))
         }
 
         // Get mining status if available

@@ -1,9 +1,8 @@
 import { ipcRenderer } from 'electron'
 
-import type { DeviceDetail, DeviceInfo } from '../../api/device/types'
 import type { SubmitAssignmentRequest } from '../../api/mining/types'
 import type { MiningWorkerStatus } from '../../node/mining-worker'
-import type { MiningAssignment, NodeStatusResponse } from '../../node/types'
+import type { LocalDeviceInfo, MiningAssignment, NodeStatusResponse } from '../../node/types'
 import type { UptimeData } from '../../storage'
 import { createPreloadEventListener } from '../../utils/ipc'
 import { NodeEvents } from './events'
@@ -15,10 +14,8 @@ const nodeIPC = {
   getStatus: (): Promise<NodeStatusResponse> => ipcRenderer.invoke(NodeEvents.GetStatus),
   getMiningStatus: (): Promise<MiningWorkerStatus> =>
     ipcRenderer.invoke(NodeEvents.GetMiningStatus),
-  getDeviceInfo: (): Promise<{ deviceInfo: DeviceInfo }> =>
-    ipcRenderer.invoke(NodeEvents.GetDeviceInfo),
-  getDeviceDetails: (): Promise<DeviceDetail> =>
-    ipcRenderer.invoke(NodeEvents.GetDeviceDetails),
+  getLocalDeviceInfo: (): Promise<LocalDeviceInfo> =>
+    ipcRenderer.invoke(NodeEvents.GetLocalDeviceInfo),
   completeMiningAssignment: (
     assignmentId: string,
     payload: SubmitAssignmentRequest

@@ -1,16 +1,9 @@
-import { persistQueryClient, queryClient } from '@/queries/client'
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { queryClient } from '@/queries/client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { PropsWithChildren } from 'react'
 
 const QueryProvider = ({ children }: PropsWithChildren) => {
-  return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: persistQueryClient }}
-    >
-      {children}
-    </PersistQueryClientProvider>
-  )
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 }
 
 export default QueryProvider

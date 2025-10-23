@@ -160,3 +160,14 @@ export interface WebSocketMessage {
   event: string
   data: any
 }
+
+export interface LocalDeviceInfo {
+  device_id: string
+  ip_address: string
+  country: string
+  country_code: string
+  cpu_cores: number
+  memory_gb: number
+  os_name: string
+  os_version: string
+}

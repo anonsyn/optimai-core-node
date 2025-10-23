@@ -1,11 +1,12 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
 
-import { deviceApi } from '../../api/device'
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
-import { deviceStore } from '../../storage'
+import type { LocalDeviceInfo } from '../../node/types'
+import { deviceStore } from '../../storage/device-store'
 import { getFullDeviceInfo } from '../../utils/device-info'
 import { getErrorMessage } from '../../utils/get-error-message'
+import { getIpGeolocation } from '../../utils/ip-geolocation'
 import windowManager from '../../window/manager'
 import { NodeEvents } from './events'
 
@@ -78,17 +79,31 @@ class NodeIpcHandler {
       return nodeRuntime.getMiningStatus()
     })
 
-    ipcMain.handle(NodeEvents.GetDeviceInfo, async () => {
-      return getFullDeviceInfo()
-    })
-
-    ipcMain.handle(NodeEvents.GetDeviceDetails, async () => {
+    ipcMain.handle(NodeEvents.GetLocalDeviceInfo, async () => {
       try {
+        // Get device info and IP geolocation in parallel
+        const [deviceInfoResult, ipGeoResult] = await Promise.all([
+          getFullDeviceInfo(),
+          getIpGeolocation()
+        ])
+
+        const deviceInfo = deviceInfoResult.deviceInfo
         const deviceId = deviceStore.getDeviceId()
-        const response = await deviceApi.getDeviceById(deviceId)
-        return response.data.detail
+
+        const localDeviceInfo: LocalDeviceInfo = {
+          device_id: deviceId,
+          ip_address: ipGeoResult.ip_address,
+          country: ipGeoResult.country,
+          country_code: ipGeoResult.country_code,
+          cpu_cores: deviceInfo.cpu_cores || 0,
+          memory_gb: deviceInfo.memory_gb || 0,
+          os_name: deviceInfo.os_name || 'Unknown',
+          os_version: deviceInfo.os_version || 'Unknown'
+        }
+
+        return localDeviceInfo
       } catch (error) {
-        log.error('Failed to fetch device details:', getErrorMessage(error))
+        log.error('[ipc] Failed to get local device info:', getErrorMessage(error))
         throw error
       }
     })
