@@ -3,6 +3,7 @@ import { useAppDispatch } from '@/hooks/redux'
 import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { authActions } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
+import { getErrorMessage } from '@/utils/get-error-message'
 import { sessionManager } from '@/utils/session-manager'
 import { sleep } from '@/utils/sleep'
 import { PATHS } from '@core-node/routers/paths'
@@ -78,21 +79,30 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       setPhase(StartupPhase.CHECKING_UPDATES)
       // Small delay to ensure phase transition is visible
       // UI status feed removed; keep phase transitions only
+      let resolved = false
 
       const { unsubscribe } = window.updaterIPC.onStateChange((state) => {
+        if (resolved) return
+
         if (state.status === 'downloading') {
           return
         }
 
         if (state.status === 'idle' || state.status === 'error') {
-          unsubscribe()
-          resolve(false)
+          if (!resolved) {
+            resolved = true
+            unsubscribe()
+            resolve(false)
+          }
           return
         }
 
         if (state.status === 'downloaded') {
-          unsubscribe()
-          resolve(true)
+          if (!resolved) {
+            resolved = true
+            unsubscribe()
+            resolve(true)
+          }
           return
         }
       })
@@ -288,8 +298,12 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       }
 
       if (shouldRestart) {
-        window.updaterIPC.quitAndInstall()
-        return
+        try {
+          window.updaterIPC.quitAndInstall()
+          return
+        } catch (error) {
+          console.log(getErrorMessage(error))
+        }
       }
 
       // 2. Check Docker requirements
