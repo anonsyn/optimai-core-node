@@ -9,6 +9,9 @@ const badgeVariants = cva(
         success: 'bg-positive/10 text-positive ',
         default: 'bg-accent text-muted-foreground',
         destructive: 'bg-destructive/5 text-destructive'
+      },
+      text: {
+        true: 'bg-transparent p-0'
       }
     },
     defaultVariants: {
@@ -21,9 +24,9 @@ export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {}
 
-const Badge = ({ className, children, variant, ...props }: BadgeProps) => {
+const Badge = ({ className, children, variant, text, ...props }: BadgeProps) => {
   return (
-    <div className={cn(badgeVariants({ variant, className }))} {...props}>
+    <div className={cn(badgeVariants({ variant, text, className }))} {...props}>
       {children}
     </div>
   )

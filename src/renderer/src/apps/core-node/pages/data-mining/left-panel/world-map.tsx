@@ -1,5 +1,5 @@
+import { isNumber } from 'lodash'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
-import { useEffect } from 'react'
 
 interface WorldMapProps {
   latitude?: number | null
@@ -9,18 +9,26 @@ interface WorldMapProps {
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
 export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
-  useEffect(() => {
-    console.log('WorldMap received:', { latitude, longitude })
-  }, [latitude, longitude])
-
   // Check if we have valid geolocation data
-  const hasValidLocation = latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined
+  const hasValidLocation = isNumber(longitude) && isNumber(latitude)
   const finalLatitude = latitude as number
   const finalLongitude = longitude as number
 
   return (
-    <div className="w-full h-[211px] bg-[#1a1a1a] rounded-t-lg overflow-hidden">
-      <ComposableMap projection="geoEquirectangular" projectionConfig={{ scale: 60, center: [0, 0] }} width={368} height={211} style={{ width: '100%', height: '100%' }}>
+    <div
+      className="bg-background h-[212px] w-full overflow-hidden"
+      style={{
+        backgroundImage: 'linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%)',
+        boxShadow: '0 0 20px 0 rgba(255, 255, 255, 0.05) inset'
+      }}
+    >
+      <ComposableMap
+        projection="geoEquirectangular"
+        projectionConfig={{ scale: 60, center: [0, 0] }}
+        width={368}
+        height={211}
+        style={{ width: '100%', height: '100%' }}
+      >
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
             geographies.map((geo) => (
@@ -29,27 +37,23 @@ export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
                 geography={geo}
                 style={{
                   default: {
-                    fill: '#1f2937',
-                    stroke: '#374151',
+                    fill: 'rgba(36, 41, 38, 0.6)',
+                    stroke: 'rgba(255, 255, 255, 0.05)',
                     strokeWidth: 0.75,
-                    outline: 'none',
-                    opacity: 0.5,
+                    outline: 'none'
                   },
                   hover: {
-                    fill: '#2d3748',
-                    stroke: '#4a5568',
+                    fill: 'rgba(36, 41, 38, 0.8',
+                    stroke: 'rgba(255, 255, 255, 0.1)',
                     strokeWidth: 0.75,
-                    outline: 'none',
-                    cursor: 'pointer',
-                    opacity: 0.6,
+                    outline: 'none'
                   },
                   pressed: {
-                    fill: '#1f2937',
-                    stroke: '#374151',
+                    fill: 'rgba(36, 41, 38, 0.8',
+                    stroke: 'rgba(255, 255, 255, 0.1)',
                     strokeWidth: 0.75,
-                    outline: 'none',
-                    opacity: 0.5,
-                  },
+                    outline: 'none'
+                  }
                 }}
               />
             ))
@@ -60,19 +64,9 @@ export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
         {hasValidLocation && (
           <Marker coordinates={[finalLongitude, finalLatitude]}>
             {/* Outer ring */}
-            <circle r={10} fill="none" stroke="#ffffff" strokeWidth={1.5} />
+            <circle r={4} fill="none" stroke="#ffffff" strokeWidth={1.5} />
             {/* Inner dot */}
-            <circle r={5} fill="#ffffff" />
-          </Marker>
-        )}
-
-        {/* Fallback marker at center for localhost/no geolocation */}
-        {!hasValidLocation && (
-          <Marker coordinates={[0, 0]}>
-            {/* Outer ring - dimmed for fallback */}
-            <circle r={10} fill="none" stroke="#ffffff" strokeWidth={1.5} opacity={0.4} />
-            {/* Inner dot - dimmed for fallback */}
-            <circle r={5} fill="#ffffff" opacity={0.4} />
+            <circle r={2} fill="#ffffff" fillOpacity={0.4} />
           </Marker>
         )}
       </ComposableMap>
