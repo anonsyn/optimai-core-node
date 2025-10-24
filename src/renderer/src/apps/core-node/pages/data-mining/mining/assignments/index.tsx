@@ -3,9 +3,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/hooks/redux'
 import { useGetMiningAssignmentsQuery, useGetMiningStatsQuery } from '@/queries/mining'
 import { nodeSelectors } from '@/store/slices/node'
+import { waitingTaskAnimationData } from '@assets/lotties/waiting-task'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { motion } from 'framer-motion'
 import lodash from 'lodash'
+import Lottie from 'lottie-react'
 import { useEffect } from 'react'
 import { AssignmentItem } from './assignment-item'
 
@@ -105,6 +107,12 @@ export const AssignmentsList = () => {
       </div>
     )
   }
+
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <Lottie animationData={waitingTaskAnimationData} loop />
+    </div>
+  )
 
   return (
     <motion.div
