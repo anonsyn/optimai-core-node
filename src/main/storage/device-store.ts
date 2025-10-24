@@ -1,7 +1,4 @@
-import crypto from 'crypto'
-import { machineIdSync } from 'node-machine-id'
 import os from 'os'
-import { getErrorMessage } from '../utils/get-error-message'
 import { createStore } from './base-store'
 import type { DeviceData } from './types'
 
@@ -9,7 +6,7 @@ import type { DeviceData } from './types'
  * Device store for managing device identification
  */
 const store = createStore<DeviceData>({
-  name: 'device',
+  name: 'device_v2',
   defaults: {
     device_id: undefined,
     device_name: undefined,
@@ -19,48 +16,26 @@ const store = createStore<DeviceData>({
   }
 })
 
-/**
- * Generate a unique device ID based on machine hardware
- */
-function generateDeviceId(): string {
-  try {
-    const machineId = machineIdSync(true) // true = use original value
-    // Hash the machine ID for privacy
-    return crypto.createHash('sha256').update(machineId).digest('hex')
-  } catch (error) {
-    // Fallback to random ID if machine ID fails
-    console.error('Failed to get machine ID:', getErrorMessage(error, 'Failed to get machine ID'))
-    return crypto.randomBytes(32).toString('hex')
-  }
-}
-
 export const deviceStore = {
   /**
    * Save device ID and metadata
+   * Device ID must be provided by the backend after registration
    */
-  saveDeviceId(deviceId?: string): string {
-    const id = deviceId || generateDeviceId()
-
-    store.set('device_id', id)
+  saveDeviceId(deviceId: string): string {
+    store.set('device_id', deviceId)
     store.set('device_name', os.hostname())
     store.set('platform', process.platform)
     store.set('arch', process.arch)
     store.set('registered_at', Date.now())
 
-    return id
+    return deviceId
   },
 
   /**
-   * Get device ID (generate if not exists)
+   * Get device ID (returns undefined if not registered)
    */
-  getDeviceId(): string {
-    let deviceId = store.get('device_id')
-
-    if (!deviceId) {
-      deviceId = this.saveDeviceId()
-    }
-
-    return deviceId
+  getDeviceId(): string | undefined {
+    return store.get('device_id')
   },
 
   /**
@@ -107,11 +82,11 @@ export const deviceStore = {
   },
 
   /**
-   * Re-register device (generate new ID)
+   * Clear device registration data
+   * After calling this, device must be re-registered with backend to get new ID
    */
-  reregister(): string {
+  clearRegistration() {
     store.clear()
-    return this.saveDeviceId()
   },
 
   /**

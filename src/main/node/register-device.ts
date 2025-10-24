@@ -14,8 +14,10 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
 
   if (deviceStore.isRegistered()) {
     const existingDeviceId = deviceStore.getDeviceId()
-    log.info('[register-device] Device already registered, reusing ID:', existingDeviceId)
-    return existingDeviceId
+    if (existingDeviceId) {
+      log.info('[register-device] Device already registered, reusing ID:', existingDeviceId)
+      return existingDeviceId
+    }
   }
 
   log.info('[register-device] User info:', { id: user.id, email: user.email })

@@ -162,7 +162,7 @@ export interface WebSocketMessage {
 }
 
 export interface LocalDeviceInfo {
-  device_id: string
+  device_id: string | undefined
   ip_address: string
   country: string
   country_code: string
