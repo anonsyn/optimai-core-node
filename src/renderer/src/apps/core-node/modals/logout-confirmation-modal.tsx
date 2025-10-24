@@ -27,7 +27,7 @@ export function LogoutConfirmationModal() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Logging out</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-balance">
             Are you sure you want to proceed? This will stop the node and sign you out.
           </AlertDialogDescription>
         </AlertDialogHeader>
