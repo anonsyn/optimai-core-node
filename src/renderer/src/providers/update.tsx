@@ -1,7 +1,8 @@
 import { useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
-import { ReactNode, useEffect, useRef } from 'react'
+import { getOS, OS } from '@/utils/os'
 import type { UpdateInfo } from 'electron-updater'
+import { ReactNode, useEffect, useRef } from 'react'
 
 interface UpdateProviderProps {
   children: ReactNode
@@ -13,10 +14,12 @@ interface UpdateProviderProps {
  */
 export function UpdateProvider({ children }: UpdateProviderProps) {
   const openUpdateModal = useOpenModal(Modals.UPDATE_READY)
+  const openWindowsUpdateModal = useOpenModal(Modals.WINDOWS_UPDATE_AVAILABLE)
   const updateCheckIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const updateStateListenerRef = useRef<(() => void) | null>(null)
   const hasShownModalRef = useRef(false)
   const lastUpdateInfoRef = useRef<UpdateInfo | null>(null)
+  const isWindows = getOS() === OS.WINDOWS
 
   useEffect(() => {
     // Clean up existing listeners
@@ -50,14 +53,21 @@ export function UpdateProvider({ children }: UpdateProviderProps) {
 
             console.log('[UpdateProvider] Update downloaded, showing modal')
 
-            // Open the update ready modal with version info
-            openUpdateModal({
+            const updateData = {
               version: state.updateInfo.version,
               releaseNotes:
                 typeof state.updateInfo.releaseNotes === 'string'
                   ? state.updateInfo.releaseNotes
                   : undefined
-            })
+            }
+
+            // For Windows: Show download modal (no auto-update due to missing code signing)
+            // For macOS/Linux: Show auto-install modal
+            if (isWindows) {
+              openWindowsUpdateModal(updateData)
+            } else {
+              openUpdateModal(updateData)
+            }
           }
         }
 
@@ -105,7 +115,7 @@ export function UpdateProvider({ children }: UpdateProviderProps) {
         updateCheckIntervalRef.current = null
       }
     }
-  }, [openUpdateModal])
+  }, [openUpdateModal, openWindowsUpdateModal, isWindows])
 
   return <>{children}</>
 }

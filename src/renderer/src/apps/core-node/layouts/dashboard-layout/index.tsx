@@ -1,5 +1,6 @@
 import { UpdateProvider } from '@/providers/update'
 import UpdateReadyModal from '@core-node/modals/update-ready-modal'
+import WindowsUpdateModal from '@core-node/modals/windows-update-modal'
 import { Outlet } from 'react-router'
 
 const DashboardLayout = () => {
@@ -7,6 +8,7 @@ const DashboardLayout = () => {
     <UpdateProvider>
       <Outlet />
       <UpdateReadyModal />
+      <WindowsUpdateModal />
     </UpdateProvider>
   )
 }

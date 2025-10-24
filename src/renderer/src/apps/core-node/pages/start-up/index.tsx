@@ -3,6 +3,7 @@ import { WindowControlButton, WindowControls } from '@/components/modules/window
 import { DockerNotInstalledModal } from '@core-node/modals/docker-not-installed-modal'
 import { DockerNotRunningModal } from '@core-node/modals/docker-not-running-modal'
 import LoginModal from '@core-node/modals/login-modal'
+import WindowsUpdateModal from '@core-node/modals/windows-update-modal'
 import CanvasGlow from '@core-node/pages/start-up/canvas-glow'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
@@ -77,6 +78,7 @@ const StartUpShell = () => {
       <LoginModal />
       <DockerNotInstalledModal />
       <DockerNotRunningModal />
+      <WindowsUpdateModal />
     </div>
   )
 }

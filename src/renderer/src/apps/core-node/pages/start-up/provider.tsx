@@ -4,6 +4,7 @@ import { useGetCurrentUserQuery } from '@/queries/auth/use-current-user'
 import { authActions } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
 import { getErrorMessage } from '@/utils/get-error-message'
+import { getOS, OS } from '@/utils/os'
 import { sessionManager } from '@/utils/session-manager'
 import { sleep } from '@/utils/sleep'
 import { PATHS } from '@core-node/routers/paths'
@@ -65,11 +66,13 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
   })
 
   const openLoginModal = useOpenModal(Modals.LOGIN)
+  const openWindowsUpdateModal = useOpenModal(Modals.WINDOWS_UPDATE_AVAILABLE)
   const openDockerNotInstalledModal = useOpenModal(Modals.DOCKER_NOT_INSTALLED)
   const openDockerNotRunningModal = useOpenModal(Modals.DOCKER_NOT_RUNNING)
   const closeDockerNotInstalledModal = useCloseModal(Modals.DOCKER_NOT_INSTALLED)
   const closeDockerNotRunningModal = useCloseModal(Modals.DOCKER_NOT_RUNNING)
   const isStartingRef = useRef(false)
+  const isWindows = getOS() === OS.WINDOWS
 
   // Status messages removed; rely on phase and error only
 
@@ -101,7 +104,21 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
           if (!resolved) {
             resolved = true
             unsubscribe()
-            resolve(true)
+
+            // For Windows: Show download modal and don't restart
+            // For macOS/Linux: Allow restart with auto-install
+            if (isWindows && state.updateInfo) {
+              openWindowsUpdateModal({
+                version: state.updateInfo.version,
+                releaseNotes:
+                  typeof state.updateInfo.releaseNotes === 'string'
+                    ? state.updateInfo.releaseNotes
+                    : undefined
+              })
+              // resolve(false) // Don't restart on Windows
+            } else {
+              resolve(true) // Restart on macOS/Linux
+            }
           }
           return
         }
@@ -109,7 +126,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
       window.updaterIPC.checkForUpdateAndNotify()
     })
-  }, [])
+  }, [isWindows, openWindowsUpdateModal])
 
   // Check Docker requirements
   const checkDockerRequirements = useCallback(async (): Promise<boolean> => {

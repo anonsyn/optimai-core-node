@@ -12,6 +12,7 @@ export enum Modals {
   DOCKER_NOT_RUNNING = 'DOCKER_NOT_RUNNING',
   ASSIGNMENT_DETAILS = 'ASSIGNMENT_DETAILS',
   UPDATE_READY = 'UPDATE_READY',
+  WINDOWS_UPDATE_AVAILABLE = 'WINDOWS_UPDATE_AVAILABLE',
   MINING_STOPPED = 'MINING_STOPPED',
   MINING_ERROR = 'MINING_ERROR'
 }
@@ -53,6 +54,10 @@ export interface ModalSliceState {
     sourceUrl?: string
   }>
   [Modals.UPDATE_READY]?: ModalState<{
+    version?: string
+    releaseNotes?: string
+  }>
+  [Modals.WINDOWS_UPDATE_AVAILABLE]?: ModalState<{
     version?: string
     releaseNotes?: string
   }>
