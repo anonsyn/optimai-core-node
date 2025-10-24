@@ -21,7 +21,8 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
     offset: options?.offset,
     created_after: options?.created_after,
     sort_by: options?.sort_by,
-    sort_order: options?.sort_order
+    sort_order: options?.sort_order,
+    device_id: options?.device_id
   }
 
   return useQuery({

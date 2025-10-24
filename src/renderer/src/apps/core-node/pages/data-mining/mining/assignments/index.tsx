@@ -1,6 +1,8 @@
 import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useAppSelector } from '@/hooks/redux'
 import { useGetMiningAssignmentsQuery, useGetMiningStatsQuery } from '@/queries/mining'
+import { nodeSelectors } from '@/store/slices/node'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { motion } from 'framer-motion'
 import lodash from 'lodash'
@@ -8,13 +10,16 @@ import { useEffect } from 'react'
 import { AssignmentItem } from './assignment-item'
 
 export const AssignmentsList = () => {
+  const deviceId = useAppSelector(nodeSelectors.deviceId)
+
   const {
     data,
     isLoading,
     refetch: refetchAssignment
   } = useGetMiningAssignmentsQuery({
     platforms: ['google'],
-    sort_by: 'updated_at'
+    sort_by: 'updated_at',
+    device_id: deviceId
   })
   const { refetch: refetchStats } = useGetMiningStatsQuery()
 

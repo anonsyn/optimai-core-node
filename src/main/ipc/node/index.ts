@@ -56,6 +56,15 @@ class NodeIpcHandler {
         message
       })
     })
+
+    // Watch device store for changes and broadcast device ID
+    deviceStore.onDidChange(() => {
+      const deviceId = deviceStore.getDeviceId()
+      if (deviceId) {
+        log.info('[ipc] Device ID changed, broadcasting to renderer:', deviceId)
+        this.broadcast(NodeEvents.OnDeviceIdChanged, deviceId)
+      }
+    })
   }
 
   initialize() {

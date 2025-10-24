@@ -24,6 +24,8 @@ const nodeIPC = {
 
   onStatusChanged: (callback: (status: NodeStatusResponse) => void) =>
     createPreloadEventListener(NodeEvents.OnNodeStatusChanged, callback),
+  onDeviceIdChanged: (callback: (deviceId: string) => void) =>
+    createPreloadEventListener(NodeEvents.OnDeviceIdChanged, callback),
   onUptimeReward: (callback: (reward: { amount: string; timestamp: number }) => void) =>
     createPreloadEventListener(NodeEvents.OnUptimeReward, callback),
   onUptimeCycle: (callback: (cycle: UptimeData) => void) =>

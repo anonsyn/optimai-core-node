@@ -8,6 +8,7 @@ export const NodeEvents = {
   CompleteMiningAssignment: 'node:complete-mining-assignment',
 
   OnNodeStatusChanged: 'node:on-status-changed',
+  OnDeviceIdChanged: 'node:on-device-id-changed',
   OnUptimeCycle: 'node:on-uptime-cycle',
   OnUptimeReward: 'node:on-uptime-reward',
   OnMiningAssignments: 'node:on-mining-assignments',

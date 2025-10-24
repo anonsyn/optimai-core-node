@@ -29,6 +29,13 @@ export function NodeProvider({ children }: NodeProviderProps) {
       })
       cleanupFunctionsRef.current.push(statusListener.unsubscribe)
 
+      // Device ID changes
+      const deviceIdListener = window.nodeIPC.onDeviceIdChanged((deviceId) => {
+        console.log('device ID changed:', deviceId)
+        dispatch(nodeActions.setDeviceId(deviceId))
+      })
+      cleanupFunctionsRef.current.push(deviceIdListener.unsubscribe)
+
       // Uptime cycle updates
       const cycleListener = window.nodeIPC.onUptimeCycle((cycle) => {
         dispatch(nodeActions.setUptimeCycle(cycle))

@@ -1,9 +1,5 @@
 import { authApi } from '@/api/auth'
 import { useAppDispatch } from '@/hooks/redux'
-import { useUserDeviceStore } from '@/hooks/use-user-deivce-store'
-import { useUserUptimeRewardStore } from '@/hooks/use-user-last-uptime-reward-store'
-import { useUserUptimeRewardCountStore } from '@/hooks/use-user-uptime-reward-count-store'
-import { useUserUptimeStore } from '@/hooks/use-user-uptime-store'
 import { sessionManager } from '@/utils/session-manager'
 import { authActions } from '@/store/slices/auth'
 import { PATHS } from '@core-node/routers/paths'
@@ -14,10 +10,6 @@ const useLogout = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const uptimeStore = useUserUptimeStore()
-  const deviceStore = useUserDeviceStore()
-  const uptimeRewardStore = useUserUptimeRewardStore()
-  const uptimeRewardCountStore = useUserUptimeRewardCountStore()
 
   return async () => {
     try {
@@ -41,11 +33,6 @@ const useLogout = () => {
     navigate(PATHS.START_UP, { replace: true })
 
     queryClient.removeQueries()
-
-    uptimeStore.removeData()
-    deviceStore.removeData()
-    uptimeRewardStore.removeData()
-    uptimeRewardCountStore.removeData()
   }
 }
 
