@@ -31,6 +31,18 @@ const DeviceInfoItem = ({ icon, label, value, tooltip, className }: DeviceInfoIt
   </div>
 )
 
+export const DeviceInfoItemSkeleton = () => {
+  return (
+    <div className="flex items-center gap-3">
+      <Skeleton className="size-9 rounded-lg" />
+      <div className="flex min-w-0 flex-1 flex-col space-y-1.5">
+        <Skeleton className="text-14 h-[16px]" />
+        <Skeleton className="text-16 h-[24px]" />
+      </div>
+    </div>
+  )
+}
+
 export const DeviceInfoCard = () => {
   const { data: localDeviceInfo, isLoading } = useLocalDeviceInfoQuery()
 
@@ -57,20 +69,22 @@ export const DeviceInfoCard = () => {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Device Information</CardTitle>
           <CardIcon>
             <Info className="size-4.5" />
           </CardIcon>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
+        <CardContent className="pt-3">
+          <div className="grid grid-cols-2 gap-6">
+            <DeviceInfoItemSkeleton />
+            <DeviceInfoItemSkeleton />
+            <DeviceInfoItemSkeleton />
+            <DeviceInfoItemSkeleton />
           </div>
+
+          <Skeleton className="mt-5 h-10 rounded-lg px-3" />
         </CardContent>
       </Card>
     )
@@ -78,7 +92,7 @@ export const DeviceInfoCard = () => {
 
   if (!localDeviceInfo) {
     return (
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Device Information</CardTitle>
           <CardIcon>
