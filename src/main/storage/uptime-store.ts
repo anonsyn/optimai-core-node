@@ -7,7 +7,7 @@ import type { UptimeData, UptimeStoreData } from './types'
  */
 function getCycleDuration(): number {
   const isProduction = process.env.NODE_ENV === 'production'
-  return (isProduction ? 60 * 5 : 30) * 1000 // 5m for prod, 30s for dev
+  return (isProduction ? 60 * 2 : 30) * 1000 // 2m for prod, 30s for dev
 }
 
 /**
