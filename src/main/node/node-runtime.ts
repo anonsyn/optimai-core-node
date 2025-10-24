@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3'
 
+import pRetry from 'p-retry'
 import { apiClient } from '../libs/axios'
 import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
@@ -96,7 +97,10 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
 
     try {
       await this.ensureUser()
-      await registerDevice()
+      await pRetry(() => registerDevice(), {
+        retries: 1,
+        minTimeout: 5000
+      })
 
       this.uptimeRunner.start()
       this.miningWorker.start()

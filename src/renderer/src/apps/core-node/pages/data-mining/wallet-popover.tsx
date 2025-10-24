@@ -4,8 +4,10 @@ import { CopyButton } from '@/components/ui/button/copy-button'
 import { Icon } from '@/components/ui/icon'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { EXTERNAL_LINKS } from '@/configs/links'
+import { useOpenModal } from '@/hooks/modal'
 import { authSelectors } from '@/store/slices/auth'
-import { Wallet } from 'lucide-react'
+import { Modals } from '@/store/slices/modals'
+import { LogOut, Wallet } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDebounce } from 'use-debounce'
@@ -32,6 +34,7 @@ export const WalletPopover = () => {
   const [debouncedOpen] = useDebounce(open, 100)
 
   const user = useSelector(authSelectors.user)
+  const openLogoutModal = useOpenModal(Modals.LOGOUT_CONFIRMATION)
 
   const walletAddress = user?.wallet_address
 
@@ -41,6 +44,11 @@ export const WalletPopover = () => {
 
   const handleMouseLeave = () => {
     setOpen(false)
+  }
+
+  const handleLogout = () => {
+    setOpen(false)
+    openLogoutModal()
   }
 
   const truncatedAddress = useMemo(() => {
@@ -167,7 +175,7 @@ export const WalletPopover = () => {
           {/* Member Since */}
 
           {/* Quick Actions */}
-          <div className="pt-8">
+          <div className="space-y-3 pt-8">
             <Button
               variant="primary"
               size="sm"
@@ -175,6 +183,10 @@ export const WalletPopover = () => {
               onClick={() => window.windowIPC.openExternalLink(EXTERNAL_LINKS.DASHBOARD.HOME)}
             >
               View Dashboard
+            </Button>
+            <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
+              <LogOut className="size-4" />
+              Logout
             </Button>
           </div>
         </div>

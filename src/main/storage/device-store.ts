@@ -1,9 +1,9 @@
 import crypto from 'crypto'
 import { machineIdSync } from 'node-machine-id'
 import os from 'os'
+import { getErrorMessage } from '../utils/get-error-message'
 import { createStore } from './base-store'
 import type { DeviceData } from './types'
-import { getErrorMessage } from '../utils/get-error-message'
 
 /**
  * Device store for managing device identification

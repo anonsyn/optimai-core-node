@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import log from 'electron-log/main'
-import { deviceStore, tokenStore, userStore } from '../../storage'
+import { deviceStore, rewardStore, tokenStore, uptimeStore, userStore } from '../../storage'
 import type { User } from '../../storage'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { AuthEvents } from './events'
@@ -83,17 +83,19 @@ class AuthIpcHandler {
       }
     })
 
-    // Logout - Remove tokens
+    // Logout - Remove tokens and clear all stored data
     ipcMain.handle(AuthEvents.Logout, async () => {
       try {
         tokenStore.removeTokens()
         userStore.removeUser()
         deviceStore.removeDeviceId()
-        log.info('Tokens removed successfully')
+        uptimeStore.removeUptimeData()
+        rewardStore.clearRewards()
+        log.info('All user data cleared successfully on logout')
         return { success: true }
       } catch (error: unknown) {
-        const message = getErrorMessage(error, 'Failed to remove tokens')
-        log.error('Failed to remove tokens:', message)
+        const message = getErrorMessage(error, 'Failed to clear user data')
+        log.error('Failed to clear user data on logout:', message)
         return { success: false, error: message }
       }
     })
