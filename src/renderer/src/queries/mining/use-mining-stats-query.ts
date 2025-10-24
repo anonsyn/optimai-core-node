@@ -1,8 +1,6 @@
 import { miningApi } from '@/api/mining'
 import { useQuery } from '@tanstack/react-query'
-
-const QUERY_KEY = 'mining-stats'
-export const getMiningStatsQueryKey = () => [QUERY_KEY]
+import { miningKeys } from './keys'
 
 interface Options {
   enabled?: boolean
@@ -11,7 +9,7 @@ interface Options {
 
 export const useGetMiningStatsQuery = (options?: Options) => {
   return useQuery({
-    queryKey: getMiningStatsQueryKey(),
+    queryKey: miningKeys.stats(),
     queryFn: async () => {
       const { data } = await miningApi.getStats()
       return data

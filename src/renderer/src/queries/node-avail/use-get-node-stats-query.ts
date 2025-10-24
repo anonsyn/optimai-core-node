@@ -1,9 +1,10 @@
 import { GetNodeStatsParams, nodeAvailApi } from '@/api/node-avail'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { nodeAvailKeys } from './keys'
 
 const getQueryOptions = (userIpId: string | undefined, params: GetNodeStatsParams) => {
   return {
-    queryKey: ['node-avail-node-stats', userIpId, params],
+    queryKey: nodeAvailKeys.nodeStats(userIpId, params),
     queryFn: () => nodeAvailApi.getNodeStats(userIpId!, params).then((res) => res.data),
     enabled: !!userIpId,
     placeholderData: keepPreviousData,

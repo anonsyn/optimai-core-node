@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { getDeviceInfoStorage } from '../../storage/device-info-storage'
-
-const RQUERY_ROOT = 'local-device-info'
-const RQUERY = () => [RQUERY_ROOT]
+import { deviceKeys } from './keys'
 
 interface Options {
   enabled?: boolean
@@ -15,7 +13,7 @@ export const useLocalDeviceInfoQuery = (options?: Options) => {
   const deviceInfoStorage = getDeviceInfoStorage()
 
   return useQuery({
-    queryKey: RQUERY(),
+    queryKey: deviceKeys.localDeviceInfo(),
     queryFn: async () => {
       // Check if cache should be used (default: true)
       const useCache = options?.useCache ?? true

@@ -1,9 +1,10 @@
 import { nodeAvailApi } from '@/api/node-avail'
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { nodeAvailKeys } from './keys'
 
 const getQueryOptions = () => {
   return {
-    queryKey: ['node-avail-user-nodes'],
+    queryKey: nodeAvailKeys.userNodes(),
     queryFn: () => {
       try {
         return nodeAvailApi.getUserNodes().then((res) => res.data)

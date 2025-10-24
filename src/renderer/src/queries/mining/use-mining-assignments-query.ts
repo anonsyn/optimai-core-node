@@ -1,11 +1,6 @@
 import { GetMiningAssignmentsParams, miningApi } from '@/api/mining'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-
-const QUERY_KEY = 'mining-assignments'
-export const getMiningAssignmentsQueryKey = (params?: GetMiningAssignmentsParams) => [
-  QUERY_KEY,
-  params
-]
+import { miningKeys } from './keys'
 
 interface Options extends GetMiningAssignmentsParams {
   enabled?: boolean
@@ -26,7 +21,7 @@ export const useGetMiningAssignmentsQuery = (options?: Options) => {
   }
 
   return useQuery({
-    queryKey: getMiningAssignmentsQueryKey(params),
+    queryKey: miningKeys.assignments(params),
     queryFn: async () => {
       const { data } = await miningApi.getAssignments(params)
       return data

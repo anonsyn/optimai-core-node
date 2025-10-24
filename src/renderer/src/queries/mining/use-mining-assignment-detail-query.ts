@@ -1,8 +1,6 @@
 import { miningApi } from '@/api/mining'
 import { useQuery } from '@tanstack/react-query'
-
-const QUERY_KEY = 'mining-assignment-detail'
-export const getMiningAssignmentDetailQueryKey = (assignmentId: string) => [QUERY_KEY, assignmentId]
+import { miningKeys } from './keys'
 
 interface Options {
   enabled?: boolean
@@ -11,7 +9,7 @@ interface Options {
 
 export const useGetMiningAssignmentDetailQuery = (assignmentId: string, options?: Options) => {
   return useQuery({
-    queryKey: getMiningAssignmentDetailQueryKey(assignmentId),
+    queryKey: miningKeys.assignmentDetail(assignmentId),
     queryFn: async () => {
       const { data } = await miningApi.getAssignmentDetail(assignmentId)
       return data
