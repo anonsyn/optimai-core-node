@@ -1,4 +1,4 @@
-import log from 'electron-log/main'
+import log from '../configs/logger'
 import EventEmitter from 'eventemitter3'
 import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'

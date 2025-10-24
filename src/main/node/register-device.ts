@@ -1,4 +1,4 @@
-import log from 'electron-log/main'
+import log from '../configs/logger'
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/types'
 import { deviceStore, userStore } from '../storage'

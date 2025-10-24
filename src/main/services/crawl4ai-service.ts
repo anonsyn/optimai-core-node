@@ -1,4 +1,4 @@
-import log from 'electron-log/main'
+import log from '../configs/logger'
 import { getErrorMessage } from '../utils/get-error-message'
 import { getPort } from '../utils/get-port'
 import { sleep } from '../utils/sleep'

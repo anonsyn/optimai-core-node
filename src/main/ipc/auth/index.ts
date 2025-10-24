@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import log from 'electron-log/main'
+import log from '../../configs/logger'
 import { deviceStore, rewardStore, tokenStore, uptimeStore, userStore } from '../../storage'
 import type { User } from '../../storage'
 import { getErrorMessage } from '../../utils/get-error-message'

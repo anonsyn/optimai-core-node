@@ -1,5 +1,5 @@
 import { BrowserWindow, ipcMain, shell } from 'electron'
-import log from 'electron-log/main'
+import log from '../../configs/logger'
 import { dockerService } from '../../services/docker-service'
 import { downloadService } from '../../services/download-service'
 import { getErrorMessage } from '../../utils/get-error-message'

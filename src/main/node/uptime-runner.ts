@@ -1,4 +1,4 @@
-import log from 'electron-log/main'
+import log from '../configs/logger'
 import EventEmitter from 'eventemitter3'
 
 import { DeviceType } from '../api/device/types'

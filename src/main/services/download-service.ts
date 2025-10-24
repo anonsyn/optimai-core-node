@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import log from 'electron-log/main'
+import log from '../configs/logger'
 import fs from 'node:fs'
 import https from 'node:https'
 import path from 'node:path'

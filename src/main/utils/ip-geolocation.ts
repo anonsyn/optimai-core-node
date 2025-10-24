@@ -1,5 +1,5 @@
 import axios from 'axios'
-import log from 'electron-log/main'
+import log from '../configs/logger'
 
 import { getErrorMessage } from './get-error-message'
 

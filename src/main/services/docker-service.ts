@@ -1,7 +1,7 @@
 import os from 'node:os'
 import path from 'node:path'
 
-import log from 'electron-log/main'
+import log from '../configs/logger'
 import execa from 'execa'
 import { getErrorMessage } from '../utils/get-error-message'
 

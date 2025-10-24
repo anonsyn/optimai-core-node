@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import log from 'electron-log/main'
+import log from '../../configs/logger'
 
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
 import type { LocalDeviceInfo } from '../../node/types'

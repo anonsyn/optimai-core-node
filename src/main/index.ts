@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, nativeTheme } from 'electron'
-import log from 'electron-log/main'
+import log from './configs/logger'
 import authIpcHandler from './ipc/auth'
 import crawl4AiIpcHandler from './ipc/crawl4ai'
 import dockerIpcHandler from './ipc/docker'
