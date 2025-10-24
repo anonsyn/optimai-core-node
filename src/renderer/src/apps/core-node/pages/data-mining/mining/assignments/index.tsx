@@ -1,4 +1,3 @@
-import { Icon } from '@/components/ui/icon'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useAppSelector } from '@/hooks/redux'
 import { useGetMiningAssignmentsQuery, useGetMiningStatsQuery } from '@/queries/mining'
@@ -91,28 +90,11 @@ export const AssignmentsList = () => {
 
   if (assignments.length === 0) {
     return (
-      <div className="flex h-full w-full justify-center pt-48">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col items-center gap-5 text-center"
-        >
-          <Icon icon="Pickaxe" className="size-8 text-white/60" />
-          <div>
-            <p className="text-20 font-medium text-white">No assignments yet</p>
-            <p className="text-16 mt-1 text-white/50">Tasks will appear here when available</p>
-          </div>
-        </motion.div>
+      <div className="h-full w-full overflow-hidden">
+        <Lottie animationData={waitingTaskAnimationData} loop />
       </div>
     )
   }
-
-  return (
-    <div className="h-full w-full overflow-hidden">
-      <Lottie animationData={waitingTaskAnimationData} loop />
-    </div>
-  )
 
   return (
     <motion.div
