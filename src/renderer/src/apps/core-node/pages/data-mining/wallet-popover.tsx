@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { IconButton } from '@/components/ui/button'
 import { Button } from '@/components/ui/button/button'
 import { CopyButton } from '@/components/ui/button/copy-button'
 import { Icon } from '@/components/ui/icon'
@@ -7,7 +8,7 @@ import { EXTERNAL_LINKS } from '@/configs/links'
 import { useOpenModal } from '@/hooks/modal'
 import { authSelectors } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
-import { LogOut, Wallet } from 'lucide-react'
+import { LogOut, Wallet, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDebounce } from 'use-debounce'
@@ -37,14 +38,6 @@ export const WalletPopover = () => {
   const openLogoutModal = useOpenModal(Modals.LOGOUT_CONFIRMATION)
 
   const walletAddress = user?.wallet_address
-
-  const handleMouseEnter = () => {
-    setOpen(true)
-  }
-
-  const handleMouseLeave = () => {
-    setOpen(false)
-  }
 
   const handleLogout = () => {
     setOpen(false)
@@ -83,7 +76,7 @@ export const WalletPopover = () => {
 
   return (
     <Popover open={debouncedOpen} onOpenChange={setOpen}>
-      <PopoverTrigger asChild onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <PopoverTrigger asChild>
         <button
           type="button"
           className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2 rounded-xl border border-white/5 px-4 transition-colors outline-none"
@@ -96,17 +89,14 @@ export const WalletPopover = () => {
         className="bg-background w-[480px] overflow-hidden border-white/5 p-0 shadow-[0_4px_4px_12px_rgba(0,0,0,0.1)]"
         align="end"
         sideOffset={12}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
-        {/* Header Section */}
         <div
-          className="bg-secondary/50 p-4"
+          className="bg-secondary/50 relative p-4"
           style={{
             backgroundImage: 'linear-gradient(0deg, #222623 0%, #222623 100%)'
           }}
         >
-          <div className="relative">
+          <div>
             <div className="flex items-center gap-3">
               <Avatar className="size-12 border border-white/5 bg-[#2D302D]">
                 <AvatarFallback className="text-20 bg-transparent font-semibold text-white">
@@ -121,7 +111,6 @@ export const WalletPopover = () => {
               </div>
             </div>
           </div>
-
           {/* Social Connections */}
           {Boolean(user?.twitter || user?.telegram) && (
             <div className="mt-5 flex items-center gap-2">
@@ -143,6 +132,12 @@ export const WalletPopover = () => {
               )}
             </div>
           )}
+          <IconButton
+            className="absolute top-4 right-4 size-10 rounded-lg"
+            onClick={setOpen.bind(this, false)}
+          >
+            <X className="size-6" />
+          </IconButton>
         </div>
 
         <div className="relative p-5">
@@ -175,16 +170,15 @@ export const WalletPopover = () => {
           {/* Member Since */}
 
           {/* Quick Actions */}
-          <div className="space-y-3 pt-8">
+          <div className="space-y-3 pt-12">
             <Button
               variant="primary"
-              size="sm"
               className="w-full"
               onClick={() => window.windowIPC.openExternalLink(EXTERNAL_LINKS.DASHBOARD.HOME)}
             >
               View Dashboard
             </Button>
-            <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
+            <Button variant="outline" className="w-full" onClick={handleLogout}>
               <LogOut className="size-4" />
               Logout
             </Button>

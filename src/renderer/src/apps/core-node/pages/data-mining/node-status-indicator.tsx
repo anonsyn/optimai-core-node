@@ -1,4 +1,3 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { nodeSelectors } from '@/store/slices/node'
 import { cn } from '@/utils/tw'
 import { MiningStatus, NodeStatus } from '@main/node/types'
@@ -103,40 +102,65 @@ export const NodeStatusIndicator = () => {
   }
 
   const config = getStatusConfig()
-
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2.5 rounded-xl border border-white/5 px-4 transition-colors outline-none"
-          >
-            <div className="relative flex items-center justify-center">
-              {/* Animated rings for active states - double pulse effect */}
-              {config.animate && (
-                <>
-                  <div
-                    className={cn(
-                      'absolute size-3.5 animate-ping rounded-full opacity-30',
-                      config.ringClass
-                    )}
-                    style={{
-                      animationDuration: '2s'
-                    }}
-                  />
-                </>
+    <button
+      type="button"
+      className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2.5 rounded-xl border border-white/5 px-4 transition-colors outline-none"
+    >
+      <div className="relative flex items-center justify-center">
+        {/* Animated rings for active states - double pulse effect */}
+        {config.animate && (
+          <>
+            <div
+              className={cn(
+                'absolute size-3.5 animate-ping rounded-full opacity-30',
+                config.ringClass
               )}
-              {/* Status dot with enhanced glow */}
-              <div className={cn('relative size-2 rounded-full', config.dotClass)} />
-            </div>
-            <span className={cn('font-medium', config.textClass)}>{config.label}</span>
-          </button>
-        </TooltipTrigger>
-        <TooltipContent className="[z-index:60]">
-          <p className="text-16">{config.tooltip}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+              style={{
+                animationDuration: '2s'
+              }}
+            />
+          </>
+        )}
+        {/* Status dot with enhanced glow */}
+        <div className={cn('relative size-2 rounded-full', config.dotClass)} />
+      </div>
+      <span className={cn('font-medium', config.textClass)}>{config.label}</span>
+    </button>
   )
+  // return (
+  //   <TooltipProvider>
+  //     <Tooltip>
+  //       <TooltipTrigger asChild>
+  //         <button
+  //           type="button"
+  //           className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2.5 rounded-xl border border-white/5 px-4 transition-colors outline-none"
+  //         >
+  //           <div className="relative flex items-center justify-center">
+  //             {/* Animated rings for active states - double pulse effect */}
+  //             {config.animate && (
+  //               <>
+  //                 <div
+  //                   className={cn(
+  //                     'absolute size-3.5 animate-ping rounded-full opacity-30',
+  //                     config.ringClass
+  //                   )}
+  //                   style={{
+  //                     animationDuration: '2s'
+  //                   }}
+  //                 />
+  //               </>
+  //             )}
+  //             {/* Status dot with enhanced glow */}
+  //             <div className={cn('relative size-2 rounded-full', config.dotClass)} />
+  //           </div>
+  //           <span className={cn('font-medium', config.textClass)}>{config.label}</span>
+  //         </button>
+  //       </TooltipTrigger>
+  //       <TooltipContent className="[z-index:60]">
+  //         <p className="text-16">{config.tooltip}</p>
+  //       </TooltipContent>
+  //     </Tooltip>
+  //   </TooltipProvider>
+  // )
 }
