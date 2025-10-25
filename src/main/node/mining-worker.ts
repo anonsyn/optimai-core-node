@@ -7,6 +7,7 @@ import { MiningAssignmentFailureReason } from '../api/mining/types'
 import { crawl4AiService } from '../services/crawl4ai-service'
 import { crawlerService } from '../services/crawler-service'
 import { dockerService } from '../services/docker-service'
+import { eventsService } from '../services/events-service'
 import { deviceStore, tokenStore, userStore } from '../storage'
 import { encode } from '../utils/encoder'
 import { getErrorMessage } from '../utils/get-error-message'
@@ -87,6 +88,15 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       log.error('[mining] Docker isn’t available — can’t start mining')
       log.error('[mining] Install and open Docker Desktop from https://docker.com to continue')
       this.setStatus(MiningStatus.Error, 'Docker not available')
+      await eventsService.reportError({
+        type: 'mining.docker_unavailable',
+        message: 'Docker is not available when starting mining worker',
+        severity: 'critical',
+        metadata: {
+          stage: 'start',
+          dockerAvailable: this.dockerAvailable
+        }
+      })
       this.running = false
       return
     }
@@ -103,6 +113,15 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       } else {
         log.error('[mining] Crawler initialization failed')
         this.setStatus(MiningStatus.Error, 'Crawler initialization failed')
+        await eventsService.reportError({
+          type: 'mining.crawler_init_failed',
+          message: 'Crawler service initialization returned false',
+          severity: 'error',
+          metadata: {
+            stage: 'start',
+            dockerAvailable: this.dockerAvailable
+          }
+        })
         this.running = false
         return
       }
@@ -113,6 +132,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       )
       this.dockerAvailable = false
       this.setStatus(MiningStatus.Error, 'Crawler initialization failed')
+      await eventsService.reportError({
+        type: 'mining.crawler_init_failed',
+        message: 'Failed to initialize crawler service',
+        severity: 'critical',
+        error,
+        metadata: {
+          stage: 'start',
+          dockerAvailable: this.dockerAvailable
+        }
+      })
       this.running = false
       return
     }
@@ -187,6 +216,12 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         '[mining] Failed to set worker preferences:',
         getErrorMessage(error, 'Failed to set worker preferences')
       )
+      void eventsService.reportError({
+        type: 'mining.worker_preferences_failed',
+        message: 'Failed to set mining worker preferences',
+        severity: 'warning',
+        error
+      })
     }
   }
 
@@ -226,6 +261,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         }
       } catch (error) {
         log.error('[mining] Heartbeat failed:', getErrorMessage(error, 'Heartbeat failed'))
+        void eventsService.reportError({
+          type: 'mining.heartbeat_failed',
+          message: 'Failed to send mining heartbeat',
+          severity: 'warning',
+          error,
+          metadata: {
+            dockerAvailable: this.dockerAvailable,
+            crawlerInitialized: this.crawlerServiceInitialized
+          }
+        })
         this.emit('error', error instanceof Error ? error : new Error(String(error)))
       }
     }
@@ -303,6 +348,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       } catch (error) {
         if (!controller.signal.aborted) {
           log.error('[mining] Task updates error:', getErrorMessage(error, 'SSE error'))
+          void eventsService.reportError({
+            type: 'mining.sse_connection_failed',
+            message: 'Mining SSE connection failed',
+            severity: 'warning',
+            error,
+            metadata: {
+              backoffMs: this.sseBackoff,
+              running: this.running
+            }
+          })
           this.emit('error', error instanceof Error ? error : new Error(String(error)))
         }
       } finally {
@@ -493,6 +548,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } catch (error) {
       const errorMsg = getErrorMessage(error, 'Error fetching assignments')
       log.error('[mining] Error fetching assignments:', errorMsg)
+      await eventsService.reportError({
+        type: 'mining.fetch_assignments_failed',
+        message: 'Failed to fetch mining assignments',
+        error,
+        metadata: {
+          running: this.running,
+          dockerAvailable: this.dockerAvailable,
+          crawlerInitialized: this.crawlerServiceInitialized
+        }
+      })
       this.emit('error', error instanceof Error ? error : new Error(String(error)))
     } finally {
       this.processing = false
@@ -563,6 +628,18 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } catch (error) {
       const errorMsg = getErrorMessage(error, `Failed to process assignment ${assignmentId}`)
       log.error(`[mining] Failed to process assignment ${assignmentId}:`, errorMsg)
+      await eventsService.reportError({
+        type: 'mining.assignment_failed',
+        message: `Failed to process assignment ${assignmentId}`,
+        severity: 'warning',
+        error,
+        metadata: {
+          assignmentId,
+          status,
+          taskPlatform: task?.platform,
+          taskUrl: (task?.source_url || (task as any)?.url) ?? undefined
+        }
+      })
 
       this.emit(
         'assignmentFailed',
@@ -590,6 +667,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
             `[mining] Failed to abandon assignment ${assignmentId}:`,
             getErrorMessage(abandonError, 'Failed to abandon assignment')
           )
+          void eventsService.reportError({
+            type: 'mining.abandon_failed',
+            message: `Failed to abandon assignment ${assignmentId}`,
+            severity: 'warning',
+            error: abandonError,
+            metadata: {
+              assignmentId,
+              reason
+            }
+          })
         }
       }
     } finally {

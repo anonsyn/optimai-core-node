@@ -2,6 +2,7 @@ import EventEmitter from 'eventemitter3'
 
 import pRetry from 'p-retry'
 import { apiClient } from '../libs/axios'
+import { eventsService } from '../services/events-service'
 import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
@@ -111,6 +112,15 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
     } catch (error) {
       const message = getErrorMessage(error, 'Node runtime error')
       const lastError = new Error(message)
+      await eventsService.reportError({
+        type: 'node.start_failed',
+        message: 'Node runtime failed to start',
+        error,
+        metadata: {
+          statusBeforeFailure: this.status,
+          wasRunning: this.running
+        }
+      })
       this.running = false
       this.lastError = message
       this.setStatus(NodeStatus.Idle)
@@ -180,7 +190,12 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       }
 
       userStore.saveUser(user)
-    } catch {
+    } catch (error) {
+      await eventsService.reportError({
+        type: 'node.ensure_user_failed',
+        message: 'Failed to load user profile before starting node',
+        error
+      })
       throw new Error('Failed to load user profile')
     }
   }

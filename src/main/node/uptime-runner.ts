@@ -3,6 +3,7 @@ import EventEmitter from 'eventemitter3'
 
 import { DeviceType } from '../api/device/types'
 import { uptimeApi } from '../api/uptime'
+import { eventsService } from '../services/events-service'
 import type { UptimeData } from '../storage'
 import { deviceStore, rewardStore, uptimeStore, userStore } from '../storage'
 import { decode, encode } from '../utils/encoder'
@@ -237,7 +238,25 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     log.info(`[uptime] Sending report to API...`)
     const reportStartTime = Date.now()
     const encoded = encode(JSON.stringify(payload))
-    const response = await uptimeApi.reportOnline(encoded)
+    let response: Awaited<ReturnType<typeof uptimeApi.reportOnline>>
+    try {
+      response = await uptimeApi.reportOnline(encoded)
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, 'Failed to report uptime')
+      log.error('[uptime] ✗ Failed to report cycle:', errorMessage)
+      await eventsService.reportError({
+        type: 'uptime.report_failed',
+        message: 'Failed to report uptime to server',
+        error,
+        metadata: {
+          duration,
+          maxDuration,
+          efficiency,
+          payloadSize: encoded.length
+        }
+      })
+      throw error
+    }
     const reportDuration = Date.now() - reportStartTime
     log.info(`[uptime] Report sent successfully (took ${reportDuration}ms)`)
 
@@ -261,6 +280,20 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     } catch (error) {
       const errorMsg = getErrorMessage(error, 'Failed to parse reward response')
       log.error('[uptime] ✗ Error parsing reward response:', errorMsg)
+      await eventsService.reportError({
+        type: 'uptime.reward_parse_failed',
+        message: 'Failed to parse uptime reward response',
+        error,
+        metadata: {
+          duration,
+          maxDuration,
+          payloadSize: encoded.length,
+          responsePreview:
+            typeof response?.data?.data === 'string'
+              ? response.data.data.slice(0, 200)
+              : undefined
+        }
+      })
       this.emit('error', error instanceof Error ? error : new Error(String(error)))
     }
 

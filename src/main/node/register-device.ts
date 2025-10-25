@@ -1,6 +1,7 @@
 import log from '../configs/logger'
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/types'
+import { eventsService } from '../services/events-service'
 import { deviceStore, userStore } from '../storage'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'
@@ -41,7 +42,25 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
   const encodedPayload = encode(JSON.stringify(payload))
   log.info('[register-device] Encoded payload length:', encodedPayload.length)
 
-  const { data } = await deviceApi.registerDevice({ data: encodedPayload }, signal)
+  let response: Awaited<ReturnType<typeof deviceApi.registerDevice>>
+  try {
+    response = await deviceApi.registerDevice({ data: encodedPayload }, signal)
+  } catch (error) {
+    const errorMessage = getErrorMessage(error, 'Failed to register device')
+    log.error('[register-device] Device registration failed:', errorMessage)
+    await eventsService.reportError({
+      type: 'device.registration_failed',
+      message: 'Device registration request failed',
+      error,
+      metadata: {
+        payloadSize: encodedPayload.length,
+        deviceInfo
+      }
+    })
+    throw error
+  }
+
+  const { data } = response
   log.info('[register-device] Server response:', data)
 
   try {
@@ -57,10 +76,20 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
     deviceStore.saveDeviceId(deviceId)
     return deviceId
   } catch (error) {
-    console.error(
-      'Failed to decode device registration response:',
-      getErrorMessage(error, 'Failed to decode device registration response')
+    const errorMessage = getErrorMessage(
+      error,
+      'Failed to decode device registration response'
     )
+    log.error('[register-device] Failed to decode device registration response:', errorMessage)
+    await eventsService.reportError({
+      type: 'device.registration_response_invalid',
+      message: 'Failed to decode device registration response',
+      error,
+      metadata: {
+        payloadSize: encodedPayload.length,
+        responsePreview: typeof data?.data === 'string' ? data.data.slice(0, 200) : undefined
+      }
+    })
     throw new Error('Failed to decode device registration response')
   }
 }

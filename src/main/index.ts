@@ -1,6 +1,7 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import 'dotenv/config'
 import { app, nativeTheme } from 'electron'
+import log from './configs/logger'
 import authIpcHandler from './ipc/auth'
 import crawl4AiIpcHandler from './ipc/crawl4ai'
 import dockerIpcHandler from './ipc/docker'
@@ -13,6 +14,31 @@ import { isMac } from './utils/os'
 import { createWindow } from './window/factory'
 import windowManager from './window/manager'
 import { WindowType } from './window/window'
+import { eventsService } from './services/events-service'
+
+const reportFatalError = (type: 'uncaught_exception' | 'unhandled_rejection', error: unknown) => {
+  const message =
+    type === 'uncaught_exception' ? 'Uncaught exception in main process' : 'Unhandled promise rejection'
+  void eventsService.reportError({
+    type: `app.${type}`,
+    message,
+    severity: 'critical',
+    error,
+    metadata: {
+      pid: process.pid
+    }
+  })
+}
+
+process.on('uncaughtException', (error) => {
+  log.error('[app] Uncaught exception:', getErrorMessage(error, 'Unknown error'))
+  reportFatalError('uncaught_exception', error)
+})
+
+process.on('unhandledRejection', (reason) => {
+  log.error('[app] Unhandled rejection:', getErrorMessage(reason, 'Unknown rejection'))
+  reportFatalError('unhandled_rejection', reason)
+})
 
 const gotTheLock = app.requestSingleInstanceLock()
 
