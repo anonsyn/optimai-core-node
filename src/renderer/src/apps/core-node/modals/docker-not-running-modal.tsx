@@ -4,7 +4,6 @@ import { Icon } from '@/components/ui/icon'
 import { useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { motion } from 'framer-motion'
-import { AlertTriangle } from 'lucide-react'
 import { useEffect } from 'react'
 
 export function DockerNotRunningModal() {
@@ -70,13 +69,12 @@ function Content() {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="bg-destructive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-          <AlertTriangle className="text-destructive size-7" />
+        <div className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full border border-white/10 bg-black/30">
+          <Icon className="size-7 shrink-0 text-white" icon="Docker" />
         </div>
-        <h3 className="text-20 font-semibold text-white">Please open Docker Desktop</h3>
-        <p className="text-16 mt-1 text-balance text-white/50">
-          Open Docker Desktop from your Applications/Start menu and keep it running. We’ll continue
-          once it’s ready.
+        <h3 className="text-20 font-semibold text-white">Please Open Docker</h3>
+        <p className="text-16 mt-1 text-white/50">
+          To power your node, make sure Docker is open and running in the background
         </p>
       </motion.div>
 

@@ -35,6 +35,7 @@ import Minus from '@assets/icons/minus.svg?react'
 import Monitor from '@assets/icons/monitor.svg?react'
 import NodeOperatorFilled from '@assets/icons/node-operator-filled.svg?react'
 import NodeOperatorOutlined from '@assets/icons/node-operator-outlined.svg?react'
+import Optimai from '@assets/icons/optimai.svg?react'
 import PanelRightOpen from '@assets/icons/panel-right-open.svg?react'
 import Pickaxe from '@assets/icons/pickaxe.svg?react'
 import Plus from '@assets/icons/plus.svg?react'
@@ -61,6 +62,7 @@ import X from '@assets/icons/x.svg?react'
 import { SVGProps } from 'react'
 
 export const Icons = {
+  Optimai,
   ArticleLine,
   BrainCircuit,
   CircleCheck,

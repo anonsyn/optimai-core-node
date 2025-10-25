@@ -2,7 +2,7 @@ import AnimatedNumber from '@/components/ui/animated-number'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/ui/icon'
 import { motion } from 'framer-motion'
-import { Container, Download, Zap } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'use-debounce'
 
@@ -192,8 +192,10 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="space-y-4"
           >
             <div className="text-center">
-              <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-                <Download className="text-green size-7" />
+              <div className="bg-background mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
+                <div className="bg-secondary flex size-11 items-center justify-center rounded-full">
+                  <Icon className="size-6" icon="Optimai" />
+                </div>
               </div>
               <h3 className="text-20 font-semibold text-white">Setting up your Node</h3>
               <p className="text-16 mt-1 text-balance text-white/50">
@@ -297,8 +299,8 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="space-y-4"
           >
             <div className="text-center">
-              <div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-                <Icon icon="CircleCheck" className="text-positive size-7" />
+              <div className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full border border-white/10 bg-black/30">
+                <Icon className="size-7 shrink-0 text-white" icon="Docker" />
               </div>
               <h3 className="text-20 font-semibold text-white">Download Complete</h3>
               <p className="text-16 mt-1 text-balance text-white/50">
@@ -317,15 +319,9 @@ export function SetupStep({ onComplete }: SetupStepProps) {
             className="space-y-4"
           >
             <div className="text-center">
-              {dockerStatus === 'not-running' ? (
-                <div className="bg-warning/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-                  <Zap className="text-warning size-7" />
-                </div>
-              ) : (
-                <motion.div className="bg-positive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-                  <Container className="text-green size-7" />
-                </motion.div>
-              )}
+              <div className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full border border-white/10 bg-black/30">
+                <Icon className="size-7 shrink-0 text-white" icon="Docker" />
+              </div>
 
               <h3 className="text-20 font-semibold text-white">
                 {dockerStatus === 'not-running'
@@ -337,8 +333,7 @@ export function SetupStep({ onComplete }: SetupStepProps) {
                 {dockerStatus === 'checking' && 'We’re checking your Docker installation...'}
                 {dockerStatus === 'not-installed' &&
                   'The installation is underway, we’ll notify you when it’s ready to go'}
-                {dockerStatus === 'not-running' &&
-                  'Everything’s installed. Just launch Docker Desktop to complete setup.'}
+                {dockerStatus === 'not-running' && 'Open Docker on your desktop and we’re all set'}
               </p>
             </div>
 
