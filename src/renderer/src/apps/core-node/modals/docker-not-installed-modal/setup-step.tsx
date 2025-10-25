@@ -426,7 +426,12 @@ export function SetupStep({ onComplete }: SetupStepProps) {
           className="from-yellow to-green w-full bg-gradient-to-r text-black hover:opacity-90 disabled:opacity-50"
         >
           {state === 'checking' && 'Preparing...'}
-          {state === 'no-installer' && `Download for ${getPlatformName()}`}
+          {state === 'no-installer' && (
+            <>
+              <Icon icon="Docker" className="size-4" />
+              <span>Download for {getPlatformName()}</span>
+            </>
+          )}
           {state === 'downloading' && (
             <>
               <span className="tabular-nums">

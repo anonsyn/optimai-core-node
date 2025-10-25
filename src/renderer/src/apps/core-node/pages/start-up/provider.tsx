@@ -53,8 +53,8 @@ interface StartupProviderProps {
 }
 
 export const StartupProvider = ({ children }: StartupProviderProps) => {
-  const [phase, setPhase] = useState<StartupPhase>(StartupPhase.INITIALIZING)
-  const [error, setError] = useState<string | null>(null)
+  const [phase, setPhase] = useState<StartupPhase>(StartupPhase.ERROR)
+  const [error, setError] = useState<string | null>('Something went wrong')
   const [isLoading, setIsLoading] = useState(true)
 
   const dispatch = useAppDispatch()
@@ -213,6 +213,7 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
     } catch (error) {
       console.error('Docker check failed:', error)
       setError('We couldn’t check Docker')
+      setPhase(StartupPhase.ERROR)
       return false
     }
   }, [
@@ -326,13 +327,14 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       // 2. Check Docker requirements
       const dockerStartTime = Date.now()
       const dockerReady = await checkDockerRequirements()
+
+      if (!dockerReady) {
+        return
+      }
+
       const dockerElapsed = Date.now() - dockerStartTime
       if (dockerElapsed < PHASE_TRANSITION_DELAY) {
         await sleep(PHASE_TRANSITION_DELAY - dockerElapsed)
-      }
-      if (!dockerReady) {
-        setPhase(StartupPhase.ERROR)
-        return
       }
 
       // 3. Check authentication
@@ -348,13 +350,15 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
         openLoginModal({
           onSuccess: async () => {
             // After successful login, continue with node startup
-            const nodeStartTime = Date.now()
             const success = await startNode()
-            const nodeElapsed = Date.now() - nodeStartTime
-            if (nodeElapsed < PHASE_TRANSITION_DELAY) {
-              await sleep(PHASE_TRANSITION_DELAY - nodeElapsed)
-            }
+
             if (success) {
+              const nodeStartTime = Date.now()
+              const nodeElapsed = Date.now() - nodeStartTime
+              if (nodeElapsed < PHASE_TRANSITION_DELAY) {
+                await sleep(PHASE_TRANSITION_DELAY - nodeElapsed)
+              }
+
               // Give time for completion animation
               await sleep(2000)
               navigate(PATHS.DATA_MINING)
@@ -367,12 +371,13 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       // 4. Start node
       const nodeStartTime = Date.now()
       const nodeStarted = await startNode()
-      const nodeElapsed = Date.now() - nodeStartTime
-      if (nodeElapsed < PHASE_TRANSITION_DELAY) {
-        await sleep(PHASE_TRANSITION_DELAY - nodeElapsed)
-      }
 
       if (nodeStarted) {
+        const nodeElapsed = Date.now() - nodeStartTime
+        if (nodeElapsed < PHASE_TRANSITION_DELAY) {
+          await sleep(PHASE_TRANSITION_DELAY - nodeElapsed)
+        }
+
         // Give time for completion animation before navigating
         await sleep(2000)
         navigate(PATHS.DATA_MINING)
