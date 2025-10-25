@@ -14,7 +14,8 @@ export enum Modals {
   UPDATE_READY = 'UPDATE_READY',
   WINDOWS_UPDATE_AVAILABLE = 'WINDOWS_UPDATE_AVAILABLE',
   MINING_STOPPED = 'MINING_STOPPED',
-  MINING_ERROR = 'MINING_ERROR'
+  MINING_ERROR = 'MINING_ERROR',
+  REPORT_ISSUE = 'REPORT_ISSUE'
 }
 
 export type ModalState<T = undefined> = {
@@ -65,6 +66,7 @@ export interface ModalSliceState {
   [Modals.MINING_ERROR]?: ModalState<{
     error: string
   }>
+  [Modals.REPORT_ISSUE]?: ModalState
 }
 
 export type ModalType = keyof ModalSliceState

@@ -1,7 +1,9 @@
+import { HelpMenuContent } from '@/components/help-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { IconButton } from '@/components/ui/button'
 import { Button } from '@/components/ui/button/button'
 import { CopyButton } from '@/components/ui/button/copy-button'
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Icon } from '@/components/ui/icon'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { EXTERNAL_LINKS } from '@/configs/links'
@@ -11,7 +13,6 @@ import { Modals } from '@/store/slices/modals'
 import { LogOut, Wallet, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useDebounce } from 'use-debounce'
 
 const formatJoinedDate = (isoDate?: string) => {
   if (!isoDate) {
@@ -32,7 +33,15 @@ const formatJoinedDate = (isoDate?: string) => {
 
 export const WalletPopover = () => {
   const [open, setOpen] = useState(false)
-  const [debouncedOpen] = useDebounce(open, 100)
+  const [openMenu, setOpenMenu] = useState(false)
+
+  const handleOpenPopoverChange = (value: boolean) => {
+    if (openMenu) {
+      return
+    }
+
+    setOpen(value)
+  }
 
   const user = useSelector(authSelectors.user)
   const openLogoutModal = useOpenModal(Modals.LOGOUT_CONFIRMATION)
@@ -75,7 +84,7 @@ export const WalletPopover = () => {
   }
 
   return (
-    <Popover open={debouncedOpen} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenPopoverChange}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -141,35 +150,44 @@ export const WalletPopover = () => {
         </div>
 
         <div className="relative p-5">
-          <div className="space-y-3">
-            <div className="bg-secondary/50 flex w-full items-center justify-center gap-2.5 rounded-xl p-4">
-              <div className="bg-accent flex size-10 items-center justify-center rounded-lg">
-                <Wallet className="size-4.5 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-14 leading-normal text-white/50">Address</p>
-                <p className="text-16 leading-normal font-semibold text-white">
+          <div className="space-y-2">
+            <div className="bg-secondary/50 flex h-11 items-center gap-2.5 rounded-lg pr-4 pl-3">
+              <Wallet className="size-4.5 text-white" />
+              <p className="text-14 flex-1 leading-normal font-medium">Wallet Address</p>
+              <div className="flex items-center gap-2">
+                <p className="text-14 leading-normal font-medium text-white/50">
                   {truncatedAddress}
                 </p>
+                {walletAddress && <CopyButton textToCopy={walletAddress} iconClassName="size-4" />}
               </div>
-              {walletAddress && <CopyButton textToCopy={walletAddress} iconClassName="size-6" />}
             </div>
-            <div className="bg-secondary/50 flex w-full items-center justify-center gap-2.5 rounded-xl p-4">
-              <div className="bg-accent flex size-10 items-center justify-center rounded-lg">
-                <Icon icon="Calendar" className="size-4.5 text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-14 leading-normal text-white/50">Member Since</p>
-                <p className="text-16 leading-normal font-semibold text-white">
-                  {joinedLabel || '--'}
-                </p>
-              </div>
+
+            <div className="bg-secondary/50 flex h-11 items-center gap-2.5 rounded-lg pr-4 pl-3">
+              <Icon className="size-4.5 text-white" icon="Calendar" />
+              <p className="text-14 flex-1 leading-normal font-medium">Member Since</p>
+              <p className="text-14 leading-normal font-medium text-white/50">
+                {joinedLabel || '--'}
+              </p>
+            </div>
+
+            <div className="bg-secondary/50 flex h-11 items-center gap-2.5 rounded-lg pr-4 pl-3">
+              <Icon className="size-4.5 text-white" icon="Calendar" />
+              <p className="text-14 flex-1 leading-normal font-medium">Help Menu</p>
+              <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="text-14 flex items-center gap-1 leading-normal font-medium text-white/50 hover:text-white/80"
+                    type="button"
+                  >
+                    <span>See all</span>
+                    <Icon className="size-4" icon="ChevronRight" />
+                  </button>
+                </DropdownMenuTrigger>
+                <HelpMenuContent />
+              </DropdownMenu>
             </div>
           </div>
 
-          {/* Member Since */}
-
-          {/* Quick Actions */}
           <div className="space-y-3 pt-12">
             <Button
               variant="primary"

@@ -9,7 +9,8 @@ export const EXTERNAL_LINKS = {
   SOCIALS: {
     X: 'https://x.com/OptimaiNetwork',
     TELEGRAM: 'https://t.me/optimainetwork',
-    GITHUB: 'https://github.com/OptimaiNetwork'
+    GITHUB: 'https://github.com/OptimaiNetwork',
+    DISCORD: 'https://discord.gg/j9wtCzeH6R'
   },
   DASHBOARD: {
     HOME: createHref(`${BASE_DASHBOARD_URL}/`),
