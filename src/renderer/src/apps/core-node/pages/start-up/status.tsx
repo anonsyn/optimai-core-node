@@ -1,6 +1,6 @@
-import { Icon } from '@/components/ui/icon'
 import { cn } from '@/utils/tw'
 import { AnimatePresence, motion } from 'framer-motion'
+import { TriangleAlert } from 'lucide-react'
 import { HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react'
 import NetworkConstellation from './network-constellation'
 import { StartupPhase, useStartup } from './provider'
@@ -17,8 +17,8 @@ type Step = {
 const steps: Step[] = [
   {
     phase: StartupPhase.INITIALIZING,
-    title: 'Preparing the App',
-    description: 'Setting things up for a smooth start.',
+    title: 'Getting Things Ready',
+    description: 'We’re setting up your app and checking basics.',
     icon: 'CPU',
     code: '> initializing...'
   },
@@ -149,31 +149,29 @@ const Status = ({ className, ...props }: StatusProps) => {
         </div>
 
         {/* Status feed removed as requested */}
-
-        {/* Error State - Refined */}
-        <AnimatePresence>
-          {hasError && error && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-              className="bg-destructive/5 flex flex-col items-center gap-3 rounded-2xl p-6"
-            >
-              <div className="text-destructive flex items-center gap-2 text-sm">
-                <Icon icon="Info" className="size-4" />
-                <span>{error}</span>
-              </div>
-              <button
-                onClick={retry}
-                className="text-destructive/70 hover:text-destructive text-xs underline underline-offset-2 transition"
-              >
-                Try again
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
+
+      {/* Error State - Refined */}
+      <AnimatePresence>
+        {hasError && error && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="bg-destructive/5 text-destructive absolute top-full left-1/2 mt-8 flex h-11 min-w-[400px] -translate-x-1/2 items-center gap-3 rounded-lg px-3 py-2"
+          >
+            <TriangleAlert className="size-4.5" />
+            <span className="max-w-[320px] flex-1 truncate">{error}</span>
+            <button
+              onClick={retry}
+              className="text-14 text-muted leading-normal font-semibold transition-opacity hover:opacity-60"
+            >
+              Try again
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

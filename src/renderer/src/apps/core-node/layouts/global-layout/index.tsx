@@ -37,7 +37,7 @@ const GlobalLayout = () => {
         richColors
         closeButton
         className="md:![--width:600px] xl:![--width:656px]"
-        duration={5000}
+        duration={50000}
         position="bottom-center"
         visibleToasts={1}
       />

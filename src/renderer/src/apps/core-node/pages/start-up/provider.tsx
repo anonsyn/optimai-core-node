@@ -53,8 +53,8 @@ interface StartupProviderProps {
 }
 
 export const StartupProvider = ({ children }: StartupProviderProps) => {
-  const [phase, setPhase] = useState<StartupPhase>(StartupPhase.ERROR)
-  const [error, setError] = useState<string | null>('Something went wrong')
+  const [phase, setPhase] = useState<StartupPhase>(StartupPhase.INITIALIZING)
+  const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const dispatch = useAppDispatch()

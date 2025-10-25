@@ -8,6 +8,7 @@ import CanvasGlow from '@core-node/pages/start-up/canvas-glow'
 import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import packageJson from '../../../../../../../package.json'
+import HelpFloatingMenu from './help-floating-menu'
 import { StartupProvider, useStartup } from './provider'
 import Status from './status'
 
@@ -74,6 +75,8 @@ const StartUpShell = () => {
           <Status />
         </motion.div>
       </div>
+
+      <HelpFloatingMenu />
 
       <LoginModal />
       <DockerNotInstalledModal />

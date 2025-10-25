@@ -39,6 +39,7 @@ import PanelRightOpen from '@assets/icons/panel-right-open.svg?react'
 import Pickaxe from '@assets/icons/pickaxe.svg?react'
 import Plus from '@assets/icons/plus.svg?react'
 import Profile from '@assets/icons/profile.svg?react'
+import QuestionMark from '@assets/icons/question-mark.svg?react'
 import RefFilled from '@assets/icons/ref-filled.svg?react'
 import RefOutlined from '@assets/icons/ref-outlined.svg?react'
 import RotateCcw from '@assets/icons/rotate-ccw.svg?react'
@@ -116,7 +117,8 @@ export const Icons = {
   Search,
   Settings,
   Square,
-  Google
+  Google,
+  QuestionMark
 } as const
 
 export type IconName = keyof typeof Icons
