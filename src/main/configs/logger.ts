@@ -9,7 +9,7 @@ const setupLogger = () => {
   // Define log directory
   const logDir = app.getPath('logs')
   const currentLogPath = path.join(logDir, 'log.log')
-  const maxLogFiles = 10
+  const maxLogFiles = 12
 
   // Make sure log directory exists
   if (!fs.existsSync(logDir)) {
@@ -20,7 +20,7 @@ const setupLogger = () => {
   electronLog.transports.file.resolvePathFn = () => currentLogPath
 
   // Configure file transport
-  electronLog.transports.file.maxSize = 10 * 1024 * 1024 // 10MB
+  electronLog.transports.file.maxSize = 1 * 1024 * 1024 // 1MB
 
   // Configure file rotation with timestamp suffix
   electronLog.transports.file.archiveLogFn = (oldLogFile) => {

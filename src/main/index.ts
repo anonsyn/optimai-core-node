@@ -1,7 +1,6 @@
-import 'dotenv/config'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import 'dotenv/config'
 import { app, nativeTheme } from 'electron'
-import log from './configs/logger'
 import authIpcHandler from './ipc/auth'
 import crawl4AiIpcHandler from './ipc/crawl4ai'
 import dockerIpcHandler from './ipc/docker'
@@ -23,7 +22,6 @@ const logFolder = app.getPath('logs')
 
 console.log('logFolder', logFolder)
 console.log('app.getPath("userData")', app.getPath('userData'))
-log.info(logFolder)
 
 if (!gotTheLock) {
   app.quit()
