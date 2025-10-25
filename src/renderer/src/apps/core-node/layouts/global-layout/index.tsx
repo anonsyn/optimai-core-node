@@ -3,6 +3,7 @@ import { NodeProvider } from '@/providers/node'
 import OnlineProvider from '@/providers/online'
 import QueryProvider from '@/providers/query'
 import ReduxProvider from '@/providers/redux'
+import ReportIssueModal from '@core-node/modals/report-issue-modal'
 import { PropsWithChildren } from 'react'
 import { Outlet } from 'react-router'
 import { Toaster } from 'sonner'
@@ -40,6 +41,7 @@ const GlobalLayout = () => {
         position="bottom-center"
         visibleToasts={1}
       />
+      <ReportIssueModal />
     </Providers>
   )
 }

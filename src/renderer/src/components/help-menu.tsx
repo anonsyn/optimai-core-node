@@ -30,13 +30,13 @@ const HelpMenuContent = ({ className, onItemClick }: HelpMenuContentProps) => {
         </DropdownMenuItem>
       </DropdownMenuGroup>
       <DropdownMenuSeparator />
-      <DropdownMenuGroup
-        onClick={() => {
-          window.windowIPC.openExternalLink(EXTERNAL_LINKS.SOCIALS.DISCORD)
-          onItemClick?.()
-        }}
-      >
-        <DropdownMenuItem>
+      <DropdownMenuGroup>
+        <DropdownMenuItem
+          onClick={() => {
+            window.windowIPC.openExternalLink(EXTERNAL_LINKS.SOCIALS.DISCORD)
+            onItemClick?.()
+          }}
+        >
           <MessageCircleQuestionMark />
           <span>Ask Community</span>
         </DropdownMenuItem>

@@ -183,7 +183,12 @@ export const WalletPopover = () => {
                     <Icon className="size-4" icon="ChevronRight" />
                   </button>
                 </DropdownMenuTrigger>
-                <HelpMenuContent />
+                <HelpMenuContent
+                  onItemClick={() => {
+                    setOpen(false)
+                    setOpenMenu(false)
+                  }}
+                />
               </DropdownMenu>
             </div>
           </div>
