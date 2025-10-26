@@ -26,7 +26,8 @@ interface MiningWorkerEvents {
 }
 
 const DOCKER_CHECK_INTERVAL_MS = 15_000
-const HEARTBEAT_INTERVAL_MS = 30_000
+// Heartbeat interval: report online status every 10 minutes
+const HEARTBEAT_INTERVAL_MS = 10 * 60 * 1000
 const POLL_INTERVAL_MS = 30_000
 const SSE_RETRY_BASE_MS = 2_000
 const SSE_RETRY_MAX_MS = 10_000
