@@ -1,3 +1,4 @@
+import { is } from '@electron-toolkit/utils'
 import { createStore } from './base-store'
 import type { UptimeData, UptimeStoreData } from './types'
 
@@ -6,8 +7,8 @@ import type { UptimeData, UptimeStoreData } from './types'
  * Production: 60 seconds, Development: 30 seconds
  */
 function getCycleDuration(): number {
-  const isProduction = process.env.NODE_ENV === 'production'
-  return (isProduction ? 60 * 2 : 30) * 1000 // 2m for prod, 30s for dev
+  const isProduction = !is.dev
+  return (isProduction ? 60 * 10 : 10) * 1000 // 10m for prod, 10s for dev
 }
 
 /**
