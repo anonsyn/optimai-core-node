@@ -1,10 +1,10 @@
+import { apiClient } from '../../libs/axios'
 import type {
   CompleteReportBody,
   CompleteReportResponse,
   CreateReportBody,
   CreateReportResponse
-} from '@shared/reports/types'
-import { apiClient } from '../../libs/axios'
+} from './types'
 
 export const reportsApi = {
   createReport(payload: CreateReportBody) {
@@ -16,4 +16,4 @@ export const reportsApi = {
   }
 }
 
-export type { CreateReportBody, CompleteReportBody }
+export type { CompleteReportBody, CreateReportBody }

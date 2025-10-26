@@ -1,6 +1,6 @@
-import { app } from 'electron'
 import axios from 'axios'
 import { createHash } from 'crypto'
+import { app } from 'electron'
 import fs from 'fs/promises'
 import os from 'os'
 import path from 'path'
@@ -8,10 +8,7 @@ import { PassThrough } from 'stream'
 import { pipeline } from 'stream/promises'
 import tar from 'tar-stream'
 import { createGzip } from 'zlib'
-import log from '../configs/logger'
 import { reportsApi } from '../api/reports'
-import { deviceStore, userStore } from '../storage'
-import { getErrorMessage } from '../utils/get-error-message'
 import {
   BugReportSubmissionResult,
   ClientType,
@@ -19,7 +16,10 @@ import {
   CreateReportResponse,
   OSPlatform,
   SubmitBugReportPayload
-} from '@shared/reports/types'
+} from '../api/reports/types'
+import log from '../configs/logger'
+import { deviceStore, userStore } from '../storage'
+import { getErrorMessage } from '../utils/get-error-message'
 
 const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024 // 10 MB limit enforced server-side
 const LOG_FILE_PATTERN = /^log(\.log|-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.log)$/
@@ -204,9 +204,7 @@ const loadLogFiles = async (limit = 2): Promise<LogFileEntry[]> => {
 
     const files = stats.filter((entry): entry is LogFileEntry => entry !== null)
 
-    return files
-      .sort((a, b) => b.mtimeMs - a.mtimeMs)
-      .slice(0, limit)
+    return files.sort((a, b) => b.mtimeMs - a.mtimeMs).slice(0, limit)
   } catch (error) {
     log.warn('[reports] Failed to enumerate log directory', getErrorMessage(error, ''))
     return []
@@ -255,7 +253,10 @@ const prepareLogBundle = async (): Promise<PreparedLogBundle> => {
 
   // Final fallback: only include the newest log file with a capped tail
   const primary = logFiles[0]
-  const fallbackContent = sliceFromEnd(primary.data, Math.min(primary.data.length, FALLBACK_ACTIVE_LOG_BYTES))
+  const fallbackContent = sliceFromEnd(
+    primary.data,
+    Math.min(primary.data.length, FALLBACK_ACTIVE_LOG_BYTES)
+  )
   const buffer = await createTarGz([
     {
       name: primary.name,

@@ -1,8 +1,5 @@
 import { ipcRenderer } from 'electron'
-import type {
-  BugReportSubmissionResult,
-  SubmitBugReportPayload
-} from '@shared/reports/types'
+import type { BugReportSubmissionResult, SubmitBugReportPayload } from '../../api/reports/types'
 import { ReportsEvents } from './events'
 
 type SubmitResult =
