@@ -4,7 +4,7 @@ import { getErrorMessage } from '../utils/get-error-message'
 
 // Get environment variables with defaults
 const BASE_API_URL = process.env.VITE_API_URL || 'https://api.optimai.network'
-const BASE_MINER_URL = process.env.VITE_MINER_URL || 'https://api-onchain-staging.optimai.network'
+const BASE_MINER_URL = process.env.VITE_MINER_URL || 'https://api-onchain.optimai.network/'
 
 // Types
 interface RefreshTokenResponse {

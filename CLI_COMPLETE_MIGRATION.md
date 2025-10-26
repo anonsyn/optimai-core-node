@@ -993,7 +993,7 @@ src/
 ```env
 # API Configuration
 API_URL=https://api.optimai.network
-MINER_URL=https://api-onchain-staging.optimai.network
+MINER_URL=https://api-onchain.optimai.network/
 WS_URL=wss://ws.optimai.network
 
 # Docker Configuration
