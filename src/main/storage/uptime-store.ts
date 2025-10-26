@@ -8,7 +8,7 @@ import type { UptimeData, UptimeStoreData } from './types'
  */
 function getCycleDuration(): number {
   const isProduction = !is.dev
-  return (isProduction ? 60 * 10 : 10) * 1000 // 10m for prod, 10s for dev
+  return (isProduction ? 60 * 10 : 30) * 1000 // 10m for prod, 30 for dev
 }
 
 /**
