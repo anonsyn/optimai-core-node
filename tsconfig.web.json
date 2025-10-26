@@ -6,7 +6,8 @@
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
     "src/main/**/*.d.ts",
-    "src/main/**/types.ts"
+    "src/main/**/types.ts",
+    "src/shared/**/*.ts"
   ],
   "exclude": [],
   "compilerOptions": {
@@ -25,8 +26,11 @@
         "src/main/*"
       ],
       "@/*": [
-        "src/renderer/src/*",
+        "src/renderer/src/*"
       ],
+      "@shared/*": [
+        "src/shared/*"
+      ]
     }
   }
 }

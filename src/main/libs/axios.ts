@@ -113,6 +113,10 @@ function createApiCLient(
         if (token) {
           config.headers.Authorization = `Bearer ${token}`
         }
+        try {
+          const finalUrl = `${config.baseURL ?? ''}${config.url ?? ''}`
+          console.log('[api] ->', config.method, finalUrl, 'hasToken=', !!token)
+        } catch {}
         return config
       },
       (error: AxiosError) => {

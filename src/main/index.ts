@@ -6,6 +6,7 @@ import authIpcHandler from './ipc/auth'
 import crawl4AiIpcHandler from './ipc/crawl4ai'
 import dockerIpcHandler from './ipc/docker'
 import nodeIpcHandler from './ipc/node'
+import reportsIpcHandler from './ipc/reports'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
 import { setupApplicationMenu } from './menu'
@@ -124,6 +125,7 @@ if (!gotTheLock) {
     dockerIpcHandler.initialize() // Initialize generic Docker IPC handler
     crawl4AiIpcHandler.initialize() // Initialize Crawl4AI-specific IPC handler
     nodeIpcHandler.initialize() // Initialize node IPC handler which starts the API server
+    reportsIpcHandler.initialize() // Initialize bug report IPC handler
 
     const window = createWindow(DEFAULT_WINDOW)
     nativeTheme.themeSource = 'dark'

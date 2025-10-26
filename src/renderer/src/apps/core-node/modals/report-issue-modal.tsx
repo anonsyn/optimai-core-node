@@ -9,7 +9,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/input/textarea'
-import { toastSuccess } from '@/components/ui/toast'
+import { toastError, toastSuccess } from '@/components/ui/toast'
 import { EXTERNAL_LINKS } from '@/configs/links'
 import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
 import { useAppSelector } from '@/hooks/redux'
@@ -17,7 +17,9 @@ import { authSelectors } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useState } from 'react'
 import { z } from 'zod'
+import { getErrorMessage } from '@/utils/get-error-message'
 
 function ReportIssueModal() {
   const open = useIsModalOpen(Modals.REPORT_ISSUE)
@@ -57,6 +59,8 @@ type FormValue = z.infer<typeof reportIssueSchema>
 
 const ReportForm = () => {
   const user = useAppSelector(authSelectors.user)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const form = useForm<FormValue>({
     mode: 'all',
@@ -71,9 +75,36 @@ const ReportForm = () => {
   const closeModal = useCloseModal(Modals.REPORT_ISSUE)
 
   const handleSubmit = async (formValue: FormValue) => {
-    console.log(formValue)
-    toastSuccess('Report submitted')
-    closeModal()
+    setSubmitError(null)
+    setIsSubmitting(true)
+
+    try {
+      if (!window.reportsIPC) {
+        throw new Error('Report submission channel is unavailable')
+      }
+
+      const response = await window.reportsIPC.submit(formValue)
+
+      if (!response.success) {
+        setSubmitError(response.error)
+        toastError(response.error)
+        return
+      }
+
+      toastSuccess(`Report submitted. ID: ${response.result.reportId}`)
+      form.reset({
+        email: user?.email || '',
+        title: '',
+        description: ''
+      })
+      closeModal()
+    } catch (error) {
+      const message = getErrorMessage(error, 'Failed to submit bug report')
+      setSubmitError(message)
+      toastError(message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -123,9 +154,17 @@ const ReportForm = () => {
             )}
           />
 
+          {submitError ? (
+            <p className="text-14 text-destructive/80">{submitError}</p>
+          ) : null}
+
+          <p className="text-13 text-white/50">
+            Logs from this device are attached automatically to help troubleshoot issues.
+          </p>
+
           <div className="flex flex-col gap-2 pt-15">
-            <SubmitButton>Send</SubmitButton>
-            <Button variant="outline" onClick={closeModal}>
+            <SubmitButton loading={isSubmitting}>Send</SubmitButton>
+            <Button variant="outline" onClick={closeModal} disabled={isSubmitting}>
               Cancel
             </Button>
           </div>
