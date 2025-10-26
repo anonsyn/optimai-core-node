@@ -1,9 +1,9 @@
-import log from '../configs/logger'
 import EventEmitter from 'eventemitter3'
 import type PQueue from 'p-queue'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
 import { MiningAssignmentFailureReason } from '../api/mining/types'
+import log from '../configs/logger'
 import { crawl4AiService } from '../services/crawl4ai-service'
 import { crawlerService } from '../services/crawler-service'
 import { dockerService } from '../services/docker-service'
@@ -26,8 +26,8 @@ interface MiningWorkerEvents {
 }
 
 const DOCKER_CHECK_INTERVAL_MS = 15_000
-// Heartbeat interval: report online status every 10 minutes
-const HEARTBEAT_INTERVAL_MS = 10 * 60 * 1000
+// Heartbeat interval: report online status every 30 seconds
+const HEARTBEAT_INTERVAL_MS = 30_000
 const POLL_INTERVAL_MS = 30_000
 const SSE_RETRY_BASE_MS = 2_000
 const SSE_RETRY_MAX_MS = 10_000
