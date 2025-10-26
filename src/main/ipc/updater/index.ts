@@ -58,10 +58,7 @@ class UpdaterIpcHandler {
     })
 
     state.subscribe((state) => {
-      const window = windowManager.getVisibleWindow()
-      if (window) {
-        window.webContents.send(UpdaterEvents.OnStateChange, state)
-      }
+      this.broadcast(UpdaterEvents.OnStateChange, state)
     })
 
     ipcMain.on(UpdaterEvents.CheckForUpdateAndNotify, () => {
@@ -80,6 +77,12 @@ class UpdaterIpcHandler {
     ipcMain.on(UpdaterEvents.QuitAndInstall, () => {
       logger.info('Quitting and installing update')
       autoUpdater.quitAndInstall()
+    })
+  }
+
+  private broadcast(channel: string, ...args: unknown[]) {
+    windowManager.getAllWindows().forEach((window) => {
+      window.webContents.send(channel, ...args)
     })
   }
 }

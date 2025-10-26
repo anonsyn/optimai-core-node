@@ -10,16 +10,17 @@ import reportsIpcHandler from './ipc/reports'
 import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
 import { setupApplicationMenu } from './menu'
+import { eventsService } from './services/events-service'
 import { getErrorMessage } from './utils/get-error-message'
-import { isMac } from './utils/os'
 import { createWindow } from './window/factory'
 import windowManager from './window/manager'
 import { WindowType } from './window/window'
-import { eventsService } from './services/events-service'
 
 const reportFatalError = (type: 'uncaught_exception' | 'unhandled_rejection', error: unknown) => {
   const message =
-    type === 'uncaught_exception' ? 'Uncaught exception in main process' : 'Unhandled promise rejection'
+    type === 'uncaught_exception'
+      ? 'Uncaught exception in main process'
+      : 'Unhandled promise rejection'
   void eventsService.reportError({
     type: `app.${type}`,
     message,
@@ -93,16 +94,13 @@ if (!gotTheLock) {
   // }
 
   app.on('second-instance', () => {
-    const window = windowManager.getVisibleWindow()
+    const window = windowManager.getAllWindows()[0]
     if (window) {
       if (window.isMinimized()) {
         window.restore()
       }
       window.focus()
       window.show()
-      if (isMac) {
-        app.dock?.show()
-      }
     }
   })
 
@@ -149,12 +147,9 @@ if (!gotTheLock) {
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      const window = windowManager.getVisibleWindow()
+      const window = windowManager.getAllWindows()[0]
       if (window) {
         window.show()
-        if (isMac) {
-          app.dock?.show()
-        }
       } else {
         const window = createWindow(DEFAULT_WINDOW)
         windowManager.addWindow(window)
