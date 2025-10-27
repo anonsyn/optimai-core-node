@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron'
 import log from '../../configs/logger'
 
+import { deviceApi, DeviceDetail } from '../../api/device'
 import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
 import type { LocalDeviceInfo } from '../../node/types'
 import { deviceStore } from '../../storage/device-store'
@@ -99,17 +100,24 @@ class NodeIpcHandler {
         const deviceInfo = deviceInfoResult.deviceInfo
         const deviceId = deviceStore.getDeviceId()
 
+        let deviceDetail: Partial<DeviceDetail> = {}
+
+        if (deviceId) {
+          const res = await deviceApi.getDeviceById(deviceId)
+          deviceDetail = res.data.detail
+        }
+
         const localDeviceInfo: LocalDeviceInfo = {
           device_id: deviceId,
-          ip_address: ipGeoResult.ip_address,
-          country: ipGeoResult.country,
-          country_code: ipGeoResult.country_code,
+          ip_address: deviceDetail.ip_address || ipGeoResult.ip_address || '--',
+          country: deviceDetail.country || ipGeoResult.country || '--',
+          country_code: deviceDetail.country_code2 || ipGeoResult.country_code || '--',
           cpu_cores: deviceInfo.cpu_cores || 0,
           memory_gb: deviceInfo.memory_gb || 0,
-          os_name: deviceInfo.os_name || 'Unknown',
-          os_version: deviceInfo.os_version || 'Unknown',
-          latitude: ipGeoResult.latitude,
-          longitude: ipGeoResult.longitude
+          os_name: deviceInfo.os_name || '--',
+          os_version: deviceInfo.os_version || '--',
+          latitude: deviceDetail.latitude ?? ipGeoResult.latitude,
+          longitude: deviceDetail.longitude ?? ipGeoResult.longitude
         }
 
         return localDeviceInfo
