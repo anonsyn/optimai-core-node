@@ -154,9 +154,7 @@ const ReportForm = () => {
             )}
           />
 
-          {submitError ? (
-            <p className="text-14 text-destructive/80">{submitError}</p>
-          ) : null}
+          {submitError ? <p className="text-14 text-destructive/80">{submitError}</p> : null}
 
           <p className="text-13 text-white/50">
             Logs from this device are attached automatically to help troubleshoot issues.

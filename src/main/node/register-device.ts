@@ -76,10 +76,7 @@ export async function registerDevice(signal?: AbortSignal): Promise<string> {
     deviceStore.saveDeviceId(deviceId)
     return deviceId
   } catch (error) {
-    const errorMessage = getErrorMessage(
-      error,
-      'Failed to decode device registration response'
-    )
+    const errorMessage = getErrorMessage(error, 'Failed to decode device registration response')
     log.error('[register-device] Failed to decode device registration response:', errorMessage)
     await eventsService.reportError({
       type: 'device.registration_response_invalid',

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDeviceInfoStorage } from '../../storage/device-info-storage'
+import { deviceInfoStorage } from '@/storage/device-info-storage'
 import { deviceKeys } from './keys'
 
 interface Options {
@@ -10,8 +10,6 @@ interface Options {
 }
 
 export const useLocalDeviceInfoQuery = (options?: Options) => {
-  const deviceInfoStorage = getDeviceInfoStorage()
-
   return useQuery({
     queryKey: deviceKeys.localDeviceInfo(),
     queryFn: async () => {

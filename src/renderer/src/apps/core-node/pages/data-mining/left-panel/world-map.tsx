@@ -1,4 +1,6 @@
+import { useMapNodesQuery } from '@/queries/stats/use-map-nodes-query'
 import { isNumber } from 'lodash'
+import { memo } from 'react'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
 
 interface WorldMapProps {
@@ -8,8 +10,8 @@ interface WorldMapProps {
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
-export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
-  // Check if we have valid geolocation data
+export const WorldMap = memo(({ latitude, longitude }: WorldMapProps) => {
+  // Check if we have valid geolocation data for user's node
   const hasValidLocation = isNumber(longitude) && isNumber(latitude)
   const finalLatitude = latitude as number
   const finalLongitude = longitude as number
@@ -24,7 +26,7 @@ export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
     >
       <ComposableMap
         projection="geoEquirectangular"
-        projectionConfig={{ scale: 60, center: [0, 0] }}
+        projectionConfig={{ scale: 62, center: [0, 0] }}
         width={368}
         height={211}
         style={{ width: '100%', height: '100%' }}
@@ -60,7 +62,10 @@ export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
           }
         </Geographies>
 
-        {/* Device location marker - with valid geolocation */}
+        {/* Network nodes - small colored dots */}
+        <Nodes />
+
+        {/* User's device location marker - with valid geolocation (larger white marker) */}
         {hasValidLocation && (
           <Marker coordinates={[finalLongitude, finalLatitude]}>
             {/* Outer ring */}
@@ -72,4 +77,45 @@ export const WorldMap = ({ latitude, longitude }: WorldMapProps) => {
       </ComposableMap>
     </div>
   )
+})
+
+const Nodes = () => {
+  // Fetch all network nodes
+  const { data: mapNodesData } = useMapNodesQuery()
+
+  const nodes = mapNodesData?.nodes || []
+
+  return (
+    <>
+      {nodes.map((node) => {
+        // Status-based colors: online = green, offline = red
+        const nodeColor = node.status === 'online' ? '#5eed87' : '#f14158'
+        const nodeOpacity = node.status === 'online' ? 0.8 : 0.5
+
+        const isValidNode =
+          node.latitude >= -90 &&
+          node.latitude <= 90 &&
+          node.longitude >= -180 &&
+          node.longitude <= 180
+
+        if (!isValidNode) return null
+
+        return (
+          <Marker key={node.id} coordinates={[node.longitude, node.latitude]}>
+            <circle
+              r={0.4}
+              fill={nodeColor}
+              opacity={nodeOpacity}
+              style={{
+                filter:
+                  node.status === 'online' ? 'drop-shadow(0 0 1px rgba(94, 237, 135, 0.6))' : 'none'
+              }}
+            />
+          </Marker>
+        )
+      })}
+    </>
+  )
 }
+
+WorldMap.displayName = 'WorldMap'

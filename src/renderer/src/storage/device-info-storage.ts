@@ -27,31 +27,6 @@ export class DeviceInfoStorage extends BaseCacheStore<LocalDeviceInfo> {
   }
 
   /**
-   * Check if device info needs refresh
-   */
-  needsRefresh(): boolean {
-    return !this.isCacheValid()
-  }
-
-  /**
-   * Get formatted remaining time
-   */
-  getFormattedRemainingTime(): string {
-    const remaining = this.getRemainingTime()
-    if (remaining <= 0) {
-      return 'Expired'
-    }
-
-    const minutes = Math.floor(remaining / 60000)
-    const seconds = Math.floor((remaining % 60000) / 1000)
-
-    if (minutes > 0) {
-      return `${minutes}m ${seconds}s`
-    }
-    return `${seconds}s`
-  }
-
-  /**
    * Get formatted cache age
    */
   getFormattedCacheAge(): string {
@@ -70,22 +45,4 @@ export class DeviceInfoStorage extends BaseCacheStore<LocalDeviceInfo> {
   }
 }
 
-// Singleton instance
-let deviceInfoStorageInstance: DeviceInfoStorage | null = null
-
-/**
- * Get or create the device info storage instance
- */
-export function getDeviceInfoStorage(): DeviceInfoStorage {
-  if (!deviceInfoStorageInstance) {
-    deviceInfoStorageInstance = new DeviceInfoStorage()
-  }
-  return deviceInfoStorageInstance
-}
-
-/**
- * Hook to use device info storage
- */
-export function useDeviceInfoStorage(): DeviceInfoStorage {
-  return getDeviceInfoStorage()
-}
+export const deviceInfoStorage = new DeviceInfoStorage()
