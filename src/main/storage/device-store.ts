@@ -6,7 +6,7 @@ import type { DeviceData } from './types'
  * Device store for managing device identification
  */
 const store = createStore<DeviceData>({
-  name: 'device_v2',
+  name: 'device_v3',
   defaults: {
     device_id: undefined,
     device_name: undefined,
