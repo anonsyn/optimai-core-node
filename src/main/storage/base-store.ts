@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import { app } from 'electron'
 import Store from 'electron-store'
 import path from 'path'
+import { IS_STAGING } from '../configs/constants'
 import type { StoreOptions } from './types'
 
 export type PersistentStore<T extends Record<string, any>> = {
@@ -26,7 +27,10 @@ export function createStore<T extends Record<string, any>>(
     name: options.name,
     encryptionKey,
     defaults: options.defaults || ({} as T),
-    cwd: path.join(app.getPath('userData'), 'secure-storage'),
+    cwd: path.join(
+      app.getPath('userData'),
+      IS_STAGING ? 'secure-storage-staging' : 'secure-storage'
+    ),
     clearInvalidConfig: true,
     accessPropertiesByDotNotation: true
   })

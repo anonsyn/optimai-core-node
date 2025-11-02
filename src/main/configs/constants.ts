@@ -4,4 +4,6 @@ export const IS_DEV = is.dev
 
 export const IS_PROD = !IS_DEV
 
+export const IS_STAGING = process.env.MAIN_NODE_ENV === 'staging'
+
 export const API_SERVER_PORT = 5000
