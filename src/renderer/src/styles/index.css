@@ -11,3 +11,7 @@
 .node-marker-online {
   filter: drop-shadow(0 0 1px rgba(94, 237, 135, 0.6));
 }
+
+.leaflet-container > div {
+  z-index: 40 !important;
+}

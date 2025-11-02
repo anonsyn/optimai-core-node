@@ -171,7 +171,7 @@ export const WalletPopover = () => {
             </div>
 
             <div className="bg-secondary/50 flex h-11 items-center gap-2.5 rounded-lg pr-4 pl-3">
-              <Icon className="size-4.5 text-white" icon="Calendar" />
+              <Icon className="size-4.5 text-white" icon="QuestionMark" />
               <p className="text-14 flex-1 leading-normal font-medium">Help Menu</p>
               <DropdownMenu open={openMenu} onOpenChange={setOpenMenu}>
                 <DropdownMenuTrigger asChild>
