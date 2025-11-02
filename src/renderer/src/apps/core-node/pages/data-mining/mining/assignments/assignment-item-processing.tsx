@@ -59,7 +59,9 @@ export const AssignmentItemProcessing = ({ assignment }: AssignmentItemProcessin
               <Domain sourceUrl={sourceUrl} />
 
               <div className="flex flex-col leading-[1.5]">
-                <h3 className="text-16 font-semibold tracking-tight text-white">{sourceUrl}</h3>
+                <h3 className="text-16 line-clamp-2 font-semibold tracking-tight text-white">
+                  {sourceUrl}
+                </h3>
                 {isProcessing && (
                   <p className="text-14 animate-shine via-yellow text-yellow/40 w-fit bg-gradient-to-r from-transparent to-transparent bg-[length:200%_100%] bg-clip-text !duration-[5s]">
                     Getting content from website
