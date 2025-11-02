@@ -1,5 +1,5 @@
 import { apiClient } from '@/libs/axios'
-import type { MapNodesQueryOptions, MapNodesResponse } from './type'
+import type { MapNodesQueryOptions, MapNodesResponse, TopCountriesResponse } from './type'
 
 export const statsApi = {
   getMapNodes(options: MapNodesQueryOptions = {}) {
@@ -28,6 +28,23 @@ export const statsApi = {
     const queryString = searchParams.toString()
     const endpoint = `/stats/map-nodes${queryString ? `?${queryString}` : ''}`
     return apiClient.get<MapNodesResponse>(endpoint)
+  },
+
+  getTopCountries(options: { no_cache?: boolean; limit?: number } = {}) {
+    const searchParams = new URLSearchParams()
+
+    if (options.no_cache) {
+      searchParams.set('no_cache', 'true')
+    }
+
+    if (options.limit !== undefined) {
+      searchParams.set('limit', String(options.limit))
+    }
+
+    const queryString = searchParams.toString()
+    const endpoint = `/stats/top-countries${queryString ? `?${queryString}` : ''}`
+
+    return apiClient.get<TopCountriesResponse>(endpoint)
   }
 }
 

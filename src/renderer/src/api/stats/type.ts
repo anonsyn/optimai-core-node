@@ -28,3 +28,18 @@ export interface MapNodesQueryOptions {
   target_total?: number
   no_cache?: boolean
 }
+
+// Top Countries Types (simplified - only used for getting country codes)
+export interface CountryData {
+  country_code: string
+}
+
+export interface TopCountriesMetrics {
+  top_countries: CountryData[]
+}
+
+export interface TopCountriesResponse {
+  metrics: TopCountriesMetrics
+  cached: boolean
+  last_updated: string
+}

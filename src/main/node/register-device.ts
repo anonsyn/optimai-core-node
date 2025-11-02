@@ -1,19 +1,27 @@
-import log from '../configs/logger'
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/types'
+import log from '../configs/logger'
 import { eventsService } from '../services/events-service'
 import { deviceStore, userStore } from '../storage'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'
 import { getErrorMessage } from '../utils/get-error-message'
 
-export async function registerDevice(signal?: AbortSignal): Promise<string> {
+interface RegisterDeviceOptions {
+  signal?: AbortSignal
+  force?: boolean
+}
+
+export async function registerDevice({
+  signal,
+  force
+}: RegisterDeviceOptions = {}): Promise<string> {
   const user = userStore.getUser()
   if (!user) {
     throw new Error('Cannot register device without an authenticated user')
   }
 
-  if (deviceStore.isRegistered()) {
+  if (deviceStore.isRegistered() && !force) {
     const existingDeviceId = deviceStore.getDeviceId()
     if (existingDeviceId) {
       log.info('[register-device] Device already registered, reusing ID:', existingDeviceId)

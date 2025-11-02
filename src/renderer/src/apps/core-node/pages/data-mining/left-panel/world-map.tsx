@@ -1,6 +1,7 @@
+import { useGetTopCountries } from '@/queries/stats/use-get-top-countries-query'
 import { useMapNodesQuery } from '@/queries/stats/use-map-nodes-query'
 import { isNumber } from 'lodash'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
 
 interface WorldMapProps {
@@ -79,9 +80,28 @@ export const WorldMap = memo(({ latitude, longitude }: WorldMapProps) => {
   )
 })
 
-const Nodes = () => {
-  // Fetch all network nodes
-  const { data: mapNodesData } = useMapNodesQuery()
+const Nodes = memo(() => {
+  // Fetch top countries data to get country codes for filtering nodes
+  const { data: topCountriesData } = useGetTopCountries({
+    limit: 10, // Get top 50 countries
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 60 * 1000 // 1 minute
+  })
+
+  // Extract country codes for filtering nodes (only from top 50 countries)
+  const countryCodes = useMemo(() => {
+    return topCountriesData?.metrics.top_countries.map((c) => c.country_code)
+  }, [topCountriesData])
+
+  // Fetch network nodes (filtered by top 50 countries)
+  const { data: mapNodesData } = useMapNodesQuery({
+    enabled: !!countryCodes,
+    countries: countryCodes,
+    max_per_country: 100,
+    target_total: 2000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 60 * 1000 // 1 minute
+  })
 
   const nodes = mapNodesData?.nodes || []
 
@@ -116,6 +136,8 @@ const Nodes = () => {
       })}
     </>
   )
-}
+})
+
+Nodes.displayName = 'Nodes'
 
 WorldMap.displayName = 'WorldMap'

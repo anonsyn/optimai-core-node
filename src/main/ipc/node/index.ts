@@ -103,8 +103,13 @@ class NodeIpcHandler {
         let deviceDetail: Partial<DeviceDetail> = {}
 
         if (deviceId) {
-          const res = await deviceApi.getDeviceById(deviceId)
-          deviceDetail = res.data.detail
+          try {
+            log.info('[ipc] Getting device detail for device ID:', deviceId)
+            const res = await deviceApi.getDeviceById(deviceId)
+            deviceDetail = res.data.detail
+          } catch (error) {
+            log.error('[ipc] Failed to get device detail:', getErrorMessage(error))
+          }
         }
 
         const localDeviceInfo: LocalDeviceInfo = {

@@ -1,6 +1,7 @@
 import EventEmitter from 'eventemitter3'
 import log from '../configs/logger'
 
+import pRetry from 'p-retry'
 import { DeviceType } from '../api/device/types'
 import { uptimeApi } from '../api/uptime'
 import { eventsService } from '../services/events-service'
@@ -177,7 +178,7 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     const encoded = encode(JSON.stringify(payload))
     let response: Awaited<ReturnType<typeof uptimeApi.reportOnline>>
     try {
-      response = await uptimeApi.reportOnline(encoded)
+      response = await pRetry(() => uptimeApi.reportOnline(encoded))
     } catch (error) {
       const errorMessage = getErrorMessage(error, 'Failed to report uptime')
       log.error('[uptime] ✗ Failed to report cycle:', errorMessage)
