@@ -38,16 +38,16 @@ export class Crawl4AiService {
     }
 
     try {
-      log.info('[crawl4ai] Initializing Crawl4AI service...')
+      // log.info('[crawl4ai] Initializing Crawl4AI service...')
 
       // Check Docker availability
       if (!(await dockerService.isInstalled())) {
-        log.error('[crawl4ai] Docker is not installed')
+        // log.error('[crawl4ai] Docker is not installed')
         return false
       }
 
       if (!(await dockerService.isRunning())) {
-        log.error('[crawl4ai] Docker daemon is not running')
+        // log.error('[crawl4ai] Docker daemon is not running')
         return false
       }
 
@@ -55,7 +55,7 @@ export class Crawl4AiService {
       const containerStatus = await dockerService.getContainerStatus(this.config.containerName)
 
       if (containerStatus?.status === 'running') {
-        log.info('[crawl4ai] Container is already running')
+        // log.info('[crawl4ai] Container is already running')
         // Try to determine the port from existing container
         // For now, we'll use the configured port
         this.containerPort = this.config.port
@@ -72,27 +72,29 @@ export class Crawl4AiService {
       // Get an available port
       this.containerPort = await getPort({ port: this.config.port })
       this.baseUrl = `http://localhost:${this.containerPort}`
-      log.info(`[crawl4ai] Using port ${this.containerPort}`)
+      // log.info(`[crawl4ai] Using port ${this.containerPort}`)
 
       // Pull image if needed
-      const imagePulled = await dockerService.pullImage(this.config.imageName, (message) =>
-        log.info(`[crawl4ai] Pull progress: ${message}`)
+      const imagePulled = await dockerService.pullImage(
+        this.config.imageName,
+        () => {}
+        // log.info(`[crawl4ai] Pull progress: ${message}`)
       )
 
       if (!imagePulled) {
-        log.error('[crawl4ai] Failed to pull Docker image')
+        // log.error('[crawl4ai] Failed to pull Docker image')
         return false
       }
 
       // Start or create container
       const started = await this.startContainer()
       if (!started) {
-        log.error('[crawl4ai] Failed to start container')
+        // log.error('[crawl4ai] Failed to start container')
         return false
       }
 
       // Wait for container to initialize before checking health
-      log.info('[crawl4ai] Waiting for container to initialize...')
+      // log.info('[crawl4ai] Waiting for container to initialize...')
       await sleep(3200)
 
       // Wait for container to be healthy
@@ -104,16 +106,16 @@ export class Crawl4AiService {
       )
 
       if (!healthy) {
-        log.error('[crawl4ai] Container health check failed')
+        // log.error('[crawl4ai] Container health check failed')
         return false
       }
 
       this.initialized = true
-      log.info('[crawl4ai] Service initialized successfully')
+      // log.info('[crawl4ai] Service initialized successfully')
       return true
     } catch (error) {
       log.error(
-        '[crawl4ai] Failed to initialize:',
+        // '[crawl4ai] Failed to initialize:',
         getErrorMessage(error, 'Failed to initialize Crawl4AI')
       )
       return false
@@ -132,14 +134,14 @@ export class Crawl4AiService {
     if (existingContainer) {
       // Container exists, try to start it
       if (existingContainer.status !== 'running') {
-        log.info(`[crawl4ai] Starting existing container ${containerName}...`)
+        // log.info(`[crawl4ai] Starting existing container ${containerName}...`)
         return await dockerService.startContainer(containerName)
       }
       return true
     }
 
     // Create and run new container
-    log.info(`[crawl4ai] Creating new container ${containerName}...`)
+    // log.info(`[crawl4ai] Creating new container ${containerName}...`)
     const containerId = await dockerService.runContainer({
       name: containerName,
       image: imageName,
@@ -213,7 +215,7 @@ export class Crawl4AiService {
    */
   async stop(): Promise<boolean> {
     try {
-      log.info('[crawl4ai] Stopping container...')
+      // log.info('[crawl4ai] Stopping container...')
       const stopped = await dockerService.stopContainer(this.config.containerName)
       if (stopped) {
         this.initialized = false
@@ -223,7 +225,7 @@ export class Crawl4AiService {
       return stopped
     } catch (error) {
       log.error(
-        '[crawl4ai] Failed to stop container:',
+        // '[crawl4ai] Failed to stop container:',
         getErrorMessage(error, 'Failed to stop Crawl4AI container')
       )
       return false
@@ -235,7 +237,7 @@ export class Crawl4AiService {
    */
   async remove(): Promise<boolean> {
     try {
-      log.info('[crawl4ai] Removing container...')
+      // log.info('[crawl4ai] Removing container...')
 
       // Stop first if running
       await this.stop()
@@ -244,7 +246,7 @@ export class Crawl4AiService {
       return removed
     } catch (error) {
       log.error(
-        '[crawl4ai] Failed to remove container:',
+        // '[crawl4ai] Failed to remove container:',
         getErrorMessage(error, 'Failed to remove Crawl4AI container')
       )
       return false
@@ -265,7 +267,7 @@ export class Crawl4AiService {
     // We don't stop the container on cleanup, just reset the state
     // This allows the container to be reused
     this.initialized = false
-    log.info('[crawl4ai] Service cleaned up (container still running for reuse)')
+    // log.info('[crawl4ai] Service cleaned up (container still running for reuse)')
   }
 }
 
