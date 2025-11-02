@@ -98,8 +98,8 @@ export const TotalRewardsCard = () => {
               <p className="text-14 leading-normal text-white/50">{item.label}</p>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <div className="flex items-center gap-1">
-                  <Token className="size-4.5 flex-shrink-0" />
-                  <span className="text-20 leading-tight font-medium text-white tabular-nums">
+                  <Token className="size-4 flex-shrink-0" />
+                  <span className="text-18 leading-tight font-medium text-white tabular-nums">
                     <NumberFlow
                       value={item.reward}
                       format={{
