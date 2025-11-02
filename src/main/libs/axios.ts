@@ -190,8 +190,8 @@ function createApiCLient(
         // Token refresh failed, process queue with error
         processQueue(refreshError)
 
-        // Clear tokens
-        tokenStore.removeTokens()
+        // // Clear tokens
+        // tokenStore.removeTokens()
 
         // Log error
         console.error(

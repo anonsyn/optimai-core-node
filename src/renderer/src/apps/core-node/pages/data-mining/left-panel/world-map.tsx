@@ -83,9 +83,7 @@ export const WorldMap = memo(({ latitude, longitude }: WorldMapProps) => {
 const Nodes = memo(() => {
   // Fetch top countries data to get country codes for filtering nodes
   const { data: topCountriesData } = useGetTopCountries({
-    limit: 10, // Get top 50 countries
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 60 * 1000 // 1 minute
+    limit: 10 // Get top 50 countries
   })
 
   // Extract country codes for filtering nodes (only from top 50 countries)
@@ -98,9 +96,7 @@ const Nodes = memo(() => {
     enabled: !!countryCodes,
     countries: countryCodes,
     max_per_country: 100,
-    target_total: 2000,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 60 * 1000 // 1 minute
+    target_total: 2000
   })
 
   const nodes = mapNodesData?.nodes || []
@@ -120,8 +116,9 @@ const Nodes = memo(() => {
 
         if (!isValidNode) return null
 
-        return (
-          <Marker key={node.id} coordinates={[node.longitude, node.latitude]}>
+        const Test = () => {
+          console.log('CHANGE')
+          return (
             <circle
               r={0.4}
               fill={nodeColor}
@@ -131,6 +128,12 @@ const Nodes = memo(() => {
                   node.status === 'online' ? 'drop-shadow(0 0 1px rgba(94, 237, 135, 0.6))' : 'none'
               }}
             />
+          )
+        }
+
+        return (
+          <Marker key={node.id} coordinates={[node.longitude, node.latitude]}>
+            <Test />
           </Marker>
         )
       })}

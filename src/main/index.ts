@@ -11,6 +11,7 @@ import updaterIpcHandler from './ipc/updater'
 import windowIpcHandler from './ipc/window'
 import { setupApplicationMenu } from './menu'
 import { eventsService } from './services/events-service'
+import { deviceStore, rewardStore, tokenStore, uptimeStore, userStore } from './storage'
 import { getErrorMessage } from './utils/get-error-message'
 import { createWindow } from './window/factory'
 import windowManager from './window/manager'
@@ -32,6 +33,14 @@ const reportFatalError = (type: 'uncaught_exception' | 'unhandled_rejection', er
   })
 }
 
+const getStorageSnapshot = () => ({
+  device: deviceStore.getDeviceInfo(),
+  user: userStore.getUser(),
+  tokens: tokenStore.getTokens(),
+  uptime: uptimeStore.getCurrentCycle(),
+  rewards: rewardStore.getStatistics()
+})
+
 process.on('uncaughtException', (error) => {
   log.error('[app] Uncaught exception:', getErrorMessage(error, 'Unknown error'))
   reportFatalError('uncaught_exception', error)
@@ -50,6 +59,7 @@ const logFolder = app.getPath('logs')
 
 console.log('logFolder', logFolder)
 console.log('app.getPath("userData")', app.getPath('userData'))
+console.log('getStorageSnapshot', getStorageSnapshot())
 
 if (!gotTheLock) {
   app.quit()

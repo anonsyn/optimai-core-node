@@ -14,9 +14,7 @@ export function useGetTopCountries(options: UseGetTopCountriesOptions = {}) {
   const {
     limit = 50, // Default to 50 countries
     no_cache = false,
-    enabled = true,
-    staleTime = 5 * 60 * 1000, // 5 minutes
-    refetchInterval = 60 * 1000 // 60 seconds
+    enabled = true
   } = options
 
   const queryKey = statsKeys.topCountries({
@@ -35,7 +33,6 @@ export function useGetTopCountries(options: UseGetTopCountriesOptions = {}) {
         .then((res) => res.data)
     },
     enabled,
-    staleTime,
-    refetchInterval
+    refetchInterval: false
   })
 }
