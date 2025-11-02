@@ -6,6 +6,9 @@ import { useGetMiningStatsQuery } from '@/queries/mining'
 import NumberFlow from '@number-flow/react'
 import { Sparkle } from 'lucide-react'
 import { WorldMap } from './world-map'
+import { WorldMapLeaflet } from './world-map-leaflet'
+
+const USE_LEAFLET_MAP = true
 
 export const TotalRewardsCard = () => {
   const { data: stats } = useGetMiningStatsQuery()
@@ -44,10 +47,18 @@ export const TotalRewardsCard = () => {
   return (
     <Card className="w-full overflow-hidden p-0">
       <div className="border-b border-white/4">
-        <WorldMap
-          latitude={deviceInfo?.latitude || null}
-          longitude={deviceInfo?.longitude || null}
-        />
+        {USE_LEAFLET_MAP ? (
+          <WorldMapLeaflet
+            key={Date.now()}
+            latitude={deviceInfo?.latitude || null}
+            longitude={deviceInfo?.longitude || null}
+          />
+        ) : (
+          <WorldMap
+            latitude={deviceInfo?.latitude || null}
+            longitude={deviceInfo?.longitude || null}
+          />
+        )}
       </div>
 
       <div className="px-4 py-3">

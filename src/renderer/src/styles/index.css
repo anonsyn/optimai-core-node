@@ -1,3 +1,4 @@
+@import 'leaflet/dist/leaflet.css';
 @import './tailwind.css';
 @import './fonts/index.css';
 @import './toast.css';
@@ -5,3 +6,8 @@
 @import './scrollbar.css';
 @import './tabs.css';
 @import './animation.css';
+
+/* Leaflet node marker glow effect */
+.node-marker-online {
+  filter: drop-shadow(0 0 1px rgba(94, 237, 135, 0.6));
+}

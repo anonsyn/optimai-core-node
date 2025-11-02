@@ -1,5 +1,4 @@
 import { statsApi, type MapNodesQueryOptions } from '@/api/stats'
-import { sleep } from '@/utils/sleep'
 import { useQuery } from '@tanstack/react-query'
 import { statsKeys } from './keys'
 
@@ -16,13 +15,14 @@ export const useMapNodesQuery = (options: UseMapNodesOptions = {}) => {
     max_per_country = 100,
     target_total = 2000,
     no_cache = false,
-    enabled = true
+    enabled = true,
+    staleTime = 5 * 60 * 1000,
+    refetchInterval = 60 * 1000
   } = options
 
   return useQuery({
     queryKey: statsKeys.mapNodes({ country, countries, max_per_country, target_total, no_cache }),
     queryFn: async () => {
-      await sleep(5000)
       return statsApi
         .getMapNodes({
           country,
@@ -34,7 +34,9 @@ export const useMapNodesQuery = (options: UseMapNodesOptions = {}) => {
         .then((res) => res.data)
     },
     enabled,
-    refetchInterval: false,
-    staleTime: 1000 * 60 * 60 // 1 hour
+    refetchInterval,
+    staleTime,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   })
 }

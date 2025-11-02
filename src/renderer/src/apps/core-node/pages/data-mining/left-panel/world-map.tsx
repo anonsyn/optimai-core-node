@@ -1,4 +1,4 @@
-import { useGetTopCountries } from '@/queries/stats/use-get-top-countries-query'
+import type { MapNodeLocation } from '@/api/stats'
 import { useMapNodesQuery } from '@/queries/stats/use-map-nodes-query'
 import { isNumber } from 'lodash'
 import { memo, useMemo } from 'react'
@@ -82,65 +82,66 @@ export const WorldMap = memo(({ latitude, longitude }: WorldMapProps) => {
 
 const Nodes = memo(() => {
   // Fetch top countries data to get country codes for filtering nodes
-  const { data: topCountriesData } = useGetTopCountries({
-    limit: 10 // Get top 50 countries
-  })
+  // const { data: topCountriesData } = useGetTopCountries({
+  //   limit: 10 // Focus on top 10 countries for performance
+  // })
 
-  // Extract country codes for filtering nodes (only from top 50 countries)
-  const countryCodes = useMemo(() => {
-    return topCountriesData?.metrics.top_countries.map((c) => c.country_code)
-  }, [topCountriesData])
+  // Extract country codes for filtering nodes (only from top countries)
+  // const countryCodes = useMemo(() => {
+  //   return topCountriesData?.metrics.top_countries.map((c) => c.country_code)
+  // }, [topCountriesData])
 
-  // Fetch network nodes (filtered by top 50 countries)
+  // Fetch network nodes (filtered by top countries)
   const { data: mapNodesData } = useMapNodesQuery({
-    enabled: !!countryCodes,
-    countries: countryCodes,
+    // enabled: !!countryCodes,
+    // countries: countryCodes,
     max_per_country: 100,
-    target_total: 2000
+    target_total: 1000
   })
 
-  const nodes = mapNodesData?.nodes || []
+  const nodes = useMemo(() => {
+    if (!mapNodesData?.nodes) return []
+    return mapNodesData.nodes.filter((node) => {
+      return (
+        node.latitude >= -90 &&
+        node.latitude <= 90 &&
+        node.longitude >= -180 &&
+        node.longitude <= 180
+      )
+    })
+  }, [mapNodesData?.nodes])
+
+  console.log({ nodes })
 
   return (
     <>
       {nodes.map((node) => {
-        // Status-based colors: online = green, offline = red
-        const nodeColor = node.status === 'online' ? '#5eed87' : '#f14158'
-        const nodeOpacity = node.status === 'online' ? 0.8 : 0.5
-
-        const isValidNode =
-          node.latitude >= -90 &&
-          node.latitude <= 90 &&
-          node.longitude >= -180 &&
-          node.longitude <= 180
-
-        if (!isValidNode) return null
-
-        const Test = () => {
-          console.log('CHANGE')
-          return (
-            <circle
-              r={0.4}
-              fill={nodeColor}
-              opacity={nodeOpacity}
-              style={{
-                filter:
-                  node.status === 'online' ? 'drop-shadow(0 0 1px rgba(94, 237, 135, 0.6))' : 'none'
-              }}
-            />
-          )
-        }
-
-        return (
-          <Marker key={node.id} coordinates={[node.longitude, node.latitude]}>
-            <Test />
-          </Marker>
-        )
+        return <NodeMarker key={node.id} node={node} />
       })}
     </>
   )
 })
 
 Nodes.displayName = 'Nodes'
+
+const NodeMarker = ({ node }: { node: MapNodeLocation }) => {
+  const nodeColor = node.status === 'online' ? '#5eed87' : '#f14158'
+  const nodeOpacity = node.status === 'online' ? 0.8 : 0.5
+
+  return (
+    <Marker coordinates={[node.longitude, node.latitude]}>
+      <circle
+        r={0.4}
+        fill={nodeColor}
+        opacity={nodeOpacity}
+        style={{
+          filter: node.status === 'online' ? 'drop-shadow(0 0 1px rgba(94, 237, 135, 0.6))' : 'none'
+        }}
+      />
+    </Marker>
+  )
+}
+
+NodeMarker.displayName = 'NodeMarker'
 
 WorldMap.displayName = 'WorldMap'
