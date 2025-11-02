@@ -1,4 +1,7 @@
 import { BASE_API_URL, BASE_MINER_URL } from '@/configs/env'
+import { store } from '@/store'
+import { logoutThunk } from '@/store/thunks/auth'
+import { getErrorMessage } from '@/utils/get-error-message'
 import { sessionManager } from '@/utils/session-manager'
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
@@ -168,9 +171,15 @@ function createApiClient(
         isRefreshing = true
 
         // Call refresh token endpoint directly (not through interceptor)
-        const response = await axios.post<RefreshTokenResponse>(`${BASE_API_URL}/auth/refresh`, {
-          refresh_token: refreshToken
-        })
+        const response = await axios
+          .post<RefreshTokenResponse>(`${BASE_API_URL}/auth/refresh`, {
+            refresh_token: refreshToken
+          })
+          .catch((error) => {
+            console.log('Refresh token failed:', getErrorMessage(error))
+
+            return Promise.reject(new Error('Failed to refresh token'))
+          })
 
         const { access_token: accessToken } = response.data
 
@@ -189,11 +198,13 @@ function createApiClient(
         // Token refresh failed, process queue with error
         processQueue(refreshError)
 
-        // Clear tokens and redirect to login
-        await sessionManager.clearTokens()
-
         // You might want to dispatch a logout action here if using Redux
-        // store.dispatch(authActions.logout())
+        const isRefreshError =
+          refreshError instanceof Error && refreshError.message === 'Failed to refresh token'
+        if (isRefreshError) {
+          await sessionManager.clearTokens()
+          store.dispatch(logoutThunk())
+        }
 
         return Promise.reject(refreshError)
       } finally {
