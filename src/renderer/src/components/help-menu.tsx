@@ -1,14 +1,13 @@
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator
+  DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
 import { EXTERNAL_LINKS } from '@/configs/links'
 import { useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { cn } from '@/utils/tw'
-import { Bug, MessageCircleQuestionMark, Signpost } from 'lucide-react'
+import { Bug, MessageCircleQuestionMark } from 'lucide-react'
 
 interface HelpMenuContentProps {
   className?: string
@@ -19,7 +18,7 @@ const HelpMenuContent = ({ className, onItemClick }: HelpMenuContentProps) => {
   const openReportIssueModal = useOpenModal(Modals.REPORT_ISSUE)
   return (
     <DropdownMenuContent className={cn('w-[224px] bg-[#2B2F2D]', className)}>
-      <DropdownMenuGroup>
+      {/* <DropdownMenuGroup>
         <DropdownMenuItem
           onClick={() => {
             onItemClick?.()
@@ -29,7 +28,7 @@ const HelpMenuContent = ({ className, onItemClick }: HelpMenuContentProps) => {
           <span>Installation Tutorial</span>
         </DropdownMenuItem>
       </DropdownMenuGroup>
-      <DropdownMenuSeparator />
+      <DropdownMenuSeparator /> */}
       <DropdownMenuGroup>
         <DropdownMenuItem
           onClick={() => {
