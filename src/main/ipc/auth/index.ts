@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import log from '../../configs/logger'
-import { deviceStore, rewardStore, tokenStore, uptimeStore, userStore } from '../../storage'
 import type { User } from '../../storage'
+import { deviceStore, rewardStore, tokenStore, uptimeStore, userStore } from '../../storage'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { AuthEvents } from './events'
 
@@ -12,6 +12,9 @@ class AuthIpcHandler {
       try {
         tokenStore.saveTokens(accessToken, refreshToken)
         log.info('Tokens stored successfully')
+        // TODO: fix device id error instead of clear registration
+        deviceStore.clearRegistration()
+
         return { success: true }
       } catch (error: unknown) {
         const message = getErrorMessage(error, 'Failed to store tokens')
