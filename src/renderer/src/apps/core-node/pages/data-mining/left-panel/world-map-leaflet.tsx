@@ -215,8 +215,7 @@ const Nodes = memo(() => {
 Nodes.displayName = 'LeafletNodes'
 
 const NodeMarker = memo(({ node }: { node: MapNodeLocation }) => {
-  const nodeColor = node.status === 'online' ? '#5eed87' : '#f14158'
-  const nodeOpacity = node.status === 'online' ? 0.8 : 0.5
+  const nodeColor = node.status === 'online' ? '#5eed87' : '#71717a'
 
   return (
     <CircleMarker
@@ -225,7 +224,7 @@ const NodeMarker = memo(({ node }: { node: MapNodeLocation }) => {
       pathOptions={{
         color: nodeColor,
         weight: 0,
-        fillOpacity: nodeOpacity,
+        fillOpacity: 1,
         fillColor: nodeColor,
         className: node.status === 'online' ? 'node-marker-online' : ''
       }}
