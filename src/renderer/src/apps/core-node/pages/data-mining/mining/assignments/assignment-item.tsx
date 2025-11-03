@@ -10,6 +10,11 @@ interface AssignmentItemProps {
 export const AssignmentItem = ({ assignment }: AssignmentItemProps) => {
   const status = lodash.get(assignment, 'status', '')
   const isCompleted = status.toLowerCase() === 'completed'
+  const isFailed = status === 'failed'
+
+  if (isFailed) {
+    return null
+  }
 
   // Render different component based on status
   if (isCompleted) {
