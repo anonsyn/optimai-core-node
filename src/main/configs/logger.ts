@@ -30,11 +30,30 @@ const setupLogger = () => {
       .replace(/\..+/, '')
       .replace(/T/, '_')
 
-    const dirName = path.dirname(oldLogFile.path)
+    const oldPath = oldLogFile.path
+    const dirName = path.dirname(oldPath)
     const newFileName = `log-${timestamp}.log`
     const newPath = path.join(dirName, newFileName)
 
-    return newPath
+    try {
+      fs.renameSync(oldPath, newPath)
+    } catch (rotateErr) {
+      console.error(
+        'Error rotating log file:',
+        getErrorMessage(rotateErr, 'Error rotating log file')
+      )
+
+      if (!oldLogFile.clear()) {
+        try {
+          fs.writeFileSync(oldPath, '')
+        } catch (clearErr) {
+          console.error(
+            'Error clearing oversized log file:',
+            getErrorMessage(clearErr, 'Error clearing oversized log file')
+          )
+        }
+      }
+    }
   }
 
   // Configure cleanup function to keep the newest 10 log files
