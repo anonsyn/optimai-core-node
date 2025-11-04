@@ -175,10 +175,10 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     }
 
     log.info(`[uptime] Sending report to API...`)
-    const encoded = encode(JSON.stringify(payload))
+    const encodedMessage = encode(JSON.stringify(payload))
     let response: Awaited<ReturnType<typeof uptimeApi.reportOnline>>
     try {
-      response = await pRetry(() => uptimeApi.reportOnline(encoded))
+      response = await pRetry(() => uptimeApi.reportOnline(encodedMessage))
     } catch (error) {
       const errorMessage = getErrorMessage(error, 'Failed to report uptime')
       log.error('[uptime] ✗ Failed to report cycle:', errorMessage)
@@ -189,7 +189,7 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
         metadata: {
           duration,
           maxDuration,
-          payloadSize: encoded.length
+          encodedMessage: encodedMessage
         }
       })
       return
@@ -215,12 +215,12 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
       log.error('[uptime] ✗ Error parsing reward response:', errorMsg)
       await eventsService.reportError({
         type: 'uptime.reward_parse_failed',
-        message: 'Failed to parse uptime reward response',
+        message: errorMsg,
         error,
         metadata: {
           duration,
           maxDuration,
-          payloadSize: encoded.length,
+          encodedMessage: encodedMessage,
           responsePreview:
             typeof response?.data?.data === 'string' ? response.data.data.slice(0, 200) : undefined
         }

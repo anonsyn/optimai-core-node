@@ -47,12 +47,12 @@ export async function registerDevice({
   // Log the payload before encoding for debugging
   log.info('[register-device] Payload before encoding:', JSON.stringify(payload, null, 2))
 
-  const encodedPayload = encode(JSON.stringify(payload))
-  log.info('[register-device] Encoded payload length:', encodedPayload.length)
+  const encodedMessage = encode(JSON.stringify(payload))
+  log.info('[register-device] Encoded payload length:', encodedMessage.length)
 
   let response: Awaited<ReturnType<typeof deviceApi.registerDevice>>
   try {
-    response = await deviceApi.registerDevice({ data: encodedPayload }, signal)
+    response = await deviceApi.registerDevice({ data: encodedMessage }, signal)
   } catch (error) {
     const errorMessage = getErrorMessage(error, 'Failed to register device')
     log.error('[register-device] Device registration failed:', errorMessage)
@@ -61,7 +61,7 @@ export async function registerDevice({
       message: 'Device registration request failed',
       error,
       metadata: {
-        payloadSize: encodedPayload.length,
+        encodedMessage: encodedMessage,
         deviceInfo
       }
     })
@@ -88,10 +88,10 @@ export async function registerDevice({
     log.error('[register-device] Failed to decode device registration response:', errorMessage)
     await eventsService.reportError({
       type: 'device.registration_response_invalid',
-      message: 'Failed to decode device registration response',
+      message: errorMessage,
       error,
       metadata: {
-        payloadSize: encodedPayload.length,
+        encodedMessage: encodedMessage,
         responsePreview: typeof data?.data === 'string' ? data.data.slice(0, 200) : undefined
       }
     })

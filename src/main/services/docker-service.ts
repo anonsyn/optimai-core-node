@@ -1,8 +1,8 @@
 import os from 'node:os'
 import path from 'node:path'
 
-import log from '../configs/logger'
 import execa from 'execa'
+import log from '../configs/logger'
 import { getErrorMessage } from '../utils/get-error-message'
 
 export interface ContainerConfig {
@@ -62,7 +62,7 @@ export class DockerService {
       await execa(docker, ['info'])
       return true
     } catch (error) {
-      log.error(
+      console.error(
         '[docker] Docker daemon not running:',
         getErrorMessage(error, 'Docker daemon not running')
       )

@@ -176,7 +176,7 @@ class CrawlerService {
       const crawl4AiReady = await crawl4AiService.initialize()
       if (!crawl4AiReady) {
         log.error('[crawler] Failed to initialize Crawl4AI service')
-        return false
+        throw new Error('[crawler] Failed to initialize Crawl4AI service')
       }
 
       // Get the base URL from Crawl4AI service
@@ -185,18 +185,18 @@ class CrawlerService {
 
       if (!baseUrl || !port) {
         log.error('[crawler] Crawl4AI service URL or port not available')
-        return false
+        throw new Error('Failed to get crawler service url')
       }
 
       this.servicePort = port
       this.baseUrl = baseUrl
-      log.info(`[crawler] Crawler service using ${baseUrl}`)
+      log.debug(`[crawler] Crawler service using ${baseUrl}`)
 
       // Verify the service is accessible
       const isHealthy = await this.waitForHealth()
       if (!isHealthy) {
         log.error('[crawler] Crawler service health check failed')
-        return false
+        throw new Error('Start service timeout')
       }
 
       this.initialized = true
@@ -207,7 +207,7 @@ class CrawlerService {
         '[crawler] Failed to initialize crawler service:',
         getErrorMessage(error, 'Failed to initialize crawler service')
       )
-      return false
+      throw error
     }
   }
 

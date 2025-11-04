@@ -43,12 +43,12 @@ export class Crawl4AiService {
       // Check Docker availability
       if (!(await dockerService.isInstalled())) {
         // log.error('[crawl4ai] Docker is not installed')
-        return false
+        throw new Error('Docker is not installed')
       }
 
       if (!(await dockerService.isRunning())) {
         // log.error('[crawl4ai] Docker daemon is not running')
-        return false
+        throw new Error('Docker daemon is not running')
       }
 
       // Check if container already exists and is running
@@ -83,7 +83,7 @@ export class Crawl4AiService {
 
       if (!imagePulled) {
         // log.error('[crawl4ai] Failed to pull Docker image')
-        return false
+        throw new Error('Failed to pull Docker image')
       }
 
       // Start or create container

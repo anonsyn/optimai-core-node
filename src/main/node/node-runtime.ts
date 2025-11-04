@@ -1,6 +1,7 @@
 import EventEmitter from 'eventemitter3'
 
 import pRetry from 'p-retry'
+import log from '../configs/logger'
 import { apiClient } from '../libs/axios'
 import { eventsService } from '../services/events-service'
 import type { UptimeData } from '../storage'
@@ -191,12 +192,8 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
 
       userStore.saveUser(user)
     } catch (error) {
-      await eventsService.reportError({
-        type: 'node.ensure_user_failed',
-        message: 'Failed to load user profile before starting node',
-        error
-      })
-      throw new Error('Failed to load user profile')
+      log.error(getErrorMessage(error, 'Failed to load user profile'))
+      throw error
     }
   }
 }
