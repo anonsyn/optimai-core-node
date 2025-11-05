@@ -45,10 +45,13 @@ export class DockerService {
   async isInstalled(): Promise<boolean> {
     try {
       const { version } = await this.ensureDockerBinary()
-      log.info('[docker] Docker version:', version)
+      console.info('[docker] Docker version:', version)
       return true
     } catch (error) {
-      log.error('[docker] Docker not installed:', getErrorMessage(error, 'Docker not installed'))
+      console.error(
+        '[docker] Docker not installed:',
+        getErrorMessage(error, 'Docker not installed')
+      )
       return false
     }
   }
@@ -95,16 +98,16 @@ export class DockerService {
   /**
    * Pull a Docker image
    */
-  async pullImage(image: string, onProgress?: (message: string) => void): Promise<boolean> {
+  async pullImage(image: string, onProgress?: (message: string) => void) {
     try {
       // Check if image exists locally first
-      const exists = await this.imageExists(image)
+      const exists = await this.isImageExists(image)
       if (exists) {
-        log.info(`[docker] Image ${image} already exists locally`)
-        return true
+        log.debug(`[docker] Image ${image} already exists locally`)
+        return
       }
 
-      log.info(`[docker] Pulling image ${image}...`)
+      log.debug(`[docker] Pulling image ${image}...`)
       onProgress?.(`Pulling ${image}...`)
 
       const docker = await this.getDockerCommand()
@@ -114,29 +117,28 @@ export class DockerService {
         pullProcess.stdout.on('data', (data) => {
           const message = data.toString().trim()
           if (message) {
-            log.info(`[docker] Pull progress: ${message}`)
+            log.debug(`[docker] Pull progress: ${message}`)
             onProgress?.(message)
           }
         })
       }
 
       await pullProcess
-      log.info(`[docker] Image ${image} pulled successfully`)
+      log.debug(`[docker] Image ${image} pulled successfully`)
       onProgress?.('Pull complete')
-      return true
     } catch (error) {
       log.error(
         `[docker] Failed to pull image ${image}:`,
         getErrorMessage(error, `Failed to pull image ${image}`)
       )
-      return false
+      throw error
     }
   }
 
   /**
    * Check if an image exists locally
    */
-  async imageExists(image: string): Promise<boolean> {
+  async isImageExists(image: string): Promise<boolean> {
     try {
       const docker = await this.getDockerCommand()
       await execa(docker, ['image', 'inspect', image])
@@ -149,7 +151,7 @@ export class DockerService {
   /**
    * Create and run a container
    */
-  async runContainer(config: ContainerConfig): Promise<string | null> {
+  async runContainer(config: ContainerConfig): Promise<string> {
     try {
       const args = ['run']
 
@@ -193,18 +195,18 @@ export class DockerService {
         args.push(...config.command)
       }
 
-      log.info(`[docker] Running container ${config.name}...`)
+      log.debug(`[docker] Running container ${config.name}...`)
       const docker = await this.getDockerCommand()
       const { stdout } = await execa(docker, args)
       const containerId = stdout.trim().substring(0, 12)
-      log.info(`[docker] Container ${config.name} started with ID: ${containerId}`)
+      log.debug(`[docker] Container ${config.name} started with ID: ${containerId}`)
       return containerId
     } catch (error) {
       log.error(
         `[docker] Failed to run container ${config.name}:`,
         getErrorMessage(error, `Failed to run container ${config.name}`)
       )
-      return null
+      throw error
     }
   }
 
@@ -213,10 +215,10 @@ export class DockerService {
    */
   async startContainer(name: string): Promise<boolean> {
     try {
-      log.info(`[docker] Starting container ${name}...`)
+      log.debug(`[docker] Starting container ${name}...`)
       const docker = await this.getDockerCommand()
       await execa(docker, ['start', name])
-      log.info(`[docker] Container ${name} started`)
+      log.debug(`[docker] Container ${name} started`)
       return true
     } catch (error) {
       log.error(
@@ -230,9 +232,9 @@ export class DockerService {
   /**
    * Stop a running container
    */
-  async stopContainer(name: string, timeout?: number): Promise<boolean> {
+  async stopContainer(name: string, timeout?: number) {
     try {
-      log.info(`[docker] Stopping container ${name}...`)
+      log.debug(`[docker] Stopping container ${name}...`)
       const args = ['stop']
       if (timeout !== undefined) {
         args.push('-t', timeout.toString())
@@ -241,23 +243,22 @@ export class DockerService {
 
       const docker = await this.getDockerCommand()
       await execa(docker, args)
-      log.info(`[docker] Container ${name} stopped`)
-      return true
+      log.debug(`[docker] Container ${name} stopped`)
     } catch (error) {
       log.error(
         `[docker] Failed to stop container ${name}:`,
         getErrorMessage(error, `Failed to stop container ${name}`)
       )
-      return false
+      throw error
     }
   }
 
   /**
    * Remove a container
    */
-  async removeContainer(name: string, force?: boolean): Promise<boolean> {
+  async removeContainer(name: string, force?: boolean) {
     try {
-      log.info(`[docker] Removing container ${name}...`)
+      log.debug(`[docker] Removing container ${name}...`)
       const args = ['rm']
       if (force) {
         args.push('-f')
@@ -266,14 +267,13 @@ export class DockerService {
 
       const docker = await this.getDockerCommand()
       await execa(docker, args)
-      log.info(`[docker] Container ${name} removed`)
-      return true
+      log.debug(`[docker] Container ${name} removed`)
     } catch (error) {
       log.error(
         `[docker] Failed to remove container ${name}:`,
         getErrorMessage(error, `Failed to remove container ${name}`)
       )
-      return false
+      throw error
     }
   }
 
@@ -414,30 +414,32 @@ export class DockerService {
     healthCheckFn: () => Promise<boolean>,
     maxRetries: number = 30,
     delayMs: number = 2000
-  ): Promise<boolean> {
+  ) {
     for (let i = 0; i < maxRetries; i++) {
       // First check if container is running
       const isRunning = await this.isContainerRunning(name)
       if (!isRunning) {
         log.warn(`[docker] Container ${name} is not running`)
-        return false
+        throw new Error(`Container ${name} is not running`)
       }
 
       // Then check health
       const isHealthy = await healthCheckFn()
       if (isHealthy) {
-        log.info(`[docker] Container ${name} is healthy`)
-        return true
+        log.debug(`[docker] Container ${name} is healthy`)
+        return
       }
 
       if (i < maxRetries - 1) {
-        log.info(`[docker] Waiting for container ${name} to be healthy... (${i + 1}/${maxRetries})`)
+        log.debug(
+          `[docker] Waiting for container ${name} to be healthy... (${i + 1}/${maxRetries})`
+        )
         await new Promise((resolve) => setTimeout(resolve, delayMs))
       }
     }
 
     log.error(`[docker] Container ${name} health check failed after ${maxRetries} attempts`)
-    return false
+    throw new Error(`Container ${name} health check failed after ${maxRetries} attempts`)
   }
 
   /**
@@ -489,7 +491,7 @@ export class DockerService {
       try {
         const { stdout } = await execa(trimmedCandidate, ['--version'])
         const version = stdout.trim()
-        log.info(`[docker] Using Docker CLI at: ${trimmedCandidate}`)
+        log.debug(`[docker] Using Docker CLI at: ${trimmedCandidate}`)
         return { command: trimmedCandidate, version }
       } catch (error) {
         const code = (error as NodeJS.ErrnoException | undefined)?.code

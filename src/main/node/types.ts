@@ -17,7 +17,7 @@ export interface ServerStatus {
 }
 
 export interface NodeStatusResponse {
-  status: string
+  status: NodeStatus
   running: boolean
   last_error: string | null
 }

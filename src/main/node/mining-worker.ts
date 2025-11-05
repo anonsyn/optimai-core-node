@@ -102,6 +102,14 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       this.setStatus(MiningStatus.Ready)
       log.info('[mining] Crawler service initialized successfully')
       this.startDockerMonitor()
+
+      // Set worker preferences
+      await this.setWorkerPreferences()
+
+      // Start services
+      this.startHeartbeat()
+      this.connectSse()
+      this.schedulePoll(0)
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to initialize crawler service')
       log.error('[mining] Failed to initialize crawler service:', message)
@@ -118,16 +126,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         }
       })
       this.running = false
-      return
     }
-
-    // Set worker preferences
-    await this.setWorkerPreferences()
-
-    // Start services
-    this.startHeartbeat()
-    this.connectSse()
-    this.schedulePoll(0)
   }
 
   async stop() {
@@ -217,28 +216,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       const encodedPayload = encode(JSON.stringify(payload))
 
       try {
-        const response = await miningApi.sendHeartbeat({ data: encodedPayload })
+        await miningApi.sendHeartbeat({ data: encodedPayload })
         log.debug('[mining] Heartbeat sent')
-
-        // Handle assignment count in response
-        if (response.data?.assigned && response.data.assigned > 0) {
-          log.info(`[mining] Got ${response.data.assigned} new tasks`)
-          // Trigger assignment processing
-          void this.processAssignments()
-        }
       } catch (error) {
         log.error('[mining] Heartbeat failed:', getErrorMessage(error, 'Heartbeat failed'))
-        void eventsService.reportError({
-          type: 'mining.heartbeat_failed',
-          message: 'Failed to send mining heartbeat',
-          severity: 'warning',
-          error,
-          metadata: {
-            dockerAvailable: this.dockerAvailable,
-            crawlerInitialized: this.crawlerServiceInitialized
-          }
-        })
-        this.emit('error', error instanceof Error ? error : new Error(String(error)))
       }
     }
 
@@ -272,8 +253,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
       const headers: Record<string, string> = {
         Accept: 'text/event-stream',
-        Authorization: `Bearer ${token}`,
-        'X-Service': 'miner'
+        Authorization: `Bearer ${token}`
       }
 
       try {
@@ -352,7 +332,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         // Trigger assignment processing
         void this.processAssignments()
       } catch (error) {
-        log.error('[mining] Couldn’t read task update:', getErrorMessage(error, 'Parse error'))
+        log.error("[mining] Couldn't read task update:", getErrorMessage(error, 'Parse error'))
         // Still try to process assignments even if parsing fails
         void this.processAssignments()
       }
@@ -414,7 +394,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         this.dockerAvailable = environmentHealthy
 
         if (!environmentHealthy) {
-          const reason = !dockerAvailable ? 'Docker not available' : 'Data fetcher is not running'
+          const reason = !dockerAvailable ? 'Docker not available' : 'The container '
           const containerInfo = !dockerAvailable ? '' : ` (${crawl4AiService.getContainerName()})`
           log.warn(`[mining] ${reason}${containerInfo} - stopping mining worker`)
           this.setStatus(MiningStatus.Error, reason)

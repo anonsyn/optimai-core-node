@@ -173,11 +173,7 @@ class CrawlerService {
       log.info('[crawler] Initializing crawler service...')
 
       // Initialize Crawl4AI service
-      const crawl4AiReady = await crawl4AiService.initialize()
-      if (!crawl4AiReady) {
-        log.error('[crawler] Failed to initialize Crawl4AI service')
-        throw new Error('[crawler] Failed to initialize Crawl4AI service')
-      }
+      await crawl4AiService.initialize()
 
       // Get the base URL from Crawl4AI service
       const baseUrl = crawl4AiService.getBaseUrl()

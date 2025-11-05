@@ -32,30 +32,25 @@ export class Crawl4AiService {
   /**
    * Initialize the Crawl4AI service
    */
-  async initialize(): Promise<boolean> {
+  async initialize() {
     if (this.initialized) {
-      return true
+      return
     }
 
     try {
-      // log.info('[crawl4ai] Initializing Crawl4AI service...')
-
       // Check Docker availability
       if (!(await dockerService.isInstalled())) {
-        // log.error('[crawl4ai] Docker is not installed')
         throw new Error('Docker is not installed')
       }
 
       if (!(await dockerService.isRunning())) {
-        // log.error('[crawl4ai] Docker daemon is not running')
         throw new Error('Docker daemon is not running')
       }
 
       // Check if container already exists and is running
-      const containerStatus = await dockerService.getContainerStatus(this.config.containerName)
+      const isContainerRunning = await dockerService.isContainerRunning(this.config.containerName)
 
-      if (containerStatus?.status === 'running') {
-        // log.info('[crawl4ai] Container is already running')
+      if (isContainerRunning) {
         // Try to determine the port from existing container
         // For now, we'll use the configured port
         this.containerPort = this.config.port
@@ -65,67 +60,42 @@ export class Crawl4AiService {
         const isHealthy = await this.checkHealth()
         if (isHealthy) {
           this.initialized = true
-          return true
+          return
         }
       }
 
       // Get an available port
       this.containerPort = await getPort({ port: this.config.port })
       this.baseUrl = `http://localhost:${this.containerPort}`
-      // log.info(`[crawl4ai] Using port ${this.containerPort}`)
 
       // Pull image if needed
-      const imagePulled = await dockerService.pullImage(
-        this.config.imageName,
-        () => {}
-        // log.info(`[crawl4ai] Pull progress: ${message}`)
-      )
-
-      if (!imagePulled) {
-        // log.error('[crawl4ai] Failed to pull Docker image')
-        throw new Error('Failed to pull Docker image')
-      }
+      await dockerService.pullImage(this.config.imageName, () => {})
 
       // Start or create container
-      const started = await this.startContainer()
-      if (!started) {
-        // log.error('[crawl4ai] Failed to start container')
-        return false
-      }
+      await this.startContainer()
 
       // Wait for container to initialize before checking health
-      // log.info('[crawl4ai] Waiting for container to initialize...')
       await sleep(3200)
 
       // Wait for container to be healthy
-      const healthy = await dockerService.waitForHealth(
+      await dockerService.waitForHealth(
         this.config.containerName,
         () => this.checkHealth(),
         30,
         2000
       )
 
-      if (!healthy) {
-        // log.error('[crawl4ai] Container health check failed')
-        return false
-      }
-
       this.initialized = true
-      // log.info('[crawl4ai] Service initialized successfully')
-      return true
     } catch (error) {
-      log.error(
-        // '[crawl4ai] Failed to initialize:',
-        getErrorMessage(error, 'Failed to initialize Crawl4AI')
-      )
-      return false
+      log.error(getErrorMessage(error, 'Failed to initialize Crawl4AI'))
+      throw error
     }
   }
 
   /**
    * Start the Crawl4AI container
    */
-  private async startContainer(): Promise<boolean> {
+  private async startContainer() {
     const { containerName, imageName } = this.config
 
     // Check if container exists (stopped)
@@ -141,8 +111,7 @@ export class Crawl4AiService {
     }
 
     // Create and run new container
-    // log.info(`[crawl4ai] Creating new container ${containerName}...`)
-    const containerId = await dockerService.runContainer({
+    return dockerService.runContainer({
       name: containerName,
       image: imageName,
       port: {
@@ -153,8 +122,6 @@ export class Crawl4AiService {
       detached: true,
       shmSize: '1g'
     })
-
-    return containerId !== null
   }
 
   /**
@@ -213,43 +180,34 @@ export class Crawl4AiService {
   /**
    * Stop the Crawl4AI container
    */
-  async stop(): Promise<boolean> {
+  async stop() {
     try {
-      // log.info('[crawl4ai] Stopping container...')
-      const stopped = await dockerService.stopContainer(this.config.containerName)
-      if (stopped) {
-        this.initialized = false
-        this.baseUrl = null
-        this.containerPort = null
-      }
-      return stopped
+      await dockerService.stopContainer(this.config.containerName)
+      this.initialized = false
+      this.baseUrl = null
+      this.containerPort = null
     } catch (error) {
-      log.error(
-        // '[crawl4ai] Failed to stop container:',
-        getErrorMessage(error, 'Failed to stop Crawl4AI container')
-      )
-      return false
+      log.error(getErrorMessage(error, 'Failed to stop Crawl4AI container'))
     }
   }
 
   /**
    * Remove the Crawl4AI container
    */
-  async remove(): Promise<boolean> {
+  async remove() {
     try {
       // log.info('[crawl4ai] Removing container...')
 
       // Stop first if running
       await this.stop()
 
-      const removed = await dockerService.removeContainer(this.config.containerName, true)
-      return removed
+      await dockerService.removeContainer(this.config.containerName, true)
     } catch (error) {
       log.error(
         // '[crawl4ai] Failed to remove container:',
         getErrorMessage(error, 'Failed to remove Crawl4AI container')
       )
-      return false
+      throw error
     }
   }
 

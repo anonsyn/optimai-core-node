@@ -1,9 +1,9 @@
 import { RootState } from '@/store'
 import {
-  NodeStatus,
-  NodeStatusResponse,
+  MiningAssignment,
   MiningWorkerStatus,
-  MiningAssignment
+  NodeStatus,
+  NodeStatusResponse
 } from '@main/node/types'
 import { UptimeData } from '@main/storage/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
@@ -18,7 +18,6 @@ export interface NodeState {
   deviceId?: string
   userIpId?: string
   status: NodeStatus
-  nodeStatusResponse?: NodeStatusResponse
   lastError?: string
 
   // Uptime tracking
@@ -50,16 +49,7 @@ const nodeSlice = createSlice({
 
     // Node status
     setNodeStatus: (state, action: PayloadAction<NodeStatusResponse>) => {
-      state.nodeStatusResponse = action.payload
-      // Map the string status to the enum
-      const statusMap: Record<string, NodeStatus> = {
-        idle: NodeStatus.Idle,
-        starting: NodeStatus.Starting,
-        running: NodeStatus.Running,
-        restarting: NodeStatus.Restarting,
-        stopping: NodeStatus.Stopping
-      }
-      state.status = statusMap[action.payload.status] || NodeStatus.Idle
+      state.status = action.payload.status
       state.lastError = action.payload.last_error || undefined
     },
 
@@ -123,7 +113,6 @@ export const nodeSelectors = {
 
   // Node status selectors
   status: (state: RootState) => state.node.status,
-  nodeStatusResponse: (state: RootState) => state.node.nodeStatusResponse,
   isRunning: (state: RootState) => state.node.status === NodeStatus.Running,
   isStarting: (state: RootState) => state.node.status === NodeStatus.Starting,
   isStopping: (state: RootState) => state.node.status === NodeStatus.Stopping,
