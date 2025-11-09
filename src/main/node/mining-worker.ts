@@ -567,21 +567,30 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
   private async processAssignment(assignment: MiningAssignment) {
     const { id: assignmentId, status, task } = assignment
+    let effectiveStatus = status
 
     try {
-      // Start assignment if needed
-      if (status === 'not_started') {
-        try {
-          log.info(`[mining] Starting assignment ${assignmentId}`)
-          await miningApi.startAssignment(assignmentId)
-          this.emit('assignmentStarted', assignmentId)
-        } catch (error: any) {
-          // Check if already started (409 status)
-          if (error?.response?.status !== 409) {
-            throw error
-          }
-          log.info(`[mining] Assignment ${assignmentId} already started`)
+      if (effectiveStatus === 'not_started') {
+        const startOutcome = await this.ensureAssignmentStart(assignmentId)
+        if (startOutcome.action === 'skip') {
+          const skipError = new Error(startOutcome.reason)
+          log.warn(
+            `[mining] Skipping assignment ${assignmentId}: ${startOutcome.reason}`
+          )
+          await eventsService.reportError({
+            type: 'mining.assignment_start_skipped',
+            message: `Cannot start assignment ${assignmentId}`,
+            severity: 'info',
+            metadata: {
+              assignmentId,
+              reason: startOutcome.reason,
+              taskPlatform: task?.platform,
+            },
+          })
+          this.emit('assignmentFailed', assignmentId, skipError)
+          return
         }
+        effectiveStatus = 'in_progress'
       }
 
       // Get URL from task
@@ -648,10 +657,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         error instanceof Error ? error : new Error(String(error))
       )
 
+      const axiosResponse = (error as any)?.response
+
       // Check if already completed (409 status)
-      if ((error as any)?.response?.status === 409) {
+      if (axiosResponse?.status === 409) {
         log.info(`[mining] Assignment ${assignmentId} already completed`)
         this.emit('assignmentCompleted', assignmentId)
+      } else if (this.shouldSkipAbandonDueToState(axiosResponse)) {
+        log.warn(
+          `[mining] Skipping abandon for assignment ${assignmentId}: ${axiosResponse?.data?.message ?? 'invalid state transition'}`
+        )
       } else {
         // Determine abandon reason based on error
         const reason = this.getAbandonReason(errorMsg)
@@ -744,4 +759,158 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     // Default to site_blocked for other errors
     return MiningAssignmentFailureReason.SITE_BLOCKED
   }
+
+  /**
+   * Guard the start transition with at most one retry for transient failures.
+   * Returns `skip` when the server explicitly refuses (platform, not found, etc.)
+   * so the caller can avoid crawling/submitting.
+   */
+  private async ensureAssignmentStart(
+    assignmentId: string
+  ): Promise<StartGuardOutcome> {
+    const attemptStart = async (
+      attempt: number
+    ): Promise<StartAttemptResult> => {
+      try {
+        log.info(`[mining] Starting assignment ${assignmentId} (attempt ${attempt})`)
+        await miningApi.startAssignment(assignmentId)
+        this.emit('assignmentStarted', assignmentId)
+        return { type: 'proceed' }
+      } catch (error: any) {
+        const decision = this.classifyStartError(error)
+        if (decision.type === 'already-started') {
+          log.info(
+            `[mining] Assignment ${assignmentId} already started (server acknowledged)`
+          )
+          return { type: 'proceed' }
+        }
+        if (decision.type === 'skip') {
+          return { type: 'skip', reason: decision.reason }
+        }
+        if (decision.type === 'retry') {
+          return { type: 'retry', reason: decision.reason }
+        }
+        throw error
+      }
+    }
+
+    const firstAttempt = await attemptStart(1)
+    if (firstAttempt.type === 'proceed') {
+      return { action: 'proceed' }
+    }
+    if (firstAttempt.type === 'skip') {
+      return { action: 'skip', reason: firstAttempt.reason }
+    }
+
+    const backoffMs = 250 + Math.floor(Math.random() * 250)
+    log.warn(
+      `[mining] startAssignment transient error for ${assignmentId}, retrying once after ${backoffMs}ms: ${firstAttempt.reason}`
+    )
+    await new Promise((resolve) => setTimeout(resolve, backoffMs))
+
+    const secondAttempt = await attemptStart(2)
+    if (secondAttempt.type === 'proceed') {
+      return { action: 'proceed' }
+    }
+    if (secondAttempt.type === 'skip') {
+      return { action: 'skip', reason: secondAttempt.reason }
+    }
+
+    return {
+      action: 'skip',
+      reason: secondAttempt.reason ?? 'start failed after retry',
+    }
+  }
+
+  /**
+   * Exposes why startAssignment failed so callers can decide between retry/skip/rethrow.
+   */
+  private classifyStartError(
+    error: any
+  ): StartErrorDecision {
+    const status: number | undefined = error?.response?.status
+    const messageRaw = this.normalizeResponseMessage(error?.response?.data)
+    const message = messageRaw?.toLowerCase() ?? ''
+
+    // Business rules that keep us from starting (reassignment limits, platform mismatch).
+    if (status === 409) {
+      if (message.includes('already started')) {
+        return { type: 'already-started' }
+      }
+      if (message.includes('platform not in worker preferences')) {
+        return { type: 'skip', reason: messageRaw ?? 'platform not allowed' }
+      }
+      if (message.includes('task not in assignable state')) {
+        return { type: 'skip', reason: messageRaw ?? 'task not in assignable state' }
+      }
+      return { type: 'skip', reason: messageRaw ?? 'conflict starting assignment' }
+    }
+
+    if (status === 404) {
+      return { type: 'skip', reason: messageRaw ?? 'assignment not found' }
+    }
+
+    if (status === 403) {
+      return { type: 'skip', reason: messageRaw ?? 'not authorized to start assignment' }
+    }
+
+    if (status && status >= 500) {
+      return { type: 'retry', reason: messageRaw ?? `server error (${status})` }
+    }
+
+    if (!status && error?.code) {
+      return { type: 'retry', reason: error.code }
+    }
+
+    return { type: 'rethrow' }
+  }
+
+  private normalizeResponseMessage(responseData: any): string | null {
+    if (typeof responseData === 'string') {
+      return responseData
+    }
+    if (responseData && typeof responseData.message === 'string') {
+      return responseData.message
+    }
+    return null
+  }
+
+  private shouldSkipAbandonDueToState(response: any): boolean {
+    if (!response) {
+      return false
+    }
+    const message = (response.data?.message ?? '').toLowerCase()
+    if (!message) {
+      return false
+    }
+
+    // Skip abandon when the server already indicated the row cannot transition
+    // (e.g., still NOT_STARTED or task was removed) to avoid spamming 409s.
+    if (response.status === 400 && message.includes('must be in progress')) {
+      return true
+    }
+    if (response.status === 404) {
+      return true
+    }
+    if (response.status === 409 && message.includes('must be in progress')) {
+      return true
+    }
+    return false
+  }
 }
+
+// Helper unions that keep the start retry decision explicit/typed.
+type StartGuardOutcome =
+  | { action: 'proceed' }
+  | { action: 'skip'; reason: string }
+
+type StartAttemptResult =
+  | { type: 'proceed' }
+  | { type: 'skip'; reason: string }
+  | { type: 'retry'; reason: string }
+
+type StartErrorDecision =
+  | { type: 'already-started' }
+  | { type: 'skip'; reason: string }
+  | { type: 'retry'; reason: string }
+  | { type: 'rethrow' }
