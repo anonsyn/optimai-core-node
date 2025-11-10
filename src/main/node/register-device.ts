@@ -95,6 +95,6 @@ export async function registerDevice({
         responsePreview: typeof data?.data === 'string' ? data.data.slice(0, 200) : undefined
       }
     })
-    throw new Error('Failed to decode device registration response')
+    throw new Error(errorMessage)
   }
 }

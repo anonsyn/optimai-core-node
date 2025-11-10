@@ -1,8 +1,8 @@
-import log from '../configs/logger'
-import { getErrorMessage } from '../utils/get-error-message'
-import { getPort } from '../utils/get-port'
-import { sleep } from '../utils/sleep'
-import { dockerService } from './docker-service'
+import log from '../../configs/logger'
+import { getErrorMessage } from '../../utils/get-error-message'
+import { getPort } from '../../utils/get-port'
+import { sleep } from '../../utils/sleep'
+import { dockerService } from '.././docker/docker-service'
 
 export interface Crawl4AiConfig {
   containerName?: string
@@ -39,13 +39,7 @@ export class Crawl4AiService {
 
     try {
       // Check Docker availability
-      if (!(await dockerService.isInstalled())) {
-        throw new Error('Docker is not installed')
-      }
-
-      if (!(await dockerService.isRunning())) {
-        throw new Error('Docker daemon is not running')
-      }
+      await dockerService.ensureAvailability()
 
       // Check if container already exists and is running
       const isContainerRunning = await dockerService.isContainerRunning(this.config.containerName)
@@ -95,7 +89,7 @@ export class Crawl4AiService {
   /**
    * Start the Crawl4AI container
    */
-  private async startContainer() {
+  private async startContainer(): Promise<void> {
     const { containerName, imageName } = this.config
 
     // Check if container exists (stopped)
@@ -104,14 +98,13 @@ export class Crawl4AiService {
     if (existingContainer) {
       // Container exists, try to start it
       if (existingContainer.status !== 'running') {
-        // log.info(`[crawl4ai] Starting existing container ${containerName}...`)
-        return await dockerService.startContainer(containerName)
+        await dockerService.startContainer(containerName)
       }
-      return true
+      return
     }
 
     // Create and run new container
-    return dockerService.runContainer({
+    await dockerService.runContainer({
       name: containerName,
       image: imageName,
       port: {
@@ -156,23 +149,6 @@ export class Crawl4AiService {
     return this.containerPort
   }
 
-  /**
-   * Get the container name
-   */
-  getContainerName(): string {
-    return this.config.containerName
-  }
-
-  /**
-   * Check if the container is running
-   */
-  async isContainerRunning(): Promise<boolean> {
-    return await dockerService.isContainerRunning(this.config.containerName)
-  }
-
-  /**
-   * Check if the service is initialized
-   */
   isInitialized(): boolean {
     return this.initialized
   }
@@ -192,30 +168,60 @@ export class Crawl4AiService {
   }
 
   /**
-   * Remove the Crawl4AI container
+   * Restart the Crawl4AI container (attempts restart, fallback to start)
    */
-  async remove() {
+  async restartContainer(): Promise<void> {
     try {
-      // log.info('[crawl4ai] Removing container...')
+      await dockerService.ensureAvailability()
 
-      // Stop first if running
-      await this.stop()
+      const status = await dockerService.getContainerStatus(this.config.containerName)
 
-      await dockerService.removeContainer(this.config.containerName, true)
-    } catch (error) {
-      log.error(
-        // '[crawl4ai] Failed to remove container:',
-        getErrorMessage(error, 'Failed to remove Crawl4AI container')
+      if (status) {
+        this.containerPort ??= this.config.port
+        this.baseUrl ??= `http://localhost:${this.containerPort}`
+
+        try {
+          await dockerService.restartContainer(this.config.containerName)
+        } catch (error) {
+          const message = getErrorMessage(
+            error,
+            `Failed to restart Crawl4AI container ${this.config.containerName}`
+          )
+          log.warn(`[crawl4ai] ${message}; attempting fresh start`)
+          await this.startContainer()
+        }
+      } else {
+        this.containerPort = await getPort({ port: this.config.port })
+        this.baseUrl = `http://localhost:${this.containerPort}`
+        await this.startContainer()
+      }
+
+      await sleep(3200)
+      await dockerService.waitForHealth(
+        this.config.containerName,
+        () => this.checkHealth(),
+        30,
+        2000
       )
+
+      this.initialized = true
+    } catch (error) {
+      this.initialized = false
+      log.error(getErrorMessage(error, 'Failed to restart Crawl4AI container'))
       throw error
     }
   }
 
   /**
-   * Get container logs
+   * Check whether the container is running
    */
-  async getLogs(lines: number = 50): Promise<string> {
-    return dockerService.getLogs(this.config.containerName, { tail: lines })
+  async isContainerRunning(): Promise<boolean> {
+    try {
+      return await dockerService.isContainerRunning(this.config.containerName)
+    } catch (error) {
+      log.error(getErrorMessage(error, 'Failed to check Crawl4AI container status'))
+      return false
+    }
   }
 
   /**

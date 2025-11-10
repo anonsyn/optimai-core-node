@@ -1,7 +1,9 @@
 import axios from 'axios'
+import EventEmitter from 'eventemitter3'
 import log from '../configs/logger'
 import { getErrorMessage } from '../utils/get-error-message'
-import { crawl4AiService } from './crawl4ai-service'
+import { sleep } from '../utils/sleep'
+import { crawl4AiService } from './docker/crawl4ai-service'
 
 export interface CrawlOptions {
   url: string
@@ -76,6 +78,38 @@ export interface CrawlResult {
   metadata?: Record<string, unknown>
 }
 
+export interface CrawlerErrorContext {
+  stage: 'initialize' | 'crawl' | 'restart' | 'close' | 'health_check'
+  attempt?: number
+  detail?: string
+}
+
+export interface CrawlerRestartOptions {
+  shouldRestart?: () => boolean
+  maxAttempts?: number
+  retryDelayMs?: number
+  onRestartFailed?: (error: unknown) => void
+  throwOnFailure?: boolean
+}
+
+export interface CrawlerAutoRestartOptions {
+  enabled?: boolean
+  checkIntervalMs?: number
+  restartOptions?: CrawlerRestartOptions
+}
+
+export interface CrawlerInitializeOptions {
+  autoRestart?: CrawlerAutoRestartOptions
+}
+
+type CrawlerServiceEvents = {
+  ready: (info: { baseUrl: string; port: number }) => void
+  closed: () => void
+  error: (error: Error, context?: CrawlerErrorContext) => void
+  restarting: (info: { attempt: number }) => void
+  restarted: (info: { attempt: number; baseUrl: string; port: number }) => void
+}
+
 /**
  * Extract favicon URL from a webpage
  * @param url The page URL
@@ -137,38 +171,81 @@ function extractFaviconUrl(url: string, html?: string): string {
   }
 }
 
-class CrawlerService {
+class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
   private baseUrl: string | null = null
   private initialized: boolean = false
-  private initializationPromise: Promise<boolean> | null = null
+  private initializationPromise: Promise<void> | null = null
   private servicePort: number | null = null
+  private autoRestartConfig: Required<CrawlerAutoRestartOptions> = {
+    enabled: true,
+    checkIntervalMs: 15000,
+    restartOptions: {}
+  }
+  private autoRestartTimer: NodeJS.Timeout | null = null
+  private autoRestartInProgress = false
 
   constructor() {
+    super()
     // Port will be set dynamically during initialization
+  }
+
+  private emitErrorEvent(error: unknown, context: CrawlerErrorContext) {
+    const err =
+      error instanceof Error ? error : new Error(getErrorMessage(error, 'Crawler service error'))
+    this.emit('error', err, context)
+  }
+
+  private applyInitializeOptions(options?: CrawlerInitializeOptions) {
+    if (!options?.autoRestart) {
+      return
+    }
+
+    const { autoRestart } = options
+    const mergedRestartOptions = autoRestart.restartOptions
+      ? {
+          ...this.autoRestartConfig.restartOptions,
+          ...autoRestart.restartOptions
+        }
+      : this.autoRestartConfig.restartOptions
+
+    this.autoRestartConfig = {
+      enabled: autoRestart.enabled ?? this.autoRestartConfig.enabled,
+      checkIntervalMs: autoRestart.checkIntervalMs ?? this.autoRestartConfig.checkIntervalMs,
+      restartOptions: mergedRestartOptions
+    }
+
+    if (!this.autoRestartConfig.enabled) {
+      this.stopAutoRestartMonitor()
+    }
   }
 
   /**
    * Initialize the crawler service
    */
-  async initialize(): Promise<boolean> {
+  async initialize(options?: CrawlerInitializeOptions): Promise<void> {
+    this.applyInitializeOptions(options)
+
     if (this.initialized) {
-      return true
+      this.startAutoRestartMonitor()
+      return
     }
 
     // If initialization is already in progress, wait for it
     if (this.initializationPromise) {
-      return await this.initializationPromise
+      await this.initializationPromise
+      return
     }
 
     // Start initialization
     this.initializationPromise = this._doInitialize()
-    const result = await this.initializationPromise
-    this.initializationPromise = null
-
-    return result
+    try {
+      await this.initializationPromise
+    } finally {
+      this.initializationPromise = null
+    }
   }
 
-  private async _doInitialize(): Promise<boolean> {
+  private async _doInitialize(): Promise<void> {
     try {
       log.info('[crawler] Initializing crawler service...')
 
@@ -197,12 +274,12 @@ class CrawlerService {
 
       this.initialized = true
       log.info('[crawler] Crawler service initialized successfully')
-      return true
+      this.emit('ready', { baseUrl: this.baseUrl, port: this.servicePort })
+      this.startAutoRestartMonitor()
     } catch (error) {
-      log.error(
-        '[crawler] Failed to initialize crawler service:',
-        getErrorMessage(error, 'Failed to initialize crawler service')
-      )
+      const message = getErrorMessage(error, 'Failed to initialize crawler service')
+      log.error('[crawler] Failed to initialize crawler service:', message)
+      this.emitErrorEvent(error, { stage: 'initialize', detail: message })
       throw error
     }
   }
@@ -214,10 +291,7 @@ class CrawlerService {
     const crawlOptions: CrawlOptions = typeof options === 'string' ? { url: options } : options
 
     // Ensure initialized
-    if (!(await this.initialize())) {
-      log.error('[crawler] Service not initialized, cannot crawl')
-      return null
-    }
+    await this.initialize()
 
     if (!this.baseUrl) {
       log.error('[crawler] Base URL not set')
@@ -307,7 +381,8 @@ class CrawlerService {
 
       return crawlResult
     } catch (error) {
-      log.error('[crawler] Crawl failed:', getErrorMessage(error, 'Crawl failed'))
+      const message = getErrorMessage(error, 'Crawl failed')
+      log.error('[crawler] Crawl failed:', message)
 
       // Check if Crawl4AI service is still healthy
       const isHealthy = await crawl4AiService.checkHealth()
@@ -340,9 +415,7 @@ class CrawlerService {
    * Create a new session for persistent crawling
    */
   async createSession(): Promise<string | null> {
-    if (!(await this.initialize())) {
-      return null
-    }
+    await this.initialize()
 
     if (!this.baseUrl) {
       log.error('[crawler] Base URL not set')
@@ -381,9 +454,9 @@ class CrawlerService {
   /**
    * Destroy a session
    */
-  async destroySession(sessionId: string): Promise<boolean> {
+  async destroySession(sessionId: string): Promise<void> {
     if (!this.baseUrl) {
-      return false
+      throw new Error('Crawler service base URL not set')
     }
 
     try {
@@ -392,13 +465,13 @@ class CrawlerService {
         validateStatus: () => true
       })
 
-      return response.status >= 200 && response.status < 300
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Unexpected status ${response.status}`)
+      }
     } catch (error) {
-      log.error(
-        '[crawler] Failed to destroy session:',
-        getErrorMessage(error, 'Failed to destroy crawler session')
-      )
-      return false
+      const message = getErrorMessage(error, 'Failed to destroy crawler session')
+      log.error('[crawler] Failed to destroy session:', message)
+      throw error
     }
   }
 
@@ -426,6 +499,7 @@ class CrawlerService {
    * Close the crawler service
    */
   async close(): Promise<void> {
+    this.stopAutoRestartMonitor()
     try {
       if (this.initialized) {
         log.info('[crawler] Closing crawler service...')
@@ -434,12 +508,11 @@ class CrawlerService {
         this.initialized = false
         this.baseUrl = null
         this.servicePort = null
+        this.emit('closed')
       }
     } catch (error) {
-      log.error(
-        '[crawler] Error closing crawler service:',
-        getErrorMessage(error, 'Error closing crawler service')
-      )
+      const message = getErrorMessage(error, 'Error closing crawler service')
+      log.error('[crawler] Error closing crawler service:', message)
     }
   }
 
@@ -448,6 +521,194 @@ class CrawlerService {
    */
   getServicePort(): number | null {
     return this.servicePort
+  }
+
+  /**
+   * Check if the underlying container is running
+   */
+  async isContainerRunning(): Promise<boolean> {
+    return crawl4AiService.isContainerRunning()
+  }
+
+  private stopAutoRestartMonitor() {
+    if (this.autoRestartTimer) {
+      clearInterval(this.autoRestartTimer)
+      this.autoRestartTimer = null
+    }
+    this.autoRestartInProgress = false
+  }
+
+  private startAutoRestartMonitor() {
+    if (!this.autoRestartConfig.enabled) {
+      this.stopAutoRestartMonitor()
+      return
+    }
+
+    const interval = Math.max(2000, this.autoRestartConfig.checkIntervalMs)
+
+    if (this.autoRestartTimer) {
+      clearInterval(this.autoRestartTimer)
+      this.autoRestartTimer = null
+    }
+
+    const checkAndRecover = async () => {
+      if (this.autoRestartInProgress || !this.initialized || this.initializationPromise) {
+        return
+      }
+
+      this.autoRestartInProgress = true
+
+      try {
+        const containerRunning = await crawl4AiService.isContainerRunning()
+        const healthy = containerRunning ? await this.isHealthy() : false
+
+        if (!containerRunning || !healthy) {
+          log.warn(
+            `[crawler] Detected Crawl4AI container ${containerRunning ? 'unhealthy' : 'stopped'} - attempting auto restart`
+          )
+
+          const baseShouldRestart = this.autoRestartConfig.restartOptions.shouldRestart
+          const shouldRestart = () => {
+            if (!this.autoRestartConfig.enabled) {
+              return false
+            }
+            return baseShouldRestart ? baseShouldRestart() : true
+          }
+
+          await this.restartContainer({
+            ...this.autoRestartConfig.restartOptions,
+            shouldRestart,
+            throwOnFailure: this.autoRestartConfig.restartOptions.throwOnFailure ?? true
+          })
+        }
+      } catch (error) {
+        const message = getErrorMessage(error, 'Auto restart failed')
+        log.error('[crawler] Auto restart failed:', message)
+        // restartContainer already emits detailed errors
+      } finally {
+        this.autoRestartInProgress = false
+      }
+    }
+
+    this.autoRestartTimer = setInterval(() => {
+      void checkAndRecover()
+    }, interval)
+
+    void checkAndRecover()
+  }
+
+  /**
+   * Restart the crawler container with configurable retry behaviour.
+   */
+  async restartContainer(options?: CrawlerRestartOptions): Promise<void> {
+    const {
+      shouldRestart = () => true,
+      maxAttempts = 3,
+      retryDelayMs = 2000,
+      onRestartFailed,
+      throwOnFailure = true
+    } = options ?? {}
+
+    const attemptLimit = Math.max(1, maxAttempts)
+    const delayMs = Math.max(0, retryDelayMs)
+
+    const shouldProceed = (): boolean => {
+      try {
+        return shouldRestart()
+      } catch (error) {
+        const message = getErrorMessage(error, 'Restart predicate failed')
+        log.error('[crawler] shouldRestart callback threw an error:', message)
+        return false
+      }
+    }
+
+    if (!shouldProceed()) {
+      log.debug('[crawler] Restart skipped because shouldRestart() returned false')
+      return
+    }
+
+    let lastError: unknown
+
+    for (let attempt = 1; attempt <= attemptLimit; attempt++) {
+      if (!shouldProceed()) {
+        log.debug(
+          `[crawler] Restart aborted before attempt ${attempt} because shouldRestart() returned false`
+        )
+        return
+      }
+
+      if (this.initializationPromise) {
+        try {
+          await this.initializationPromise
+        } catch (error) {
+          lastError = error
+        }
+      }
+
+      this.emit('restarting', { attempt })
+
+      try {
+        await this.close()
+        await crawl4AiService.restartContainer()
+
+        const baseUrl = crawl4AiService.getBaseUrl()
+        const port = crawl4AiService.getPort()
+
+        if (!baseUrl || !port) {
+          throw new Error('Failed to resolve crawler endpoint after restart')
+        }
+
+        this.baseUrl = baseUrl
+        this.servicePort = port
+
+        const healthy = await this.waitForHealth()
+        if (!healthy) {
+          throw new Error('Crawler service health check failed after restart')
+        }
+
+        this.initialized = true
+        this.emit('ready', { baseUrl, port })
+
+        log.info(`[crawler] Restart attempt ${attempt} succeeded`)
+
+        this.emit('restarted', {
+          attempt,
+          baseUrl,
+          port
+        })
+
+        this.startAutoRestartMonitor()
+
+        return
+      } catch (error) {
+        lastError = error
+        const message = getErrorMessage(error, 'Failed to restart crawler service')
+        log.error(`[crawler] Restart attempt ${attempt}/${attemptLimit} failed:`, message)
+        this.emitErrorEvent(error, { stage: 'restart', attempt, detail: message })
+
+        if (attempt < attemptLimit) {
+          await sleep(delayMs)
+        }
+      }
+    }
+
+    if (onRestartFailed) {
+      onRestartFailed(lastError)
+    }
+
+    if (throwOnFailure) {
+      if (lastError instanceof Error) {
+        throw lastError
+      }
+      throw new Error(getErrorMessage(lastError, 'Failed to restart crawler service'))
+    }
+  }
+
+  /**
+   * Restart the crawler environment by reinitializing the service.
+   */
+  async restartEnvironment(options?: CrawlerRestartOptions): Promise<void> {
+    await this.restartContainer(options)
   }
 }
 

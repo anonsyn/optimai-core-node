@@ -3,7 +3,6 @@ import 'dotenv/config'
 import { app, nativeTheme } from 'electron'
 import log from './configs/logger'
 import authIpcHandler from './ipc/auth'
-import crawl4AiIpcHandler from './ipc/crawl4ai'
 import dockerIpcHandler from './ipc/docker'
 import nodeIpcHandler from './ipc/node'
 import reportsIpcHandler from './ipc/reports'
@@ -131,7 +130,6 @@ if (!gotTheLock) {
     updaterIpcHandler.initialize()
     authIpcHandler.initialize() // Initialize auth IPC handler for token management
     dockerIpcHandler.initialize() // Initialize generic Docker IPC handler
-    crawl4AiIpcHandler.initialize() // Initialize Crawl4AI-specific IPC handler
     nodeIpcHandler.initialize() // Initialize node IPC handler which starts the API server
     reportsIpcHandler.initialize() // Initialize bug report IPC handler
 

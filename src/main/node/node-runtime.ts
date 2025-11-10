@@ -8,11 +8,11 @@ import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
 import { sleep } from '../utils/sleep'
-import { MiningWorker, type MiningWorkerStatus } from './mining-worker'
+import { miningWorker as miningWorkerSingleton, type MiningWorkerStatus } from './mining-worker'
 import { registerDevice } from './register-device'
 import type { MiningAssignment, NodeStatusResponse } from './types'
 import { NodeStatus } from './types'
-import { UptimeRunner } from './uptime-runner'
+import { uptimeRunner as uptimeRunnerSingleton } from './uptime-runner'
 
 export enum NodeRuntimeEvent {
   Status = 'status',
@@ -43,8 +43,8 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
   private running = false
   private lastError: string | null = null
 
-  private readonly uptimeRunner = new UptimeRunner()
-  private readonly miningWorker = new MiningWorker()
+  private readonly uptimeRunner = uptimeRunnerSingleton
+  private readonly miningWorker = miningWorkerSingleton
 
   constructor() {
     super()

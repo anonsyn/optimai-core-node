@@ -2,8 +2,8 @@ import os from 'node:os'
 import path from 'node:path'
 
 import execa from 'execa'
-import log from '../configs/logger'
-import { getErrorMessage } from '../utils/get-error-message'
+import log from '../../configs/logger'
+import { getErrorMessage } from '../../utils/get-error-message'
 
 export interface ContainerConfig {
   name: string
@@ -69,6 +69,32 @@ export class DockerService {
         '[docker] Docker daemon not running:',
         getErrorMessage(error, 'Docker daemon not running')
       )
+      return false
+    }
+  }
+
+  async ensureAvailability() {
+    try {
+      const installed = await this.isInstalled()
+      if (!installed) {
+        throw new Error('Docker is not installed')
+      }
+
+      const running = await this.isRunning()
+      if (!running) {
+        throw new Error('Docker is not running')
+      }
+    } catch (error) {
+      log.error("[mining] Couldn't check Docker:", getErrorMessage(error, "Couldn't check Docker"))
+      throw error
+    }
+  }
+
+  async isAvailable() {
+    try {
+      await this.ensureAvailability()
+      return true
+    } catch {
       return false
     }
   }
@@ -213,19 +239,36 @@ export class DockerService {
   /**
    * Start an existing container
    */
-  async startContainer(name: string): Promise<boolean> {
+  async startContainer(name: string): Promise<void> {
     try {
       log.debug(`[docker] Starting container ${name}...`)
       const docker = await this.getDockerCommand()
       await execa(docker, ['start', name])
       log.debug(`[docker] Container ${name} started`)
-      return true
     } catch (error) {
       log.error(
         `[docker] Failed to start container ${name}:`,
         getErrorMessage(error, `Failed to start container ${name}`)
       )
-      return false
+      throw error
+    }
+  }
+
+  /**
+   * Restart a container
+   */
+  async restartContainer(name: string): Promise<void> {
+    try {
+      log.debug(`[docker] Restarting container ${name}...`)
+      const docker = await this.getDockerCommand()
+      await execa(docker, ['restart', name])
+      log.debug(`[docker] Container ${name} restarted`)
+    } catch (error) {
+      log.error(
+        `[docker] Failed to restart container ${name}:`,
+        getErrorMessage(error, `Failed to restart container ${name}`)
+      )
+      throw error
     }
   }
 

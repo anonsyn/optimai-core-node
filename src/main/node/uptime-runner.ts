@@ -229,3 +229,5 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     }
   }
 }
+
+export const uptimeRunner = new UptimeRunner()

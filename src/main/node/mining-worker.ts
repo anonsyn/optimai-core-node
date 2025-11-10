@@ -4,9 +4,7 @@ import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
 import { MiningAssignmentFailureReason } from '../api/mining/types'
 import log from '../configs/logger'
-import { crawl4AiService } from '../services/crawl4ai-service'
-import { crawlerService } from '../services/crawler-service'
-import { dockerService } from '../services/docker-service'
+import { crawlerService, type CrawlerErrorContext } from '../services/crawler-service'
 import { eventsService } from '../services/events-service'
 import { deviceStore, tokenStore, userStore } from '../storage'
 import { encode } from '../utils/encoder'
@@ -25,28 +23,26 @@ interface MiningWorkerEvents {
   statusChanged: (status: MiningWorkerStatus) => void
 }
 
-const DOCKER_CHECK_INTERVAL_MS = 15_000
 // Heartbeat interval: report online status every 30 seconds
 const HEARTBEAT_INTERVAL_MS = 30_000
 const POLL_INTERVAL_MS = 30_000
 const SSE_RETRY_BASE_MS = 2_000
 const SSE_RETRY_MAX_MS = 10_000
+const CRAWLER_CHECK_INTERVAL_MS = 15_000
 
 export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private running = false
   private pollTimer: NodeJS.Timeout | null = null
   private heartbeatTimer: NodeJS.Timeout | null = null
   private reconnectTimer: NodeJS.Timeout | null = null
-  private dockerMonitorTimer: NodeJS.Timeout | null = null
   private sseAbortController: AbortController | null = null
   private processing = false
   private processingAssignments = new Set<string>()
   private sseBackoff = SSE_RETRY_BASE_MS
-  private dockerAvailable = false
-  private crawlerServiceInitialized = false
   private assignmentQueue: PQueue | null = null
   private status: MiningStatus = MiningStatus.Idle
   private lastError?: string
+  private detachCrawlerListeners: (() => void) | null = null
 
   private setStatus(status: MiningStatus, error?: string) {
     const prevStatus = this.status
@@ -65,8 +61,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   getStatus(): MiningWorkerStatus {
     return {
       status: this.status,
-      dockerAvailable: this.dockerAvailable,
-      crawlerInitialized: this.crawlerServiceInitialized,
       isProcessing: this.processingAssignments.size > 0,
       assignmentCount: this.processingAssignments.size,
       lastError: this.lastError
@@ -83,25 +77,24 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     this.sseBackoff = SSE_RETRY_BASE_MS
     this.setStatus(MiningStatus.Initializing)
 
-    // Check Docker availability
-    this.dockerAvailable = await this.checkDockerAvailability()
-    if (!this.dockerAvailable) {
-      log.error('[mining] Docker isn’t available — can’t start mining')
-      log.error('[mining] Install and open Docker Desktop from https://docker.com to continue')
-      this.setStatus(MiningStatus.Error, 'Docker not available')
-
-      this.running = false
-      return
-    }
-
     // Initialize crawler service
     this.setStatus(MiningStatus.InitializingCrawler)
     try {
-      await crawlerService.initialize()
-      this.crawlerServiceInitialized = true
+      await crawlerService.initialize({
+        autoRestart: {
+          enabled: true,
+          checkIntervalMs: CRAWLER_CHECK_INTERVAL_MS,
+          restartOptions: {
+            maxAttempts: 3,
+            retryDelayMs: 2_000,
+            shouldRestart: () => this.running,
+            throwOnFailure: true
+          }
+        }
+      })
       this.setStatus(MiningStatus.Ready)
       log.info('[mining] Crawler service initialized successfully')
-      this.startDockerMonitor()
+      this.attachCrawlerListeners()
 
       // Set worker preferences
       await this.setWorkerPreferences()
@@ -113,7 +106,6 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to initialize crawler service')
       log.error('[mining] Failed to initialize crawler service:', message)
-      this.dockerAvailable = false
       this.setStatus(MiningStatus.Error, message)
       await eventsService.reportError({
         type: 'mining.crawler_init_failed',
@@ -121,8 +113,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         severity: 'critical',
         error,
         metadata: {
-          stage: 'start',
-          dockerAvailable: this.dockerAvailable
+          stage: 'start'
         }
       })
       this.running = false
@@ -144,38 +135,22 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     this.clearTimer(this.reconnectTimer)
     this.reconnectTimer = null
 
-    this.clearTimer(this.dockerMonitorTimer)
-    this.dockerMonitorTimer = null
-
     if (this.sseAbortController) {
       this.sseAbortController.abort()
       this.sseAbortController = null
     }
 
-    // Close crawler service
-    if (this.crawlerServiceInitialized) {
-      await crawlerService.close()
-      this.crawlerServiceInitialized = false
+    if (this.detachCrawlerListeners) {
+      this.detachCrawlerListeners()
+      this.detachCrawlerListeners = null
     }
+
+    // Close crawler service
+    await crawlerService.close()
 
     if (this.assignmentQueue) {
       this.assignmentQueue.clear()
       this.assignmentQueue = null
-    }
-  }
-
-  private async checkDockerAvailability(): Promise<boolean> {
-    try {
-      const installed = await dockerService.isInstalled()
-      if (!installed) {
-        return false
-      }
-
-      const running = await dockerService.isRunning()
-      return running
-    } catch (error) {
-      log.error('[mining] Couldn’t check Docker:', getErrorMessage(error, 'Couldn’t check Docker'))
-      return false
     }
   }
 
@@ -203,8 +178,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
       const agentInfo = {
         client: 'desktop-core-node',
-        ts: Date.now(),
-        docker_available: this.dockerAvailable
+        ts: Date.now()
       }
 
       const payload = {
@@ -368,47 +342,31 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     }
   }
 
-  private startDockerMonitor() {
-    this.clearTimer(this.dockerMonitorTimer)
+  private attachCrawlerListeners() {
+    if (this.detachCrawlerListeners) {
+      this.detachCrawlerListeners()
+      this.detachCrawlerListeners = null
+    }
 
-    let checking = false
-    const checkDockerState = async () => {
-      if (checking) {
-        return
-      }
-      checking = true
+    const handleError = (error: Error, context?: CrawlerErrorContext) => {
+      const contextDetails = context
+        ? ` (stage=${context.stage}${
+            context.attempt ? `, attempt=${context.attempt}` : ''
+          }${context.detail ? `, detail=${context.detail}` : ''})`
+        : ''
+      const message = error?.message ?? 'Crawler service error'
+      log.error(`[mining] Crawler service error${contextDetails}:`, message)
 
-      if (!this.running) {
-        checking = false
-        return
-      }
-      try {
-        const dockerAvailable = await this.checkDockerAvailability()
-        let containerRunning = true
-
-        if (dockerAvailable && this.crawlerServiceInitialized) {
-          containerRunning = await crawl4AiService.isContainerRunning()
-        }
-
-        const environmentHealthy = dockerAvailable && containerRunning
-        this.dockerAvailable = environmentHealthy
-
-        if (!environmentHealthy) {
-          const reason = !dockerAvailable ? 'Docker not available' : 'The container '
-          const containerInfo = !dockerAvailable ? '' : ` (${crawl4AiService.getContainerName()})`
-          log.warn(`[mining] ${reason}${containerInfo} - stopping mining worker`)
-          this.setStatus(MiningStatus.Error, reason)
-          await this.stop()
-        }
-      } finally {
-        checking = false
+      if (this.running) {
+        this.setStatus(MiningStatus.Error, message)
       }
     }
 
-    void checkDockerState()
-    this.dockerMonitorTimer = setInterval(() => {
-      void checkDockerState()
-    }, DOCKER_CHECK_INTERVAL_MS)
+    crawlerService.on('error', handleError)
+
+    this.detachCrawlerListeners = () => {
+      crawlerService.off('error', handleError)
+    }
   }
 
   private async processAssignments() {
@@ -460,26 +418,20 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
           continue
         }
 
-        if (this.dockerAvailable && this.crawlerServiceInitialized) {
-          this.processingAssignments.add(assignment.id)
-          this.setStatus(MiningStatus.Processing)
-          queue
-            .add(() => this.processAssignment(assignment))
-            .catch((error) => {
-              log.error(
-                `[mining] Queue task for assignment ${assignment.id} failed:`,
-                getErrorMessage(error, `Failed to process assignment ${assignment.id}`)
-              )
-              this.processingAssignments.delete(assignment.id)
-              if (this.processingAssignments.size === 0) {
-                this.setStatus(MiningStatus.Ready)
-              }
-            })
-        } else {
-          log.warn(
-            `[mining] Cannot process assignment ${assignment.id} - Docker/crawler not available`
-          )
-        }
+        this.processingAssignments.add(assignment.id)
+        this.setStatus(MiningStatus.Processing)
+        queue
+          .add(() => this.processAssignment(assignment))
+          .catch((error) => {
+            log.error(
+              `[mining] Queue task for assignment ${assignment.id} failed:`,
+              getErrorMessage(error, `Failed to process assignment ${assignment.id}`)
+            )
+            this.processingAssignments.delete(assignment.id)
+            if (this.processingAssignments.size === 0) {
+              this.setStatus(MiningStatus.Ready)
+            }
+          })
       }
     } catch (error) {
       const errorMsg = getErrorMessage(error, 'Error fetching assignments')
@@ -653,3 +605,5 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     return MiningAssignmentFailureReason.SITE_BLOCKED
   }
 }
+
+export const miningWorker = new MiningWorker()

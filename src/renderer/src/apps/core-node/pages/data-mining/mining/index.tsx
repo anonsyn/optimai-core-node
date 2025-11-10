@@ -14,8 +14,6 @@ const isOperationalStatus = (status: MiningStatus) =>
 export const Mining = () => {
   const [miningStatus, setMiningStatus] = useState<MiningWorkerStatus>({
     status: MiningStatus.Idle,
-    dockerAvailable: false,
-    crawlerInitialized: false,
     isProcessing: false,
     assignmentCount: 0
   })

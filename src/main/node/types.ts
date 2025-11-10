@@ -62,8 +62,6 @@ export enum MiningStatus {
 
 export interface MiningWorkerStatus {
   status: MiningStatus
-  dockerAvailable: boolean
-  crawlerInitialized: boolean
   isProcessing: boolean
   assignmentCount: number
   lastError?: string

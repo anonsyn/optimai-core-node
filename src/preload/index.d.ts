@@ -1,5 +1,4 @@
 import { type AuthIPC } from '../main/ipc/auth/preload'
-import { type Crawl4AiIPC } from '../main/ipc/crawl4ai/preload'
 import { type DockerIPC } from '../main/ipc/docker/preload'
 import { type NodeIPC } from '../main/ipc/node/preload'
 import { type ReportsIPC } from '../main/ipc/reports/preload'
@@ -13,7 +12,6 @@ declare global {
     authIPC: AuthIPC
     nodeIPC: NodeIPC
     dockerIPC: DockerIPC
-    crawl4AiIPC: Crawl4AiIPC
     reportsIPC: ReportsIPC
   }
 }
