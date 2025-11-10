@@ -21,14 +21,6 @@ export function NodeProvider({ children }: NodeProviderProps) {
 
     // Setup IPC event listeners
     const setupListeners = () => {
-      // Node status changes
-      const statusListener = window.nodeIPC.onStatusChanged((status) => {
-        console.log('node status change')
-        console.log({ status })
-        dispatch(nodeActions.setNodeStatus(status))
-      })
-      cleanupFunctionsRef.current.push(statusListener.unsubscribe)
-
       // Device ID changes
       const deviceIdListener = window.nodeIPC.onDeviceIdChanged((deviceId) => {
         console.log('device ID changed:', deviceId)
@@ -74,12 +66,6 @@ export function NodeProvider({ children }: NodeProviderProps) {
       })
       cleanupFunctionsRef.current.push(miningStatusListener.unsubscribe)
 
-      // Node errors
-      const nodeErrorListener = window.nodeIPC.onNodeError((payload) => {
-        dispatch(nodeActions.setNodeError(payload.message))
-      })
-      cleanupFunctionsRef.current.push(nodeErrorListener.unsubscribe)
-
       // Mining errors
       const miningErrorListener = window.nodeIPC.onMiningError((payload) => {
         dispatch(nodeActions.setMiningError(payload.message))
@@ -92,10 +78,6 @@ export function NodeProvider({ children }: NodeProviderProps) {
     // Initial data fetch
     const fetchInitialData = async () => {
       try {
-        // Get current status
-        const status = await window.nodeIPC.getStatus()
-        dispatch(nodeActions.setNodeStatus(status))
-
         // Get device info to set device ID
         const localDeviceInfo = await window.nodeIPC.getLocalDeviceInfo()
         if (localDeviceInfo?.device_id) {

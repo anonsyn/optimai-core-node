@@ -1,88 +1,16 @@
-import EventEmitter from 'eventemitter3'
-
 import pRetry from 'p-retry'
 import log from '../configs/logger'
 import { apiClient } from '../libs/axios'
 import { eventsService } from '../services/events-service'
-import type { UptimeData } from '../storage'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
 import { sleep } from '../utils/sleep'
-import { miningWorker as miningWorkerSingleton, type MiningWorkerStatus } from './mining-worker'
+import { miningWorker } from './mining-worker'
 import { registerDevice } from './register-device'
-import type { MiningAssignment, NodeStatusResponse } from './types'
-import { NodeStatus } from './types'
-import { uptimeRunner as uptimeRunnerSingleton } from './uptime-runner'
+import { uptimeRunner } from './uptime-runner'
 
-export enum NodeRuntimeEvent {
-  Status = 'status',
-  UptimeReward = 'uptime-reward',
-  UptimeCycle = 'uptime-cycle',
-  MiningAssignments = 'mining-assignments',
-  MiningAssignmentStarted = 'mining-assignment-started',
-  MiningAssignmentCompleted = 'mining-assignment-completed',
-  MiningError = 'mining-error',
-  MiningStatusChanged = 'mining-status-changed',
-  Error = 'error'
-}
-
-type NodeRuntimeEventMap = {
-  [NodeRuntimeEvent.Status]: (status: NodeStatusResponse) => void
-  [NodeRuntimeEvent.UptimeReward]: (reward: { amount: string; timestamp: number }) => void
-  [NodeRuntimeEvent.UptimeCycle]: (cycle: UptimeData) => void
-  [NodeRuntimeEvent.MiningAssignments]: (assignments: MiningAssignment[]) => void
-  [NodeRuntimeEvent.MiningAssignmentStarted]: (assignmentId: string) => void
-  [NodeRuntimeEvent.MiningAssignmentCompleted]: (assignmentId: string) => void
-  [NodeRuntimeEvent.MiningError]: (error: Error) => void
-  [NodeRuntimeEvent.MiningStatusChanged]: (status: MiningWorkerStatus) => void
-  [NodeRuntimeEvent.Error]: (error: Error) => void
-}
-
-export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
-  private status: NodeStatus = NodeStatus.Idle
+export class NodeRuntime {
   private running = false
-  private lastError: string | null = null
-
-  private readonly uptimeRunner = uptimeRunnerSingleton
-  private readonly miningWorker = miningWorkerSingleton
-
-  constructor() {
-    super()
-
-    this.uptimeRunner.on('reward', (reward) => {
-      this.emit(NodeRuntimeEvent.UptimeReward, reward)
-    })
-
-    this.uptimeRunner.on('cycle', (cycle) => {
-      this.emit(NodeRuntimeEvent.UptimeCycle, cycle)
-    })
-
-    this.uptimeRunner.on('error', (error) => {
-      this.lastError = error.message
-      this.emit(NodeRuntimeEvent.Error, error)
-      this.emit(NodeRuntimeEvent.Status, this.getStatus())
-    })
-
-    this.miningWorker.on('assignments', (assignments: MiningAssignment[]) => {
-      this.emit(NodeRuntimeEvent.MiningAssignments, assignments)
-    })
-
-    this.miningWorker.on('assignmentStarted', (assignmentId: string) => {
-      this.emit(NodeRuntimeEvent.MiningAssignmentStarted, assignmentId)
-    })
-
-    this.miningWorker.on('assignmentCompleted', (assignmentId: string) => {
-      this.emit(NodeRuntimeEvent.MiningAssignmentCompleted, assignmentId)
-    })
-
-    this.miningWorker.on('error', (error: Error) => {
-      this.emit(NodeRuntimeEvent.MiningError, error)
-    })
-
-    this.miningWorker.on('statusChanged', (status: MiningWorkerStatus) => {
-      this.emit(NodeRuntimeEvent.MiningStatusChanged, status)
-    })
-  }
 
   async start(): Promise<boolean> {
     if (this.running) {
@@ -94,8 +22,6 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
     }
 
     this.running = true
-    this.setStatus(NodeStatus.Starting)
-    this.lastError = null
 
     try {
       await this.ensureUser()
@@ -104,11 +30,10 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
         minTimeout: 5000
       })
 
-      this.uptimeRunner.start()
-      this.miningWorker.start()
+      uptimeRunner.start()
+      miningWorker.start()
       await sleep(5000)
 
-      this.setStatus(NodeStatus.Running)
       return true
     } catch (error) {
       const message = getErrorMessage(error, 'Node runtime error')
@@ -118,14 +43,10 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
         message: 'Node runtime failed to start',
         error,
         metadata: {
-          statusBeforeFailure: this.status,
           wasRunning: this.running
         }
       })
       this.running = false
-      this.lastError = message
-      this.setStatus(NodeStatus.Idle)
-      this.emit(NodeRuntimeEvent.Error, lastError)
       throw lastError
     }
   }
@@ -135,42 +56,16 @@ export class NodeRuntime extends EventEmitter<NodeRuntimeEventMap> {
       return false
     }
 
-    this.setStatus(NodeStatus.Stopping)
     this.running = false
 
-    this.uptimeRunner.stop()
-    await this.miningWorker.stop()
+    uptimeRunner.stop()
+    await miningWorker.stop()
 
-    this.setStatus(NodeStatus.Idle)
-    this.lastError = null
     return true
   }
 
-  async restartMining(): Promise<boolean> {
-    if (!this.running) {
-      return await this.start()
-    }
-
-    await this.miningWorker.stop()
-    await this.miningWorker.start()
-    return true
-  }
-
-  getStatus(): NodeStatusResponse {
-    return {
-      status: this.status,
-      running: this.running,
-      last_error: this.lastError
-    }
-  }
-
-  getMiningStatus(): MiningWorkerStatus {
-    return this.miningWorker.getStatus()
-  }
-
-  private setStatus(status: NodeStatus) {
-    this.status = status
-    this.emit(NodeRuntimeEvent.Status, this.getStatus())
+  isRunning(): boolean {
+    return this.running
   }
 
   private async ensureUser() {

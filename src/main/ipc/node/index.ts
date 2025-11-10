@@ -2,8 +2,10 @@ import { ipcMain } from 'electron'
 import log from '../../configs/logger'
 
 import { deviceApi, DeviceDetail } from '../../api/device'
-import { nodeRuntime, NodeRuntimeEvent } from '../../node/node-runtime'
+import { miningWorker } from '../../node/mining-worker'
+import { nodeRuntime } from '../../node/node-runtime'
 import type { LocalDeviceInfo } from '../../node/types'
+import { uptimeRunner } from '../../node/uptime-runner'
 import { deviceStore } from '../../storage/device-store'
 import { getFullDeviceInfo } from '../../utils/device-info'
 import { getErrorMessage } from '../../utils/get-error-message'
@@ -13,47 +15,37 @@ import { NodeEvents } from './events'
 
 class NodeIpcHandler {
   constructor() {
-    nodeRuntime.on(NodeRuntimeEvent.Status, (status) => {
-      this.broadcast(NodeEvents.OnNodeStatusChanged, status)
-    })
-
-    nodeRuntime.on(NodeRuntimeEvent.UptimeReward, (reward) => {
+    // Listen directly to UptimeRunner events
+    uptimeRunner.on('reward', (reward) => {
       this.broadcast(NodeEvents.OnUptimeReward, reward)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.UptimeCycle, (cycle) => {
+    uptimeRunner.on('cycle', (cycle) => {
       this.broadcast(NodeEvents.OnUptimeCycle, cycle)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.MiningAssignments, (assignments) => {
+    // Listen directly to MiningWorker events
+    miningWorker.on('assignments', (assignments) => {
       console.log('NEW MINING ASSIGNMENTS')
       this.broadcast(NodeEvents.OnMiningAssignments, assignments)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.MiningAssignmentStarted, (assignmentId) => {
+    miningWorker.on('assignmentStarted', (assignmentId) => {
       this.broadcast(NodeEvents.OnMiningAssignmentStarted, assignmentId)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.MiningAssignmentCompleted, (assignmentId) => {
+    miningWorker.on('assignmentCompleted', (assignmentId) => {
       this.broadcast(NodeEvents.OnMiningAssignmentCompleted, assignmentId)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.MiningStatusChanged, (status) => {
+    miningWorker.on('statusChanged', (status) => {
       this.broadcast(NodeEvents.OnMiningStatusChanged, status)
     })
 
-    nodeRuntime.on(NodeRuntimeEvent.MiningError, (error) => {
+    miningWorker.on('error', (error) => {
       const message = getErrorMessage(error, 'Mining worker error')
       log.error('Mining worker error:', message)
       this.broadcast(NodeEvents.OnMiningError, {
-        message
-      })
-    })
-
-    nodeRuntime.on(NodeRuntimeEvent.Error, (error) => {
-      const message = getErrorMessage(error, 'Node runtime error')
-      log.error('Node runtime error:', message)
-      this.broadcast(NodeEvents.OnNodeError, {
         message
       })
     })
@@ -78,15 +70,12 @@ class NodeIpcHandler {
     })
 
     ipcMain.handle(NodeEvents.RestartMining, async () => {
-      return nodeRuntime.restartMining()
-    })
-
-    ipcMain.handle(NodeEvents.GetStatus, async () => {
-      return nodeRuntime.getStatus()
+      await miningWorker.restart()
+      return true
     })
 
     ipcMain.handle(NodeEvents.GetMiningStatus, async () => {
-      return nodeRuntime.getMiningStatus()
+      return miningWorker.getStatus()
     })
 
     ipcMain.handle(NodeEvents.GetLocalDeviceInfo, async () => {

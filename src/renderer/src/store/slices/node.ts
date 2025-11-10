@@ -1,10 +1,5 @@
 import { RootState } from '@/store'
-import {
-  MiningAssignment,
-  MiningWorkerStatus,
-  NodeStatus,
-  NodeStatusResponse
-} from '@main/node/types'
+import { MiningAssignment, MiningWorkerStatus } from '@main/node/types'
 import { UptimeData } from '@main/storage/types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
@@ -14,11 +9,9 @@ export interface NodeReward {
 }
 
 export interface NodeState {
-  // Node status
+  // Device info
   deviceId?: string
   userIpId?: string
-  status: NodeStatus
-  lastError?: string
 
   // Uptime tracking
   cycle?: UptimeData
@@ -31,7 +24,6 @@ export interface NodeState {
 }
 
 const initialState: NodeState = {
-  status: NodeStatus.Idle,
   miningAssignments: []
 }
 
@@ -45,12 +37,6 @@ const nodeSlice = createSlice({
     },
     setUserIpId: (state, action: PayloadAction<string>) => {
       state.userIpId = action.payload
-    },
-
-    // Node status
-    setNodeStatus: (state, action: PayloadAction<NodeStatusResponse>) => {
-      state.status = action.payload.status
-      state.lastError = action.payload.last_error || undefined
     },
 
     // Uptime
@@ -88,9 +74,6 @@ const nodeSlice = createSlice({
     },
 
     // Error handling
-    setNodeError: (state, action: PayloadAction<string>) => {
-      state.lastError = action.payload
-    },
     setMiningError: (state, action: PayloadAction<string>) => {
       if (state.miningStatus) {
         state.miningStatus.lastError = action.payload
@@ -111,13 +94,6 @@ export const nodeSelectors = {
   deviceId: (state: RootState) => state.node.deviceId,
   userIpId: (state: RootState) => state.node.userIpId,
 
-  // Node status selectors
-  status: (state: RootState) => state.node.status,
-  isRunning: (state: RootState) => state.node.status === NodeStatus.Running,
-  isStarting: (state: RootState) => state.node.status === NodeStatus.Starting,
-  isStopping: (state: RootState) => state.node.status === NodeStatus.Stopping,
-  lastError: (state: RootState) => state.node.lastError,
-
   // Uptime selectors
   cycle: (state: RootState) => state.node.cycle,
   latestReward: (state: RootState) => state.node.latestReward,
@@ -131,7 +107,14 @@ export const nodeSelectors = {
     return id ? state.node.miningAssignments.find((a) => a.id === id) : undefined
   },
   isMiningProcessing: (state: RootState) => state.node.miningStatus?.isProcessing || false,
-  miningError: (state: RootState) => state.node.miningStatus?.lastError
+  miningError: (state: RootState) => state.node.miningStatus?.lastError,
+
+  // Derived selectors
+  isRunning: (state: RootState) => {
+    // Node is considered running if mining worker is active
+    const status = state.node.miningStatus?.status
+    return status !== undefined && status !== 'stopped' && status !== 'idle'
+  }
 }
 
 export default nodeSlice

@@ -2,24 +2,10 @@
  * Type definitions for Node API
  */
 
-export enum NodeStatus {
-  Idle = 'idle',
-  Starting = 'starting',
-  Running = 'running',
-  Restarting = 'restarting',
-  Stopping = 'stopping'
-}
-
 export interface ServerStatus {
   isRunning: boolean
   isReady: boolean
   port: number | null
-}
-
-export interface NodeStatusResponse {
-  status: NodeStatus
-  running: boolean
-  last_error: string | null
 }
 
 export interface TokensResponse {

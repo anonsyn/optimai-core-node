@@ -273,15 +273,9 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
       // Wait a bit for the node to fully initialize
       await sleep(1000)
 
-      // Check node status to confirm it's running
-      const nodeStatus = await window.nodeIPC.getStatus()
-
-      if (nodeStatus?.running) {
-        setPhase(StartupPhase.COMPLETED)
-        return true
-      } else {
-        throw new Error(`Node status: ${nodeStatus?.status || 'unknown'}`)
-      }
+      // Node start succeeded, mark as completed
+      setPhase(StartupPhase.COMPLETED)
+      return true
     } catch (err) {
       console.error('Error starting node:', err)
       setError('Couldn’t start OptimAI')

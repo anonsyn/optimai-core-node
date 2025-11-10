@@ -165,6 +165,13 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     }
   }
 
+  async restart() {
+    log.info('[mining] Restarting mining worker...')
+    await this.stop()
+    await this.start()
+    log.info('[mining] Mining worker restarted')
+  }
+
   private async setWorkerPreferences() {
     try {
       await miningApi.setWorkerPreferences(['google'])
