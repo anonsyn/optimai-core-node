@@ -19,61 +19,17 @@ export function NodeProvider({ children }: NodeProviderProps) {
     cleanupFunctionsRef.current.forEach((cleanup) => cleanup())
     cleanupFunctionsRef.current = []
 
-    // Setup IPC event listeners
-    const setupListeners = () => {
-      // Device ID changes
-      const deviceIdListener = window.nodeIPC.onDeviceIdChanged((deviceId) => {
-        console.log('device ID changed:', deviceId)
+    cleanupFunctionsRef.current.push(
+      window.nodeIPC.onDeviceIdChanged((deviceId) => {
         dispatch(nodeActions.setDeviceId(deviceId))
-      })
-      cleanupFunctionsRef.current.push(deviceIdListener.unsubscribe)
-
-      // Uptime cycle updates
-      const cycleListener = window.nodeIPC.onUptimeCycle((cycle) => {
-        dispatch(nodeActions.setUptimeCycle(cycle))
-      })
-      cleanupFunctionsRef.current.push(cycleListener.unsubscribe)
-
-      // Uptime rewards
-      const rewardListener = window.nodeIPC.onUptimeReward((reward) => {
-        dispatch(nodeActions.setUptimeReward(reward))
-      })
-      cleanupFunctionsRef.current.push(rewardListener.unsubscribe)
-
-      // Mining assignments
-      const assignmentsListener = window.nodeIPC.onMiningAssignments((assignments) => {
-        dispatch(nodeActions.setMiningAssignments(assignments))
-      })
-      cleanupFunctionsRef.current.push(assignmentsListener.unsubscribe)
-
-      // Mining assignment started
-      const assignmentStartedListener = window.nodeIPC.onMiningAssignmentStarted((assignmentId) => {
-        dispatch(nodeActions.setMiningAssignmentStarted(assignmentId))
-      })
-      cleanupFunctionsRef.current.push(assignmentStartedListener.unsubscribe)
-
-      // Mining assignment completed
-      const assignmentCompletedListener = window.nodeIPC.onMiningAssignmentCompleted(
-        (assignmentId) => {
-          dispatch(nodeActions.setMiningAssignmentCompleted(assignmentId))
-        }
-      )
-      cleanupFunctionsRef.current.push(assignmentCompletedListener.unsubscribe)
-
-      // Mining status changes
-      const miningStatusListener = window.nodeIPC.onMiningStatusChanged((status) => {
+      }).unsubscribe,
+      window.nodeIPC.onMiningStatusChanged((status) => {
         dispatch(nodeActions.setMiningStatus(status))
-      })
-      cleanupFunctionsRef.current.push(miningStatusListener.unsubscribe)
-
-      // Mining errors
-      const miningErrorListener = window.nodeIPC.onMiningError((payload) => {
+      }).unsubscribe,
+      window.nodeIPC.onMiningError((payload) => {
         dispatch(nodeActions.setMiningError(payload.message))
-      })
-      cleanupFunctionsRef.current.push(miningErrorListener.unsubscribe)
-    }
-
-    setupListeners()
+      }).unsubscribe
+    )
 
     // Initial data fetch
     const fetchInitialData = async () => {
