@@ -38,14 +38,9 @@ function Content() {
     }
   }
 
+  // Just show the error code
   const getErrorMessage = () => {
-    if (error === 'Docker not available') {
-      return 'Docker is not running. Please start Docker to continue.'
-    }
-    if (error === 'Crawler initialization failed') {
-      return 'Failed to initialize mining services. Please check Docker.'
-    }
-    return error || 'An unexpected error occurred.'
+    return `Error: ${error || 'UNKNOWN_ERROR'}`
   }
 
   return (

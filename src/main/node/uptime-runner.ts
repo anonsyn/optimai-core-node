@@ -4,6 +4,13 @@ import log from '../configs/logger'
 import pRetry from 'p-retry'
 import { DeviceType } from '../api/device/types'
 import { uptimeApi } from '../api/uptime'
+import {
+  uptimeCycleTooShortError,
+  uptimeReportFailedError,
+  uptimeRewardParseError,
+  uptimeTickError,
+  uptimeUserInfoMissingError
+} from '../errors/error-factory'
 import { eventsService } from '../services/events-service'
 import type { UptimeData } from '../storage'
 import { deviceStore, rewardStore, uptimeStore, userStore } from '../storage'
@@ -134,7 +141,10 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     } catch (error) {
       const errorMsg = getErrorMessage(error, 'Uptime tick error')
       log.error('[uptime] ✗ Error in tick:', errorMsg)
-      this.emit('error', error instanceof Error ? error : new Error(String(error)))
+      const appError = uptimeTickError(errorMsg)
+      // Emit as standard Error with code in message
+      const standardError = new Error(`${appError.code}: ${appError.message}`)
+      this.emit('error', standardError)
     } finally {
       if (this.running) {
         const nextCheckTime = Date.now() + this.intervalMs
@@ -151,7 +161,8 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
   private async reportCycle(data: UptimeData) {
     const user = userStore.getUser()
     if (!user) {
-      log.error('[uptime] ✗ Cannot report cycle - user information not available')
+      const appError = uptimeUserInfoMissingError()
+      log.error('[uptime] ✗', appError.message)
       return
     }
 
@@ -160,9 +171,8 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
     const duration = Math.min(data.uptime, maxDuration)
 
     if (duration <= 1000) {
-      log.warn(
-        `[uptime] ✗ Cycle duration too short (${this.formatTime(duration)}) - skipping report and creating new cycle`
-      )
+      const appError = uptimeCycleTooShortError(duration)
+      log.warn(`[uptime] ✗ ${appError.message}`)
       return
     }
 
@@ -181,6 +191,7 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
       response = await pRetry(() => uptimeApi.reportOnline(encodedMessage))
     } catch (error) {
       const errorMessage = getErrorMessage(error, 'Failed to report uptime')
+      const appError = uptimeReportFailedError(errorMessage)
       log.error('[uptime] ✗ Failed to report cycle:', errorMessage)
       await eventsService.reportError({
         type: 'uptime.report_failed',
@@ -189,7 +200,8 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
         metadata: {
           duration,
           maxDuration,
-          encodedMessage: encodedMessage
+          encodedMessage: encodedMessage,
+          errorCode: appError.code
         }
       })
       return
@@ -212,6 +224,7 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
       }
     } catch (error) {
       const errorMsg = getErrorMessage(error, 'Failed to parse reward response')
+      const appError = uptimeRewardParseError(errorMsg)
       log.error('[uptime] ✗ Error parsing reward response:', errorMsg)
       await eventsService.reportError({
         type: 'uptime.reward_parse_failed',
@@ -219,6 +232,7 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
         error,
         metadata: {
           duration,
+          errorCode: appError.code,
           maxDuration,
           encodedMessage: encodedMessage,
           responsePreview:

@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron'
 
 import type { SubmitAssignmentRequest } from '../../api/mining/types'
+import type { AppError } from '../../errors/error-codes'
 import type { LocalDeviceInfo, MiningAssignment, MiningWorkerStatus } from '../../node/types'
 import type { UptimeData } from '../../storage'
 import { createPreloadEventListener } from '../../utils/ipc'
@@ -34,9 +35,7 @@ const nodeIPC = {
     createPreloadEventListener(NodeEvents.OnMiningAssignmentCompleted, callback),
   onMiningStatusChanged: (callback: (status: MiningWorkerStatus) => void) =>
     createPreloadEventListener(NodeEvents.OnMiningStatusChanged, callback),
-  onNodeError: (callback: (payload: { message: string }) => void) =>
-    createPreloadEventListener(NodeEvents.OnNodeError, callback),
-  onMiningError: (callback: (payload: { message: string }) => void) =>
+  onMiningError: (callback: (error: AppError) => void) =>
     createPreloadEventListener(NodeEvents.OnMiningError, callback)
 }
 

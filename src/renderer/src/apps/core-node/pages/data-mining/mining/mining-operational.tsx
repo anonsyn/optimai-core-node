@@ -1,7 +1,9 @@
 import { useCloseModal, useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
+import { nodeSelectors } from '@/store/slices/node'
 import { MiningStatus, type MiningWorkerStatus } from '@main/node/types'
 import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { AssignmentsList } from './assignments'
 
 interface MiningOperationalProps {
@@ -13,11 +15,12 @@ export const MiningOperational = ({ status }: MiningOperationalProps) => {
   const openMiningError = useOpenModal(Modals.MINING_ERROR)
   const closeMiningStopped = useCloseModal(Modals.MINING_STOPPED)
   const closeMiningError = useCloseModal(Modals.MINING_ERROR)
+  const miningErrorCode = useSelector(nodeSelectors.miningErrorCode)
 
   useEffect(() => {
     // Open/close modals based on mining status
     if (status.status === MiningStatus.Error) {
-      openMiningError({ error: status.lastError || 'An error occurred' })
+      openMiningError({ error: miningErrorCode || 'UNKNOWN_ERROR' })
       closeMiningStopped()
     } else if (status.status === MiningStatus.Stopped) {
       openMiningStopped()
@@ -29,7 +32,7 @@ export const MiningOperational = ({ status }: MiningOperationalProps) => {
     }
   }, [
     status.status,
-    status.lastError,
+    miningErrorCode,
     openMiningError,
     openMiningStopped,
     closeMiningError,

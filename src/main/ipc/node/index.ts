@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import log from '../../configs/logger'
 
 import { deviceApi, DeviceDetail } from '../../api/device'
+import { isAppError } from '../../errors/error-codes'
 import { miningWorker } from '../../node/mining-worker'
 import { nodeRuntime } from '../../node/node-runtime'
 import type { LocalDeviceInfo } from '../../node/types'
@@ -45,9 +46,20 @@ class NodeIpcHandler {
     miningWorker.on('error', (error) => {
       const message = getErrorMessage(error, 'Mining worker error')
       log.error('Mining worker error:', message)
-      this.broadcast(NodeEvents.OnMiningError, {
-        message
-      })
+
+      // Check if error has error code
+      if (isAppError(error)) {
+        this.broadcast(NodeEvents.OnMiningError, {
+          code: error.code,
+          message: error.message
+        })
+      } else {
+        // Fallback for errors without codes
+        this.broadcast(NodeEvents.OnMiningError, {
+          code: 'UNKNOWN_ERROR',
+          message
+        })
+      }
     })
 
     // Watch device store for changes and broadcast device ID

@@ -26,8 +26,8 @@ export function NodeProvider({ children }: NodeProviderProps) {
       window.nodeIPC.onMiningStatusChanged((status) => {
         dispatch(nodeActions.setMiningStatus(status))
       }).unsubscribe,
-      window.nodeIPC.onMiningError((payload) => {
-        dispatch(nodeActions.setMiningError(payload.message))
+      window.nodeIPC.onMiningError((error) => {
+        dispatch(nodeActions.setMiningError(error))
       }).unsubscribe
     )
 

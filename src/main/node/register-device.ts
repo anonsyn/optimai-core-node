@@ -1,6 +1,12 @@
 import { deviceApi } from '../api/device'
 import { DeviceType } from '../api/device/types'
 import log from '../configs/logger'
+import {
+  deviceIdMissingError,
+  deviceNoUserError,
+  deviceRegistrationFailedError,
+  deviceResponseDecodeError
+} from '../errors/error-factory'
 import { eventsService } from '../services/events-service'
 import { deviceStore, userStore } from '../storage'
 import { getFullDeviceInfo } from '../utils/device-info'
@@ -18,7 +24,7 @@ export async function registerDevice({
 }: RegisterDeviceOptions = {}): Promise<string> {
   const user = userStore.getUser()
   if (!user) {
-    throw new Error('Cannot register device without an authenticated user')
+    throw deviceNoUserError()
   }
 
   if (deviceStore.isRegistered() && !force) {
@@ -56,16 +62,18 @@ export async function registerDevice({
   } catch (error) {
     const errorMessage = getErrorMessage(error, 'Failed to register device')
     log.error('[register-device] Device registration failed:', errorMessage)
+    const appError = deviceRegistrationFailedError(errorMessage)
     await eventsService.reportError({
       type: 'device.registration_failed',
       message: 'Device registration request failed',
       error,
       metadata: {
         encodedMessage: encodedMessage,
-        deviceInfo
+        deviceInfo,
+        errorCode: appError.code
       }
     })
-    throw error
+    throw appError
   }
 
   const { data } = response
@@ -78,7 +86,7 @@ export async function registerDevice({
     const deviceId = typeof parsed.device_id === 'string' ? parsed.device_id : undefined
 
     if (!deviceId) {
-      throw new Error('Device ID missing in server response')
+      throw deviceIdMissingError()
     }
 
     deviceStore.saveDeviceId(deviceId)
@@ -86,15 +94,17 @@ export async function registerDevice({
   } catch (error) {
     const errorMessage = getErrorMessage(error, 'Failed to decode device registration response')
     log.error('[register-device] Failed to decode device registration response:', errorMessage)
+    const appError = deviceResponseDecodeError(errorMessage)
     await eventsService.reportError({
       type: 'device.registration_response_invalid',
       message: errorMessage,
       error,
       metadata: {
         encodedMessage: encodedMessage,
-        responsePreview: typeof data?.data === 'string' ? data.data.slice(0, 200) : undefined
+        responsePreview: typeof data?.data === 'string' ? data.data.slice(0, 200) : undefined,
+        errorCode: appError.code
       }
     })
-    throw new Error(errorMessage)
+    throw appError
   }
 }

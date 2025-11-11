@@ -4,6 +4,14 @@ import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
 import { MiningAssignmentFailureReason } from '../api/mining/types'
 import log from '../configs/logger'
+import type { AppError } from '../errors/error-codes'
+import { isAppError } from '../errors/error-codes'
+import {
+  miningCrawlerInitError,
+  miningNoContentError,
+  miningNoUrlError,
+  miningSSEError
+} from '../errors/error-factory'
 import { crawlerService, type CrawlerErrorContext } from '../services/crawler-service'
 import { eventsService } from '../services/events-service'
 import { deviceStore, tokenStore, userStore } from '../storage'
@@ -15,8 +23,8 @@ interface MiningWorkerEvents {
   assignments: (assignments: MiningAssignment[]) => void
   assignmentStarted: (assignmentId: string) => void
   assignmentCompleted: (assignmentId: string) => void
-  assignmentFailed: (assignmentId: string, error: Error) => void
-  error: (error: Error) => void
+  assignmentFailed: (assignmentId: string, error: Error | AppError) => void
+  error: (error: Error | AppError) => void
   statusChanged: (status: MiningWorkerStatus) => void
 }
 
@@ -115,16 +123,28 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       this.connectSse()
       this.schedulePoll(0)
     } catch (error) {
-      const message = getErrorMessage(error, 'Failed to initialize crawler service')
-      log.error('[mining] Failed to initialize crawler service:', message)
-      this.setStatus(MiningStatus.Error, message)
+      // Check if this is a Docker-specific error (DOCKER_2001 or DOCKER_2002)
+      let appError: AppError
+      if (isAppError(error) && (error.code === 'DOCKER_2001' || error.code === 'DOCKER_2002')) {
+        // Use the Docker error directly
+        appError = error
+        log.error(`[mining] Docker error: ${error.code} - ${error.message}`)
+      } else {
+        // Generic crawler init error
+        const message = getErrorMessage(error, 'Failed to initialize crawler service')
+        appError = miningCrawlerInitError(message)
+        log.error('[mining] Failed to initialize crawler service:', message)
+      }
+
+      this.setStatus(MiningStatus.Error, appError.code)
       await eventsService.reportError({
         type: 'mining.crawler_init_failed',
-        message: message,
+        message: appError.message,
         severity: 'critical',
         error,
         metadata: {
-          stage: 'start'
+          stage: 'start',
+          errorCode: appError.code
         }
       })
       this.running = false
@@ -177,10 +197,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       await miningApi.setWorkerPreferences(['google'])
       log.info('[mining] Worker preferences saved (processing Google tasks)')
     } catch (error) {
-      log.error(
-        '[mining] Failed to set worker preferences:',
-        getErrorMessage(error, 'Failed to set worker preferences')
-      )
+      const message = getErrorMessage(error, 'Failed to set worker preferences')
+      log.error('[mining] Failed to set worker preferences:', message)
+      // Non-critical error, don't emit
     }
   }
 
@@ -256,7 +275,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         })
 
         if (!response.ok || !response.body) {
-          throw new Error(`SSE connection failed with status ${response.status}`)
+          throw miningSSEError(`Connection failed with status ${response.status}`)
         }
 
         log.info('[mining] Connected to task updates')
@@ -488,7 +507,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       // Get URL from task
       const url = task?.source_url || (task as any)?.url
       if (!url) {
-        throw new Error(`No URL found for assignment ${assignmentId}`)
+        throw miningNoUrlError(assignmentId)
       }
 
       // Crawl content
@@ -500,7 +519,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       })
 
       if (!crawlResult || !crawlResult.markdown) {
-        throw new Error(`No content crawled for assignment ${assignmentId}`)
+        throw miningNoContentError(assignmentId)
       }
 
       const crawlTime = (Date.now() - startTime) / 1000

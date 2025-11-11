@@ -1,5 +1,11 @@
 import pRetry from 'p-retry'
 import log from '../configs/logger'
+import {
+  authNoTokensError,
+  authUserFetchError,
+  authUserPayloadMissingError,
+  nodeStartFailedError
+} from '../errors/error-factory'
 import { apiClient } from '../libs/axios'
 import { eventsService } from '../services/events-service'
 import { tokenStore, userStore } from '../storage'
@@ -18,7 +24,7 @@ export class NodeRuntime {
     }
 
     if (!tokenStore.hasTokens()) {
-      throw new Error('Authentication required before starting node')
+      throw authNoTokensError()
     }
 
     this.running = true
@@ -37,17 +43,18 @@ export class NodeRuntime {
       return true
     } catch (error) {
       const message = getErrorMessage(error, 'Node runtime error')
-      const lastError = new Error(message)
+      const appError = nodeStartFailedError(message)
       await eventsService.reportError({
         type: 'node.start_failed',
         message: 'Node runtime failed to start',
         error,
         metadata: {
-          wasRunning: this.running
+          wasRunning: this.running,
+          errorCode: appError.code
         }
       })
       this.running = false
-      throw lastError
+      throw appError
     }
   }
 
@@ -82,13 +89,14 @@ export class NodeRuntime {
 
       const user = response.data?.user
       if (!user) {
-        throw new Error('User payload missing')
+        throw authUserPayloadMissingError()
       }
 
       userStore.saveUser(user)
     } catch (error) {
-      log.error(getErrorMessage(error, 'Failed to load user profile'))
-      throw error
+      const message = getErrorMessage(error, 'Failed to load user profile')
+      log.error(message)
+      throw authUserFetchError(message)
     }
   }
 }
