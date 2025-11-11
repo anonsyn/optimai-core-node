@@ -48,7 +48,7 @@ export class Crawl4AiService {
         // Try to determine the port from existing container
         // For now, we'll use the configured port
         this.containerPort = this.config.port
-        this.baseUrl = `http://localhost:${this.containerPort}`
+        this.baseUrl = `http://127.0.0.1:${this.containerPort}`
 
         // Verify it's accessible
         const isHealthy = await this.checkHealth()
@@ -60,7 +60,7 @@ export class Crawl4AiService {
 
       // Get an available port
       this.containerPort = await getPort({ port: this.config.port })
-      this.baseUrl = `http://localhost:${this.containerPort}`
+      this.baseUrl = `http://127.0.0.1:${this.containerPort}`
 
       // Pull image if needed
       await dockerService.pullImage(this.config.imageName, () => {})
@@ -178,7 +178,7 @@ export class Crawl4AiService {
 
       if (status) {
         this.containerPort ??= this.config.port
-        this.baseUrl ??= `http://localhost:${this.containerPort}`
+        this.baseUrl ??= `http://127.0.0.1:${this.containerPort}`
 
         try {
           await dockerService.restartContainer(this.config.containerName)
@@ -192,7 +192,7 @@ export class Crawl4AiService {
         }
       } else {
         this.containerPort = await getPort({ port: this.config.port })
-        this.baseUrl = `http://localhost:${this.containerPort}`
+        this.baseUrl = `http://127.0.0.1:${this.containerPort}`
         await this.startContainer()
       }
 

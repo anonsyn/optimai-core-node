@@ -60,8 +60,8 @@ CRAWL4AI_CONTAINER_NAME=opai_crawl4ai    # Container name
 
 **Endpoints**:
 
-- `GET http://localhost:11235/health` - Health check
-- `POST http://localhost:11235/crawl` - Main crawling endpoint
+- `GET http://127.0.0.1:11235/health` - Health check
+- `POST http://127.0.0.1:11235/crawl` - Main crawling endpoint
 
 **Request Payload Structure**:
 
@@ -357,7 +357,7 @@ class Crawl4AIClient {
   private baseUrl: string
 
   constructor(port: number = 11235) {
-    this.baseUrl = `http://localhost:${port}`
+    this.baseUrl = `http://127.0.0.1:${port}`
   }
 
   async health(): Promise<boolean> {
@@ -445,7 +445,7 @@ Add to `.env`:
 CRAWLER_DOCKER_PORT=11235
 CRAWLER_DOCKER_IMAGE=unclecode/crawl4ai:0.7.4
 CRAWLER_CONTAINER_NAME=opai_crawl4ai
-CRAWLER_HEALTH_CHECK_URL=http://localhost:11235/health
+CRAWLER_HEALTH_CHECK_URL=http://127.0.0.1:11235/health
 CRAWLER_MAX_RETRIES=3
 CRAWLER_SESSION_TIMEOUT=3600000
 ```
@@ -727,7 +727,7 @@ docker logs opai_crawl4ai
 docker inspect opai_crawl4ai
 
 # Test health endpoint
-curl http://localhost:11235/health
+curl http://127.0.0.1:11235/health
 
 # Remove container (for fresh start)
 docker stop opai_crawl4ai && docker rm opai_crawl4ai
