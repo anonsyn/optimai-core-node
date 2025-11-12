@@ -28,6 +28,8 @@ export const AssignmentsList = () => {
 
   const assignments = data?.assignments || []
 
+  const isEmpty = assignments.length === 0 || assignments.every((item) => item.status === 'failed')
+
   // Listen for new assignments and refetch the list
   useEffect(() => {
     const refetchAssignments = lodash.debounce(
@@ -88,7 +90,7 @@ export const AssignmentsList = () => {
     )
   }
 
-  if (assignments.length === 0) {
+  if (isEmpty) {
     return (
       <div className="h-full w-full overflow-hidden">
         <Lottie animationData={waitingTaskAnimationData} loop />
