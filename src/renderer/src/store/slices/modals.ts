@@ -65,7 +65,6 @@ export interface ModalSliceState {
     version?: string
     releaseNotes?: string
   }>
-  [Modals.MINING_STOPPED]?: ModalState
   [Modals.MINING_ERROR]?: ModalState<{
     error?: AppError
   }>

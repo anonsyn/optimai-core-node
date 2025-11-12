@@ -2,7 +2,6 @@ import { AssignmentDetailModal } from '@core-node/modals/assignment-detail-modal
 import { DockerNotRunningModal } from '@core-node/modals/docker-not-running-modal'
 import { LogoutConfirmationModal } from '@core-node/modals/logout-confirmation-modal'
 import { MiningErrorModal } from '@core-node/modals/mining-error-modal'
-import { MiningStoppedModal } from '@core-node/modals/mining-stopped-modal'
 import { DataMiningHeader } from './header'
 import { LeftPanel } from './left-panel'
 import { Mining } from './mining'
@@ -38,7 +37,6 @@ const DataMiningPage = () => {
 
       {/* Modals */}
       <AssignmentDetailModal />
-      <MiningStoppedModal />
       <MiningErrorModal />
       <DockerNotRunningModal />
       <LogoutConfirmationModal />
