@@ -4,7 +4,7 @@ import { Icon } from '@/components/ui/icon'
 import { useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export function DockerNotRunningModal() {
   const open = useIsModalOpen(Modals.DOCKER_NOT_RUNNING)
@@ -23,9 +23,17 @@ export function DockerNotRunningModal() {
 }
 
 function Content() {
-  const { onRetry: onComplete } = useModalData(Modals.DOCKER_NOT_RUNNING)
+  const modalData = useModalData(Modals.DOCKER_NOT_RUNNING)
+  const { onRetry: onComplete, autoCheck = true } = modalData || {}
+  const [isChecking, setIsChecking] = useState(autoCheck)
+
+  const handleManualCheck = () => {
+    setIsChecking(true)
+  }
 
   useEffect(() => {
+    if (!isChecking) return
+
     let cancelled = false
     let interval: NodeJS.Timeout | null = null
 
@@ -58,7 +66,7 @@ function Content() {
       cancelled = true
       if (interval) clearInterval(interval)
     }
-  }, [onComplete])
+  }, [onComplete, isChecking])
 
   return (
     <div className="flex h-full flex-col">
@@ -80,11 +88,18 @@ function Content() {
 
       <div className="space-y-2 pt-15">
         <Button
-          disabled
+          disabled={isChecking}
+          onClick={isChecking ? undefined : handleManualCheck}
           className="from-yellow to-green w-full bg-gradient-to-r text-black hover:opacity-90 disabled:opacity-50"
         >
-          <Icon icon="LoaderCircle" className="size-4 animate-spin" />
-          Checking Docker...
+          {isChecking ? (
+            <>
+              <Icon icon="LoaderCircle" className="size-4 animate-spin" />
+              Checking Docker...
+            </>
+          ) : (
+            'Check Docker'
+          )}
         </Button>
         <Button
           variant="outline"

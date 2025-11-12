@@ -177,10 +177,11 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
               return false
             } catch (retryError) {
               console.error('Docker retry check failed:', retryError)
-              setError('We couldn’t check Docker')
+              setError("We couldn't check Docker")
               return false
             }
-          }
+          },
+          autoCheck: true
         })
       })
     }
