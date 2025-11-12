@@ -60,7 +60,7 @@ CRAWL4AI_CONTAINER_NAME=opai_crawl4ai    # Container name
 
 **Endpoints**:
 
-- `GET http://127.0.0.1:11235/health` - Health check
+- `GET http://127.0.0.1`:11235/health` - Health check
 - `POST http://127.0.0.1:11235/crawl` - Main crawling endpoint
 
 **Request Payload Structure**:

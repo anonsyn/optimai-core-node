@@ -2,6 +2,8 @@
  * Type definitions for Node API
  */
 
+import type { AppError } from '../errors/error-codes'
+
 export interface ServerStatus {
   isRunning: boolean
   isReady: boolean
@@ -50,7 +52,7 @@ export interface MiningWorkerStatus {
   status: MiningStatus
   isProcessing: boolean
   assignmentCount: number
-  lastError?: string
+  lastError?: AppError
 }
 
 export interface MiningAssignment {

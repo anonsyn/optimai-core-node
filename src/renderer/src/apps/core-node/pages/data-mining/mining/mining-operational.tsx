@@ -15,12 +15,12 @@ export const MiningOperational = ({ status }: MiningOperationalProps) => {
   const openMiningError = useOpenModal(Modals.MINING_ERROR)
   const closeMiningStopped = useCloseModal(Modals.MINING_STOPPED)
   const closeMiningError = useCloseModal(Modals.MINING_ERROR)
-  const miningErrorCode = useSelector(nodeSelectors.miningErrorCode)
+  const miningError = useSelector(nodeSelectors.miningError)
 
   useEffect(() => {
     // Open/close modals based on mining status
     if (status.status === MiningStatus.Error) {
-      openMiningError({ error: miningErrorCode || 'UNKNOWN_ERROR' })
+      openMiningError({ error: miningError })
       closeMiningStopped()
     } else if (status.status === MiningStatus.Stopped) {
       openMiningStopped()
@@ -32,7 +32,7 @@ export const MiningOperational = ({ status }: MiningOperationalProps) => {
     }
   }, [
     status.status,
-    miningErrorCode,
+    miningError,
     openMiningError,
     openMiningStopped,
     closeMiningError,

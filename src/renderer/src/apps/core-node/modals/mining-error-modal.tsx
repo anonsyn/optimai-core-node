@@ -40,7 +40,7 @@ function Content() {
 
   // Just show the error code
   const getErrorMessage = () => {
-    return `Error: ${error || 'UNKNOWN_ERROR'}`
+    return `Error: ${error?.message || 'UNKNOWN_ERROR'}`
   }
 
   return (

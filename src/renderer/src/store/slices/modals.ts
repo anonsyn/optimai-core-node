@@ -1,5 +1,6 @@
 import { Mission, MissionType } from '@/api/missions'
 import { RootState } from '@/store'
+import { AppError } from '@/types/errors'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 export enum Modals {
@@ -64,7 +65,7 @@ export interface ModalSliceState {
   }>
   [Modals.MINING_STOPPED]?: ModalState
   [Modals.MINING_ERROR]?: ModalState<{
-    error: string
+    error?: AppError
   }>
   [Modals.REPORT_ISSUE]?: ModalState
 }

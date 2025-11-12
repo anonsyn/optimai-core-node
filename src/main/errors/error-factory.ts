@@ -183,6 +183,21 @@ export function crawlerNotHealthyError(): AppError {
   return createError(ErrorCode.CRAWLER_4009, 'Crawler service is not healthy')
 }
 
+export function crawlerSessionDestroyError(originalMessage: string): AppError {
+  return createError(
+    ErrorCode.CRAWLER_4006,
+    `Failed to destroy crawler session: ${originalMessage}`
+  )
+}
+
+export function crawlerCloseError(originalMessage: string): AppError {
+  return createError(ErrorCode.CRAWLER_4007, `Failed to close crawler service: ${originalMessage}`)
+}
+
+export function crawlerEndpointResolveError(): AppError {
+  return createError(ErrorCode.CRAWLER_4010, 'Failed to resolve crawler endpoint after restart')
+}
+
 // ==================== UPTIME ERRORS ====================
 
 export function uptimeUserInfoMissingError(): AppError {
@@ -237,4 +252,10 @@ export function nodeStartFailedError(originalMessage: string): AppError {
 
 export function nodeStopFailedError(originalMessage: string): AppError {
   return createError(ErrorCode.NODE_7002, `Node runtime failed to stop: ${originalMessage}`)
+}
+
+// ==================== UNKNOWN ERRORS ====================
+
+export function unknownError(originalMessage: string): AppError {
+  return createError(ErrorCode.UNKNOWN_ERROR, `Unknown error: ${originalMessage}`)
 }

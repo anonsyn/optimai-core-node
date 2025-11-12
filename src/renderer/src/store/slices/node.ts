@@ -1,6 +1,5 @@
 import { RootState } from '@/store'
 import { MiningWorkerStatus } from '@main/node/types'
-import { AppError } from '@/types/errors'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface NodeReward {
@@ -15,7 +14,6 @@ export interface NodeState {
 
   // Mining
   miningStatus?: MiningWorkerStatus
-  miningError?: AppError
 }
 
 const initialState: NodeState = {}
@@ -35,10 +33,7 @@ const nodeSlice = createSlice({
     setMiningStatus: (state, action: PayloadAction<MiningWorkerStatus>) => {
       state.miningStatus = action.payload
     },
-    // Error handling
-    setMiningError: (state, action: PayloadAction<AppError>) => {
-      state.miningError = action.payload
-    },
+
     // Reset
     reset: () => initialState
   }
@@ -57,8 +52,7 @@ export const nodeSelectors = {
   miningStatus: (state: RootState) => state.node.miningStatus,
 
   isMiningProcessing: (state: RootState) => state.node.miningStatus?.isProcessing || false,
-  miningError: (state: RootState) => state.node.miningError,
-  miningErrorCode: (state: RootState) => state.node.miningError?.code,
+  miningError: (state: RootState) => state.node.miningStatus?.lastError,
 
   // Derived selectors
   isRunning: (state: RootState) => {
