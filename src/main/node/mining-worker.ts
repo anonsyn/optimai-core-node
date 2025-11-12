@@ -617,6 +617,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     } finally {
       // Remove from processing set
       this.processingAssignments.delete(assignmentId)
+
+      // If no more assignments being processed, set status back to Ready
+      if (this.processingAssignments.size === 0 && this.status === MiningStatus.Processing) {
+        this.setStatus(MiningStatus.Ready)
+      }
     }
   }
 
