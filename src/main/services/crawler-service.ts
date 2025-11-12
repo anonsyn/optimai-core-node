@@ -321,7 +321,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
         stream: false,
         cache_mode: crawlOptions.cacheMode || 'smart',
         wait_until: 'domcontentloaded',
-        page_timeout: 60000,
+        page_timeout: 180000,
         delay_before_return_html: 2.0,
         simulate_user: true,
         override_navigator: true,

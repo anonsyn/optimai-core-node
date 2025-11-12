@@ -95,7 +95,7 @@ function createApiCLient(
 ): AxiosInstance {
   const client = axios.create({
     baseURL,
-    timeout: options.timeout || 60000, // 60 seconds for main process
+    timeout: options.timeout || 180000, // 3 minutes for main process
     headers: {
       'Content-Type': 'application/json',
       ...options.customHeaders
