@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
+import IMAGES from '@/configs/images'
 import { useCloseModal, useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { motion } from 'framer-motion'
@@ -82,8 +83,14 @@ function Content() {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full border border-white/10 bg-black/30">
-          <Icon className="size-7 shrink-0 text-white" icon="Docker" />
+        <div
+          className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full border border-white/10 bg-black/30"
+          style={{
+            boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.20)'
+          }}
+        >
+          {/* <Icon className="size-7 shrink-0 text-white" icon="Docker" /> */}
+          <img className="h-[22px] w-auto shrink-0" src={IMAGES.PLATFORMS.DOCKER} />
         </div>
         <h3 className="text-20 font-semibold text-white">Please Open Docker</h3>
         <p className="text-16 mt-1 text-white/50">

@@ -49,7 +49,7 @@ export interface ModalSliceState {
     onRetry: () => Promise<boolean>
   }>
   [Modals.DOCKER_NOT_RUNNING]?: ModalState<{
-    onRetry: () => Promise<boolean>
+    onRetry: () => Promise<any>
     autoCheck?: boolean
     canDismiss?: boolean
   }>

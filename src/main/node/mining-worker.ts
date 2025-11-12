@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3'
 import type PQueue from 'p-queue'
+import pRetry from 'p-retry'
 import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
 import { MiningAssignmentFailureReason } from '../api/mining/types'
@@ -400,10 +401,18 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       }
     }
 
+    const handleReady = () => {
+      if (this.status === MiningStatus.Error) {
+        this.setStatus(MiningStatus.Ready)
+      }
+    }
+
     crawlerService.on('error', handleError)
+    crawlerService.on('ready', handleReady)
 
     this.detachCrawlerListeners = () => {
       crawlerService.off('error', handleError)
+      crawlerService.off('ready', handleReady)
     }
   }
 
@@ -515,9 +524,16 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       log.info(`[mining] Collecting content from ${url} for assignment ${assignmentId}`)
       const startTime = Date.now()
 
-      const crawlResult = await crawlerService.crawl({
-        url
-      })
+      const crawlResult = await pRetry(
+        () =>
+          crawlerService.crawl({
+            url
+          }),
+        {
+          retries: 1,
+          minTimeout: 3000
+        }
+      )
 
       if (!crawlResult || !crawlResult.markdown) {
         throw miningNoContentError(assignmentId)

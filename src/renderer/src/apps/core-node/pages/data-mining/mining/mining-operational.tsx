@@ -11,32 +11,39 @@ interface MiningOperationalProps {
 }
 
 export const MiningOperational = ({ status }: MiningOperationalProps) => {
-  const openMiningStopped = useOpenModal(Modals.MINING_STOPPED)
   const openMiningError = useOpenModal(Modals.MINING_ERROR)
-  const closeMiningStopped = useCloseModal(Modals.MINING_STOPPED)
+  const openDockerErrorModal = useOpenModal(Modals.DOCKER_NOT_RUNNING)
   const closeMiningError = useCloseModal(Modals.MINING_ERROR)
+  const closeDockerModal = useCloseModal(Modals.DOCKER_NOT_RUNNING)
   const miningError = useSelector(nodeSelectors.miningError)
 
   useEffect(() => {
-    // Open/close modals based on mining status
+    // Open/close modal based on mining status
     if (status.status === MiningStatus.Error) {
-      openMiningError({ error: miningError })
-      closeMiningStopped()
-    } else if (status.status === MiningStatus.Stopped) {
-      openMiningStopped()
+      if (miningError) {
+        const isDockerError = miningError.code.startsWith('DOCKER_')
+        if (isDockerError) {
+          openDockerErrorModal({
+            onRetry: async () => closeDockerModal(),
+            autoCheck: false,
+            canDismiss: true
+          })
+        } else {
+          openMiningError({ error: miningError })
+        }
+      }
+    } else {
+      // Close modal when mining is operational
       closeMiningError()
-    } else if (status.status === MiningStatus.Ready || status.status === MiningStatus.Processing) {
-      // Close both modals when mining is operational
-      closeMiningStopped()
-      closeMiningError()
+      closeDockerModal()
     }
   }, [
     status.status,
     miningError,
     openMiningError,
-    openMiningStopped,
     closeMiningError,
-    closeMiningStopped
+    openDockerErrorModal,
+    closeDockerModal
   ])
 
   return (

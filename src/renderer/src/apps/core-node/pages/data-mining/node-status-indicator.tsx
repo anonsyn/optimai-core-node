@@ -1,3 +1,5 @@
+import { useOpenModal } from '@/hooks/modal'
+import { Modals } from '@/store/slices/modals'
 import { nodeSelectors } from '@/store/slices/node'
 import { cn } from '@/utils/tw'
 import { MiningStatus } from '@main/node/types'
@@ -8,6 +10,9 @@ export const NodeStatusIndicator = () => {
   const miningStatus = useSelector(nodeSelectors.miningStatus)
   const isProcessing = useSelector(nodeSelectors.isMiningProcessing)
   const miningError = useSelector(nodeSelectors.miningError)
+
+  const openMiningError = useOpenModal(Modals.MINING_ERROR)
+  const openDockerErrorModal = useOpenModal(Modals.DOCKER_NOT_RUNNING)
 
   const getStatusConfig = () => {
     // If node is not running, show offline
@@ -71,10 +76,29 @@ export const NodeStatusIndicator = () => {
   }
 
   const config = getStatusConfig()
+
+  const handleClick = () => {
+    if (miningStatus?.status === MiningStatus.Error) {
+      if (miningError) {
+        const isDockerError = miningError.code.startsWith('DOCKER_')
+        if (isDockerError) {
+          openDockerErrorModal({
+            onRetry: async () => {},
+            autoCheck: false,
+            canDismiss: true
+          })
+        } else {
+          openMiningError({ error: miningError })
+        }
+      }
+    }
+  }
+
   return (
     <button
       type="button"
       className="bg-accent/30 hover:bg-accent/40 text-16 flex h-10 items-center gap-2.5 rounded-xl border border-white/5 px-4 transition-colors outline-none"
+      onClick={handleClick}
     >
       <div className="relative flex items-center justify-center">
         {config.animate && (
