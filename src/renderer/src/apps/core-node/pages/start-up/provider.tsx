@@ -181,7 +181,8 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
               return false
             }
           },
-          autoCheck: true
+          autoCheck: true,
+          canDismiss: false
         })
       })
     }

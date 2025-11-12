@@ -51,6 +51,7 @@ export interface ModalSliceState {
   [Modals.DOCKER_NOT_RUNNING]?: ModalState<{
     onRetry: () => Promise<boolean>
     autoCheck?: boolean
+    canDismiss?: boolean
   }>
   [Modals.ASSIGNMENT_DETAILS]?: ModalState<{
     assignmentId: string

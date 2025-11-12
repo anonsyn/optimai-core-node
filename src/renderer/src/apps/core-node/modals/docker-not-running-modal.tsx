@@ -1,21 +1,26 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
-import { useIsModalOpen, useModalData } from '@/hooks/modal'
+import { useCloseModal, useIsModalOpen, useModalData } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
 export function DockerNotRunningModal() {
   const open = useIsModalOpen(Modals.DOCKER_NOT_RUNNING)
+  const modalData = useModalData(Modals.DOCKER_NOT_RUNNING)
+  const closeModal = useCloseModal(Modals.DOCKER_NOT_RUNNING)
+  const { canDismiss = false } = modalData || {}
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen && canDismiss) {
+      closeModal()
+    }
+  }
 
   return (
-    <Dialog open={open}>
-      <DialogContent
-        className="overflow-hidden sm:max-w-[452px]"
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="overflow-hidden sm:max-w-[452px]">
         <Content />
       </DialogContent>
     </Dialog>
