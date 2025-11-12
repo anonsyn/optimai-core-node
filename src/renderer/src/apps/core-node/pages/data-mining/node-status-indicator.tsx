@@ -82,7 +82,13 @@ export const NodeStatusIndicator = () => {
         const isDockerError = miningError.code.startsWith('DOCKER_')
         if (isDockerError) {
           openDockerErrorModal({
-            onRetry: async () => {},
+            onRetry: async () => {
+              try {
+                await window.nodeIPC.restartMining()
+              } catch (error) {
+                console.error('Failed to restart mining:', error)
+              }
+            },
             autoCheck: false,
             canDismiss: true
           })
