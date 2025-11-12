@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Icon } from '@/components/ui/icon'
-import { useIsModalOpen, useModalData } from '@/hooks/modal'
+import { useCloseModal, useIsModalOpen, useModalData, useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { motion } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
@@ -10,8 +10,10 @@ import { useState } from 'react'
 export function MiningErrorModal() {
   const open = useIsModalOpen(Modals.MINING_ERROR)
 
+  const closeModal = useCloseModal(Modals.MINING_ERROR)
+
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent
         className="overflow-hidden sm:max-w-[452px]"
         onPointerDownOutside={(e) => e.preventDefault()}
@@ -26,6 +28,8 @@ export function MiningErrorModal() {
 function Content() {
   const { error } = useModalData(Modals.MINING_ERROR)
   const [isRetrying, setIsRetrying] = useState(false)
+
+  const openReportIssueModal = useOpenModal(Modals.REPORT_ISSUE)
 
   const handleRetry = async () => {
     setIsRetrying(true)
@@ -52,8 +56,10 @@ function Content() {
         transition={{ duration: 0.3 }}
         className="flex-1 text-center"
       >
-        <div className="bg-destructive/10 mx-auto mb-6 flex size-18 items-center justify-center rounded-full">
-          <AlertTriangle className="text-destructive size-7" />
+        <div className="mx-auto mb-6 flex size-18 items-center justify-center rounded-full border border-black/20 bg-[#202522]">
+          <div className="bg-background flex size-13 items-center justify-center rounded-full">
+            <AlertTriangle className="size-6 text-white" />
+          </div>
         </div>
         <h3 className="text-20 font-semibold text-white">Mining Error</h3>
         <p className="text-16 mt-1 text-white/70">{getErrorMessage()}</p>
@@ -72,6 +78,16 @@ function Content() {
               Try again
             </>
           )}
+        </Button>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => {
+            openReportIssueModal()
+          }}
+        >
+          Report Issue
         </Button>
       </div>
     </div>

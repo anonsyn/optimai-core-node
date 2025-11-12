@@ -15,11 +15,11 @@ import { useCloseModal, useIsModalOpen } from '@/hooks/modal'
 import { useAppSelector } from '@/hooks/redux'
 import { authSelectors } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { z } from 'zod'
 import { getErrorMessage } from '@/utils/get-error-message'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 function ReportIssueModal() {
   const open = useIsModalOpen(Modals.REPORT_ISSUE)
@@ -121,7 +121,7 @@ const ReportForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Email" autoComplete="email" {...field} />
+                  <Input placeholder="Email" autoComplete="off" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,7 +134,7 @@ const ReportForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Title" {...field} />
+                  <Input placeholder="Title" autoComplete="off" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
