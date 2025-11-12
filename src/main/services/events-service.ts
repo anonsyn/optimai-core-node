@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { app } from 'electron'
 import log from '../configs/logger'
 import { eventsApi, type EventSeverity } from '../api/events'
 import { deviceStore, userStore } from '../storage'
@@ -89,7 +90,8 @@ class EventsService {
 
     const metadataWithError = this.mergeMetadata(metadata, {
       error: errorMessage,
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
+      nodeVersion: app.getVersion()
     })
 
     await this.reportEvent({
