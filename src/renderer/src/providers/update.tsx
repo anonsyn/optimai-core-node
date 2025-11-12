@@ -39,8 +39,6 @@ export function UpdateProvider({ children }: UpdateProviderProps) {
     // Setup update state listener
     const setupUpdateListener = () => {
       const { unsubscribe } = window.updaterIPC.onStateChange((state) => {
-        console.log('[UpdateProvider] Update state changed:', state)
-
         // Handle update downloaded state
         if (state.status === 'downloaded' && state.updateInfo) {
           // Only show modal once per update

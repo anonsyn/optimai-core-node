@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux'
 export const NodeStatusIndicator = () => {
   const isRunning = useSelector(nodeSelectors.isRunning)
   const miningStatus = useSelector(nodeSelectors.miningStatus)
-  const isProcessing = useSelector(nodeSelectors.isMiningProcessing)
   const miningError = useSelector(nodeSelectors.miningError)
 
   const openMiningError = useOpenModal(Modals.MINING_ERROR)
@@ -28,7 +27,7 @@ export const NodeStatusIndicator = () => {
     }
 
     // Node is running, show mining status
-    if (miningStatus?.status === MiningStatus.Processing || isProcessing) {
+    if (miningStatus?.status === MiningStatus.Processing) {
       return {
         label: 'Mining',
         dotClass: 'bg-green shadow-[0_0_12px_rgba(34,197,94,0.8)]',
