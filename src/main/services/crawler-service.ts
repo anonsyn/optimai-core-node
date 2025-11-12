@@ -352,7 +352,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
           headers: {
             'Content-Type': 'application/json'
           },
-          timeout: 90000,
+          timeout: 180000,
           validateStatus: () => true
         }
       )
