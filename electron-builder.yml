@@ -39,6 +39,6 @@ appImage:
 npmRebuild: false
 publish:
   provider: s3
-  bucket: core-node-alpha
+  bucket: core-node
   region: auto
   endpoint: https://87715f7d8edee067bb527e0d24f889d6.r2.cloudflarestorage.com

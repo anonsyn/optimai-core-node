@@ -23,7 +23,7 @@
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
     "deploy": "npm run build && electron-builder build --publish always",
-    "deploy:mac": "arch -x86_64 yarn deploy"
+    "deploy:mac": "npm run build && electron-builder build --mac --universal --publish always"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
