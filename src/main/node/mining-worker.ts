@@ -433,14 +433,31 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       }
 
       // Fetch assignments
-      const { data } = await miningApi.getAssignments({
+      const response = await miningApi.getAssignments({
         statuses: ['not_started', 'in_progress'],
         limit: 30,
         platforms: 'google', // Only fetch Google platform tasks
         ...(deviceId && { device_id: deviceId }) // Only include device_id if set
       })
+      const data = response?.data
+      const cacheVersionHeader =
+        (response as any)?.headers?.['x-assignment-cache-version'] ??
+        (response as any)?.headers?.['X-Assignment-Cache-Version']
 
       const assignments = data?.assignments ?? []
+      log.info(
+        `[mining] Assignments fetched: total=${assignments.length}, cacheVersion=${cacheVersionHeader ?? 'n/a'}, deviceId=${deviceId ?? 'none'}`
+      )
+      if (assignments.length > 0) {
+        const preview = assignments.slice(0, 5).map((a) => ({
+          id: a.id,
+          status: a.status,
+          created_at: a.created_at,
+          updated_at: a.updated_at,
+          task_platform: a.task?.platform
+        }))
+        log.info(`[mining] Assignment preview: ${JSON.stringify(preview)}`)
+      }
 
       // Filter for Google platform (server filtering might not work)
       const googleAssignments = assignments.filter(
@@ -685,8 +702,13 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private async ensureAssignmentStart(assignmentId: string): Promise<StartGuardOutcome> {
     const attemptStart = async (attempt: number): Promise<StartAttemptResult> => {
       try {
+        const startedAt = Date.now()
         log.info(`[mining] Starting assignment ${assignmentId} (attempt ${attempt})`)
         await miningApi.startAssignment(assignmentId)
+        const elapsed = Date.now() - startedAt
+        log.info(
+          `[mining] startAssignment success for ${assignmentId} on attempt ${attempt} in ${elapsed}ms`
+        )
         this.emit('assignmentStarted', assignmentId)
         return { type: 'proceed' }
       } catch (error: any) {
@@ -706,6 +728,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     }
 
     const firstAttempt = await attemptStart(1)
+    log.info(
+      `[mining] startAssignment attempt 1 result for ${assignmentId}: ${firstAttempt.type}${
+        'reason' in firstAttempt && (firstAttempt as any).reason ? ` (${(firstAttempt as any).reason})` : ''
+      }`
+    )
     if (firstAttempt.type === 'proceed') {
       return { action: 'proceed' }
     }
@@ -720,6 +747,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     await new Promise((resolve) => setTimeout(resolve, backoffMs))
 
     const secondAttempt = await attemptStart(2)
+    log.info(
+      `[mining] startAssignment attempt 2 result for ${assignmentId}: ${secondAttempt.type}${
+        'reason' in secondAttempt && (secondAttempt as any).reason ? ` (${(secondAttempt as any).reason})` : ''
+      }`
+    )
     if (secondAttempt.type === 'proceed') {
       return { action: 'proceed' }
     }

@@ -158,4 +158,5 @@ export interface LocalDeviceInfo {
   os_version: string
   latitude?: number
   longitude?: number
+  name?: string
 }
