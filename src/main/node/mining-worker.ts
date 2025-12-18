@@ -17,8 +17,8 @@ import { crawlerService } from '../services/crawler-service'
 import { eventsService } from '../services/events-service'
 import { deviceStore, tokenStore, userStore } from '../storage'
 import { encode } from '../utils/encoder'
-import { getErrorMessage } from '../utils/get-error-message'
 import { ensureError } from '../utils/ensure-error'
+import { getErrorMessage } from '../utils/get-error-message'
 import { MiningStatus, type MiningAssignment, type MiningWorkerStatus } from './types'
 
 interface MiningWorkerEvents {
@@ -45,7 +45,7 @@ type StartErrorDecision =
   | { type: 'rethrow' }
 
 // Heartbeat interval: report online status every 30 seconds
-const HEARTBEAT_INTERVAL_MS = 30_000
+const HEARTBEAT_INTERVAL_MS = 60_000
 const POLL_INTERVAL_MS = 30_000
 const SSE_RETRY_BASE_MS = 2_000
 const SSE_RETRY_MAX_MS = 10_000
@@ -728,7 +728,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     const firstAttempt = await attemptStart(1)
     log.info(
       `[mining] startAssignment attempt 1 result for ${assignmentId}: ${firstAttempt.type}${
-        'reason' in firstAttempt && (firstAttempt as any).reason ? ` (${(firstAttempt as any).reason})` : ''
+        'reason' in firstAttempt && (firstAttempt as any).reason
+          ? ` (${(firstAttempt as any).reason})`
+          : ''
       }`
     )
     if (firstAttempt.type === 'proceed') {
@@ -747,7 +749,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     const secondAttempt = await attemptStart(2)
     log.info(
       `[mining] startAssignment attempt 2 result for ${assignmentId}: ${secondAttempt.type}${
-        'reason' in secondAttempt && (secondAttempt as any).reason ? ` (${(secondAttempt as any).reason})` : ''
+        'reason' in secondAttempt && (secondAttempt as any).reason
+          ? ` (${(secondAttempt as any).reason})`
+          : ''
       }`
     )
     if (secondAttempt.type === 'proceed') {

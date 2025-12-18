@@ -10,14 +10,14 @@ function safeStringify(value: unknown): string {
 }
 
 export const getErrorMessage = (error: any, defaultMessage?: string): string => {
-  if (isAppError(error)) {
-    return (error as AppError).message || defaultMessage || 'Unknown error'
-  }
-
   if (axios.isAxiosError(error)) {
     const serverError = error.response?.data
     const message = serverError?.message || error.message || defaultMessage
     return message
+  }
+
+  if (isAppError(error)) {
+    return (error as AppError).message || defaultMessage || 'Unknown error'
   }
 
   if (error instanceof Error) {
@@ -28,7 +28,12 @@ export const getErrorMessage = (error: any, defaultMessage?: string): string => 
     return error || defaultMessage || 'Unknown error'
   }
 
-  if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'message' in error &&
+    typeof error.message === 'string'
+  ) {
     return error.message || defaultMessage || 'Unknown error'
   }
 
