@@ -123,7 +123,8 @@ class NodeIpcHandler {
           os_name: deviceInfo.os_name || '--',
           os_version: deviceInfo.os_version || '--',
           latitude: deviceDetail.latitude ?? ipGeoResult.latitude,
-          longitude: deviceDetail.longitude ?? ipGeoResult.longitude
+          longitude: deviceDetail.longitude ?? ipGeoResult.longitude,
+          name: deviceDetail.name
         }
 
         return localDeviceInfo

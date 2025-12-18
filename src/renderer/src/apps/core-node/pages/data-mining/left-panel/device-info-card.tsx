@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardIcon, CardTitle } from '@/components
 import { Skeleton } from '@/components/ui/skeleton'
 import { useLocalDeviceInfoQuery } from '@/queries/device'
 import { cn } from '@/utils/tw'
-import { Cpu, Fingerprint, Globe, Info, MemoryStick, Monitor } from 'lucide-react'
+import { Cpu, Fingerprint, Globe, Info, MemoryStick, Monitor, Tag } from 'lucide-react'
 
 interface DeviceInfoItemProps {
   icon: React.ReactNode
@@ -138,13 +138,34 @@ export const DeviceInfoCard = () => {
           />
         </div>
 
-        {/* Device ID Footer */}
-        {localDeviceInfo.device_id && (
-          <div className="mt-5 flex h-10 items-center gap-2 rounded-lg bg-white/5 px-3">
-            <Fingerprint className="size-4.5 text-white/50" />
-            <span className="text-14 font-mono font-medium text-white/50">{deviceId}</span>
-          </div>
-        )}
+        {/* Device Footer */}
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          {localDeviceInfo.device_id && (
+            <div
+              className={cn(
+                'flex h-10 items-center gap-2 rounded-lg bg-white/5 px-3',
+                !localDeviceInfo.name && 'col-span-2'
+              )}
+            >
+              <Fingerprint className="size-4.5 text-white/50" />
+              <span className="text-14 font-mono font-medium text-white/50">{deviceId}</span>
+            </div>
+          )}
+
+          {localDeviceInfo.name && (
+            <div
+              className={cn(
+                'flex h-10 items-center gap-2 rounded-lg bg-white/5 px-3',
+                !localDeviceInfo.device_id && 'col-span-2'
+              )}
+            >
+              <Tag className="size-4.5 text-white/50" />
+              <span className="text-14 truncate font-medium text-white/50">
+                {localDeviceInfo.name}
+              </span>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   )
