@@ -12,6 +12,7 @@ import { deviceStore, userStore } from '../storage'
 import { getFullDeviceInfo } from '../utils/device-info'
 import { decode, encode } from '../utils/encoder'
 import { getErrorMessage } from '../utils/get-error-message'
+import { ensureError } from '../utils/ensure-error'
 
 interface RegisterDeviceOptions {
   signal?: AbortSignal
@@ -24,7 +25,7 @@ export async function registerDevice({
 }: RegisterDeviceOptions = {}): Promise<string> {
   const user = userStore.getUser()
   if (!user) {
-    throw deviceNoUserError()
+    throw ensureError(deviceNoUserError())
   }
 
   if (deviceStore.isRegistered() && !force) {
@@ -73,7 +74,7 @@ export async function registerDevice({
         errorCode: appError.code
       }
     })
-    throw appError
+    throw ensureError(appError)
   }
 
   const { data } = response
@@ -86,7 +87,7 @@ export async function registerDevice({
     const deviceId = typeof parsed.device_id === 'string' ? parsed.device_id : undefined
 
     if (!deviceId) {
-      throw deviceIdMissingError()
+      throw ensureError(deviceIdMissingError())
     }
 
     deviceStore.saveDeviceId(deviceId)
@@ -105,6 +106,6 @@ export async function registerDevice({
         errorCode: appError.code
       }
     })
-    throw appError
+    throw ensureError(appError)
   }
 }

@@ -204,3 +204,41 @@ export function toAppError(
 
   return createError(defaultCode, 'Unknown error occurred')
 }
+
+/**
+ * Converts any error to a plain, serializable AppError payload.
+ * Unlike `toAppError`, this never returns an `Error` instance.
+ */
+export function toAppErrorPayload(
+  error: unknown,
+  defaultCode: ErrorCode = ErrorCode.UNKNOWN_ERROR
+): AppError {
+  if (isAppError(error) && !(error instanceof Error)) {
+    return error
+  }
+
+  if (error instanceof Error) {
+    const code = (error as any)?.code
+    if (typeof code === 'string') {
+      return createError(code as ErrorCode, error.message)
+    }
+    return createError(defaultCode, error.message)
+  }
+
+  if (typeof error === 'string') {
+    return createError(defaultCode, error)
+  }
+
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = (error as any).message
+    if (typeof message === 'string') {
+      const code = (error as any).code
+      if (typeof code === 'string') {
+        return createError(code as ErrorCode, message)
+      }
+      return createError(defaultCode, message)
+    }
+  }
+
+  return createError(defaultCode, 'Unknown error occurred')
+}

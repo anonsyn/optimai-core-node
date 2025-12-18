@@ -5,6 +5,7 @@ import execa from 'execa'
 import log from '../../configs/logger'
 import { dockerNotInstalledError, dockerNotRunningError } from '../../errors/error-factory'
 import { getErrorMessage } from '../../utils/get-error-message'
+import { ensureError } from '../../utils/ensure-error'
 
 export interface ContainerConfig {
   name: string
@@ -78,16 +79,16 @@ export class DockerService {
     try {
       const installed = await this.isInstalled()
       if (!installed) {
-        throw dockerNotInstalledError()
+        throw ensureError(dockerNotInstalledError())
       }
 
       const running = await this.isRunning()
       if (!running) {
-        throw dockerNotRunningError()
+        throw ensureError(dockerNotRunningError())
       }
     } catch (error) {
       log.error("[mining] Couldn't check Docker:", getErrorMessage(error, "Couldn't check Docker"))
-      throw error
+      throw ensureError(error, "Couldn't check Docker")
     }
   }
 

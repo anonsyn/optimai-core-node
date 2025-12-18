@@ -14,6 +14,7 @@ import {
   unknownError
 } from '../errors/error-factory'
 import { getErrorMessage } from '../utils/get-error-message'
+import { ensureError } from '../utils/ensure-error'
 import { sleep } from '../utils/sleep'
 import { crawl4AiService } from './docker/crawl4ai-service'
 
@@ -258,7 +259,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
 
       if (!baseUrl || !port) {
         log.error('[crawler] Crawl4AI service URL or port not available')
-        throw crawlerServiceUrlError()
+        throw ensureError(crawlerServiceUrlError())
       }
 
       this.servicePort = port
@@ -269,7 +270,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
       const isHealthy = await this.waitForHealth()
       if (!isHealthy) {
         log.error('[crawler] Crawler service health check failed')
-        throw crawlerHealthCheckTimeoutError()
+        throw ensureError(crawlerHealthCheckTimeoutError())
       }
 
       this.initialized = true
@@ -281,7 +282,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
       log.error('[crawler] Failed to initialize crawler service:', message)
       const lastError = isAppError(error) ? error : unknownError(message)
       this.emit('error', lastError)
-      throw lastError
+      throw ensureError(lastError)
     }
   }
 
@@ -392,7 +393,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
         this.initialized = false
       }
 
-      throw crawlerCrawlFailedError(message)
+      throw ensureError(crawlerCrawlFailedError(message))
     }
   }
 
@@ -457,7 +458,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
    */
   async destroySession(sessionId: string): Promise<void> {
     if (!this.baseUrl) {
-      throw crawlerNotInitializedError()
+      throw ensureError(crawlerNotInitializedError())
     }
 
     try {
@@ -467,12 +468,12 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
       })
 
       if (response.status < 200 || response.status >= 300) {
-        throw crawlerSessionDestroyError(`Unexpected status ${response.status}`)
+        throw ensureError(crawlerSessionDestroyError(`Unexpected status ${response.status}`))
       }
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to destroy crawler session')
       log.error('[crawler] Failed to destroy session:', message)
-      throw crawlerSessionDestroyError(message)
+      throw ensureError(crawlerSessionDestroyError(message))
     }
   }
 
@@ -480,20 +481,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
    * Check if the crawler service is healthy
    */
   async isHealthy(): Promise<boolean> {
-    if (!this.baseUrl) {
-      return false
-    }
-
-    try {
-      const response = await axios.get(`${this.baseUrl}/health`, {
-        timeout: 2000,
-        validateStatus: () => true
-      })
-
-      return response.status >= 200 && response.status < 300
-    } catch {
-      return false
-    }
+    return crawl4AiService.checkHealth()
   }
 
   /**
@@ -656,7 +644,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
         const port = crawl4AiService.getPort()
 
         if (!baseUrl || !port) {
-          throw crawlerEndpointResolveError()
+          throw ensureError(crawlerEndpointResolveError())
         }
 
         this.baseUrl = baseUrl
@@ -664,7 +652,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
 
         const healthy = await this.waitForHealth()
         if (!healthy) {
-          throw crawlerNotHealthyError()
+          throw ensureError(crawlerNotHealthyError())
         }
 
         this.initialized = true
@@ -702,7 +690,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
     this.emit('error', error)
 
     if (throwOnFailure) {
-      throw error
+      throw ensureError(error)
     }
   }
 

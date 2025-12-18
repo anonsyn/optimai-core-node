@@ -5,8 +5,7 @@ import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
 import { MiningAssignmentFailureReason } from '../api/mining/types'
 import log from '../configs/logger'
-import type { AppError } from '../errors/error-codes'
-import { isAppError } from '../errors/error-codes'
+import { isAppError, toAppErrorPayload, type AppError } from '../errors/error-codes'
 import {
   crawlerCrawlFailedError,
   miningCrawlerInitError,
@@ -19,6 +18,7 @@ import { eventsService } from '../services/events-service'
 import { deviceStore, tokenStore, userStore } from '../storage'
 import { encode } from '../utils/encoder'
 import { getErrorMessage } from '../utils/get-error-message'
+import { ensureError } from '../utils/ensure-error'
 import { MiningStatus, type MiningAssignment, type MiningWorkerStatus } from './types'
 
 interface MiningWorkerEvents {
@@ -65,10 +65,10 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private lastError?: AppError
   private detachCrawlerListeners: (() => void) | null = null
 
-  private setStatus(status: MiningStatus, error?: AppError) {
+  private setStatus(status: MiningStatus, error?: AppError | Error) {
     const prevStatus = this.status
     this.status = status
-    this.lastError = error
+    this.lastError = error ? toAppErrorPayload(error) : undefined
     const fullStatus = this.getStatus()
 
     // Always log status changes for debugging
@@ -125,17 +125,15 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       this.connectSse()
       this.schedulePoll(0)
     } catch (error) {
-      // Check if this is a Docker-specific error (DOCKER_2001 or DOCKER_2002)
       let appError: AppError
       if (isAppError(error)) {
-        appError = error
-        log.error('[mining] Failed to initialize crawler service:', appError.message)
+        appError = toAppErrorPayload(error)
       } else {
         const message = getErrorMessage(error, 'Failed to initialize crawler service')
         appError = miningCrawlerInitError(message)
-        log.error('[mining] Failed to initialize crawler service:', message)
       }
 
+      log.error('[mining] Failed to initialize crawler service:', appError.message)
       this.setStatus(MiningStatus.Error, appError)
       await eventsService.reportError({
         type: 'mining.crawler_init_failed',
@@ -275,7 +273,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         })
 
         if (!response.ok || !response.body) {
-          throw miningSSEError(`Connection failed with status ${response.status}`)
+          throw ensureError(miningSSEError(`Connection failed with status ${response.status}`))
         }
 
         log.info('[mining] Connected to task updates')
@@ -388,7 +386,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     const handleError = (error: Error | AppError) => {
       let appError: AppError
       if (isAppError(error)) {
-        appError = error
+        appError = toAppErrorPayload(error)
       } else {
         const message = error?.message ?? 'Crawler service error'
         appError = crawlerCrawlFailedError(message)
@@ -517,7 +515,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       // Get URL from task
       const url = task?.source_url || (task as any)?.url
       if (!url) {
-        throw miningNoUrlError(assignmentId)
+        throw ensureError(miningNoUrlError(assignmentId))
       }
 
       // Crawl content
@@ -536,7 +534,7 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       )
 
       if (!crawlResult || !crawlResult.markdown) {
-        throw miningNoContentError(assignmentId)
+        throw ensureError(miningNoContentError(assignmentId))
       }
 
       const crawlTime = (Date.now() - startTime) / 1000

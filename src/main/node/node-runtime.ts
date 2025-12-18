@@ -10,6 +10,7 @@ import { apiClient } from '../libs/axios'
 import { eventsService } from '../services/events-service'
 import { tokenStore, userStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
+import { ensureError } from '../utils/ensure-error'
 import { sleep } from '../utils/sleep'
 import { miningWorker } from './mining-worker'
 import { registerDevice } from './register-device'
@@ -24,7 +25,7 @@ export class NodeRuntime {
     }
 
     if (!tokenStore.hasTokens()) {
-      throw authNoTokensError()
+      throw ensureError(authNoTokensError())
     }
 
     this.running = true
@@ -54,7 +55,7 @@ export class NodeRuntime {
         }
       })
       this.running = false
-      throw appError
+      throw ensureError(appError)
     }
   }
 
@@ -89,14 +90,14 @@ export class NodeRuntime {
 
       const user = response.data?.user
       if (!user) {
-        throw authUserPayloadMissingError()
+        throw ensureError(authUserPayloadMissingError())
       }
 
       userStore.saveUser(user)
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to load user profile')
       log.error(message)
-      throw authUserFetchError(message)
+      throw ensureError(authUserFetchError(message))
     }
   }
 }
