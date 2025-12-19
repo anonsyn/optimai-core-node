@@ -12,6 +12,36 @@ import {
 import { ensureError } from '../../utils/ensure-error'
 import { getErrorMessage } from '../../utils/get-error-message'
 
+function parseDockerHumanSizeToBytes(input: string): number | null {
+  const trimmed = input.trim()
+  if (!trimmed) return null
+
+  if (trimmed === '0B') return 0
+
+  const match = trimmed.match(/^(\d+(?:\.\d+)?)\s*(B|kB|KB|MB|MiB|GB|GiB|TB|TiB)$/)
+  if (!match) return null
+
+  const value = Number(match[1])
+  if (!Number.isFinite(value)) return null
+
+  const unit = match[2]
+  const powerTable: Record<string, number> = {
+    B: 0,
+    kB: 1,
+    KB: 1,
+    MB: 2,
+    MiB: 2,
+    GB: 3,
+    GiB: 3,
+    TB: 4,
+    TiB: 4
+  }
+  const power = powerTable[unit]
+  if (power === undefined) return null
+
+  return Math.round(value * 1024 ** power)
+}
+
 export interface ContainerConfig {
   name: string
   image: string
@@ -155,6 +185,216 @@ export class DockerService {
         getErrorMessage(error, 'Failed to get Docker info')
       )
       return null
+    }
+  }
+
+  /**
+   * Get a human-readable disk usage report for Docker resources.
+   * Note: output depends on Docker CLI version and platform.
+   */
+  async getDiskUsageReport(verbose: boolean = true): Promise<string | null> {
+    try {
+      const docker = await this.getDockerCommand()
+      const args = verbose ? ['system', 'df', '-v'] : ['system', 'df']
+      const { stdout } = await execa(docker, args)
+      return stdout.trim() || null
+    } catch (error) {
+      log.debug(
+        '[docker] Failed to get disk usage report:',
+        getErrorMessage(error, 'Failed to get disk usage report')
+      )
+      return null
+    }
+  }
+
+  private parseImageRef(imageRef: string): { repository: string; tag: string } | null {
+    const trimmed = imageRef.trim()
+    if (!trimmed) return null
+
+    const lastColon = trimmed.lastIndexOf(':')
+    if (lastColon === -1) {
+      return { repository: trimmed, tag: 'latest' }
+    }
+
+    const repository = trimmed.slice(0, lastColon)
+    const tag = trimmed.slice(lastColon + 1)
+    if (!repository || !tag) return null
+    return { repository, tag }
+  }
+
+  /**
+   * Retrieves image disk usage as reported by Docker (`docker system df -v`) when possible,
+   * falling back to `docker image ls` size when needed.
+   */
+  async getImageDiskUsage(imageRef: string): Promise<{
+    repository: string
+    tag: string
+    sizeBytes: number | null
+    sharedBytes: number | null
+    uniqueBytes: number | null
+  } | null> {
+    const parsedRef = this.parseImageRef(imageRef)
+    if (!parsedRef) return null
+
+    const { repository, tag } = parsedRef
+    const fromDf = await this.getImageDiskUsageFromSystemDf(repository, tag)
+    if (fromDf) return fromDf
+
+    const fromList = await this.getImageSizeFromImageList(repository, tag)
+    return {
+      repository,
+      tag,
+      sizeBytes: fromList,
+      sharedBytes: null,
+      uniqueBytes: null
+    }
+  }
+
+  private async getImageDiskUsageFromSystemDf(
+    repository: string,
+    tag: string
+  ): Promise<{
+    repository: string
+    tag: string
+    sizeBytes: number | null
+    sharedBytes: number | null
+    uniqueBytes: number | null
+  } | null> {
+    try {
+      const report = await this.getDiskUsageReport(true)
+      if (!report) return null
+
+      const lines = report.split('\n')
+      const headerIndex = lines.findIndex((line) => line.trim().startsWith('REPOSITORY'))
+      if (headerIndex === -1) return null
+
+      for (let i = headerIndex + 1; i < lines.length; i++) {
+        const line = lines[i]
+        const trimmed = line.trim()
+
+        if (!trimmed) break
+        if (trimmed.startsWith('Containers space usage:')) break
+
+        const columns = trimmed.split(/\s{2,}/)
+        if (columns.length < 8) continue
+
+        const repo = columns[0]
+        const rowTag = columns[1]
+        if (repo !== repository || rowTag !== tag) continue
+
+        const sizeBytes = parseDockerHumanSizeToBytes(columns[4] ?? '')
+        const sharedBytes = parseDockerHumanSizeToBytes(columns[5] ?? '')
+        const uniqueBytes = parseDockerHumanSizeToBytes(columns[6] ?? '')
+        return { repository: repo, tag: rowTag, sizeBytes, sharedBytes, uniqueBytes }
+      }
+
+      return null
+    } catch (error) {
+      log.debug(
+        '[docker] Failed to parse image disk usage from system df:',
+        getErrorMessage(error, 'Failed to parse image disk usage')
+      )
+      return null
+    }
+  }
+
+  private async getImageSizeFromImageList(repository: string, tag: string): Promise<number | null> {
+    try {
+      const docker = await this.getDockerCommand()
+      const ref = `${repository}:${tag}`
+      const { stdout } = await execa(docker, [
+        'image',
+        'ls',
+        '--filter',
+        `reference=${ref}`,
+        '--format',
+        '{{.Size}}'
+      ])
+
+      const sizeText = stdout.trim()
+      if (!sizeText) return null
+      return parseDockerHumanSizeToBytes(sizeText)
+    } catch (error) {
+      log.debug(
+        `[docker] Failed to get image size from image ls for ${repository}:${tag}:`,
+        getErrorMessage(error, 'Failed to get image size from image ls')
+      )
+      return null
+    }
+  }
+
+  async getImageSizeBytes(image: string): Promise<number | null> {
+    try {
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, ['image', 'inspect', image, '--format', '{{.Size}}'])
+      const trimmed = stdout.trim()
+      if (!trimmed) return null
+      const parsed = Number(trimmed)
+      return Number.isFinite(parsed) && parsed >= 0 ? parsed : null
+    } catch (error) {
+      log.debug(
+        `[docker] Failed to inspect image size for ${image}:`,
+        getErrorMessage(error, 'Failed to inspect image size')
+      )
+      return null
+    }
+  }
+
+  /**
+   * Returns container size text as reported by `docker ps --size` (not bytes).
+   * Example: "12.3MB (virtual 1.2GB)".
+   */
+  async getContainerSizeText(name: string): Promise<string | null> {
+    try {
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, [
+        'ps',
+        '-a',
+        '--size',
+        '--filter',
+        `name=^${name}$`,
+        '--format',
+        '{{.Size}}'
+      ])
+
+      const trimmed = stdout.trim()
+      return trimmed || null
+    } catch (error) {
+      log.debug(
+        `[docker] Failed to get container size for ${name}:`,
+        getErrorMessage(error, 'Failed to get container size')
+      )
+      return null
+    }
+  }
+
+  /**
+   * Returns container disk usage numbers as reported by `docker ps --size`.
+   * `writableBytes` is the container's write layer; `virtualBytes` includes image layers.
+   */
+  async getContainerDiskUsage(name: string): Promise<{
+    sizeText: string | null
+    writableBytes: number | null
+    virtualBytes: number | null
+  }> {
+    const sizeText = await this.getContainerSizeText(name)
+    if (!sizeText) {
+      return { sizeText: null, writableBytes: null, virtualBytes: null }
+    }
+
+    const match = sizeText.match(/^(\S+)\s*\\(virtual\\s+(\\S+)\\)$/i)
+    if (!match) {
+      return {
+        sizeText,
+        writableBytes: parseDockerHumanSizeToBytes(sizeText),
+        virtualBytes: null
+      }
+    }
+
+    return {
+      sizeText,
+      writableBytes: parseDockerHumanSizeToBytes(match[1] ?? ''),
+      virtualBytes: parseDockerHumanSizeToBytes(match[2] ?? '')
     }
   }
 
