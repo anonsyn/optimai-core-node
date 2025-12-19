@@ -5,6 +5,7 @@ import { MiningStatus, type MiningWorkerStatus } from '@main/node/types'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { AssignmentsList } from './assignments'
+import { shouldShowDockerNotRunningModal } from '../../../utils/error-modal-routing'
 
 interface MiningOperationalProps {
   status: MiningWorkerStatus
@@ -21,8 +22,7 @@ export const MiningOperational = ({ status }: MiningOperationalProps) => {
     // Open/close modal based on mining status
     if (status.status === MiningStatus.Error) {
       if (miningError) {
-        const isDockerError = miningError.code.startsWith('DOCKER_')
-        if (isDockerError) {
+        if (shouldShowDockerNotRunningModal(miningError.code)) {
           openDockerErrorModal({
             onRetry: async () => closeDockerModal(),
             autoCheck: false,

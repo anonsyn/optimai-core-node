@@ -128,10 +128,8 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       this.schedulePoll(0)
     } catch (error) {
       const payload = toAppErrorPayload(error)
-      const appError: AppError =
-        payload.code === ErrorCode.UNKNOWN_ERROR
-          ? miningCrawlerInitError(getErrorMessage(error, 'Failed to initialize crawler service'))
-          : payload
+      const initMessage = getErrorMessage(error, 'Failed to initialize crawler service')
+      const appError: AppError = miningCrawlerInitError(initMessage)
 
       log.error('[mining] Failed to initialize crawler service:', appError.message)
 
@@ -151,6 +149,8 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         metadata: {
           stage: 'start',
           errorCode: appError.code,
+          rootCauseCode: payload.code,
+          rootCauseMessage: payload.message,
           dockerInfo,
           crawl4ai: crawl4AiService.getDiagnostics()
         }

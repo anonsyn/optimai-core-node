@@ -9,8 +9,8 @@ import {
   dockerNotInstalledError,
   dockerNotRunningError
 } from '../../errors/error-factory'
-import { getErrorMessage } from '../../utils/get-error-message'
 import { ensureError } from '../../utils/ensure-error'
+import { getErrorMessage } from '../../utils/get-error-message'
 
 export interface ContainerConfig {
   name: string
@@ -550,6 +550,7 @@ export class DockerService {
       const { stdout } = await execa(docker, ['inspect', name, '--format', format])
 
       const trimmed = stdout.trim()
+      console.log({ stdout })
       if (!trimmed || trimmed === 'null') {
         return null
       }
@@ -565,6 +566,7 @@ export class DockerService {
       }
 
       const parsed = Number(hostPort)
+      console.log({ parsed })
       return Number.isFinite(parsed) && parsed > 0 ? parsed : null
     } catch (error) {
       log.debug(

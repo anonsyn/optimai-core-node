@@ -254,6 +254,36 @@ export function nodeStopFailedError(originalMessage: string): AppError {
   return createError(ErrorCode.NODE_7002, `Node runtime failed to stop: ${originalMessage}`)
 }
 
+// ==================== CRAWL4AI ERRORS ====================
+
+export function crawl4aiInitFailedError(originalMessage: string): AppError {
+  return createError(
+    ErrorCode.CRAWL4AI_8001,
+    `Failed to initialize Crawl4AI container: ${originalMessage}`
+  )
+}
+
+export function crawl4aiStopFailedError(originalMessage: string): AppError {
+  return createError(
+    ErrorCode.CRAWL4AI_8002,
+    `Failed to stop Crawl4AI container: ${originalMessage}`
+  )
+}
+
+export function crawl4aiRestartFailedError(originalMessage: string): AppError {
+  return createError(
+    ErrorCode.CRAWL4AI_8003,
+    `Failed to restart Crawl4AI container: ${originalMessage}`
+  )
+}
+
+export function crawl4aiStatusCheckFailedError(originalMessage: string): AppError {
+  return createError(
+    ErrorCode.CRAWL4AI_8004,
+    `Failed to check Crawl4AI container status: ${originalMessage}`
+  )
+}
+
 // ==================== UNKNOWN ERRORS ====================
 
 export function unknownError(originalMessage: string): AppError {

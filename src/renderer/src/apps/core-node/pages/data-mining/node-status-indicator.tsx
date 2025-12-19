@@ -4,6 +4,7 @@ import { nodeSelectors } from '@/store/slices/node'
 import { cn } from '@/utils/tw'
 import { MiningStatus } from '@main/node/types'
 import { useSelector } from 'react-redux'
+import { shouldShowDockerNotRunningModal } from '../../utils/error-modal-routing'
 
 export const NodeStatusIndicator = () => {
   const isRunning = useSelector(nodeSelectors.isRunning)
@@ -79,8 +80,7 @@ export const NodeStatusIndicator = () => {
   const handleClick = () => {
     if (miningStatus?.status === MiningStatus.Error) {
       if (miningError) {
-        const isDockerError = miningError.code.startsWith('DOCKER_')
-        if (isDockerError) {
+        if (shouldShowDockerNotRunningModal(miningError.code)) {
           openDockerErrorModal({
             onRetry: async () => {
               try {

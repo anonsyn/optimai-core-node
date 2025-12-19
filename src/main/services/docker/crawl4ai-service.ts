@@ -4,6 +4,8 @@ import { getErrorMessage } from '../../utils/get-error-message'
 import { getPort } from '../../utils/get-port'
 import { sleep } from '../../utils/sleep'
 import { dockerService } from '.././docker/docker-service'
+import { ErrorCode, toAppErrorPayload } from '../../errors/error-codes'
+import { crawl4aiInitFailedError, crawl4aiRestartFailedError } from '../../errors/error-factory'
 
 export interface Crawl4AiConfig {
   containerName?: string
@@ -34,6 +36,17 @@ export class Crawl4AiService {
 
   constructor(config?: Crawl4AiConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+  }
+
+  private wrapHealthCheckFailure(error: unknown, stage: 'initialize' | 'restart'): unknown {
+    const payload = toAppErrorPayload(error)
+    if (payload.code !== ErrorCode.DOCKER_2005) {
+      return error
+    }
+
+    return stage === 'initialize'
+      ? crawl4aiInitFailedError(payload.message)
+      : crawl4aiRestartFailedError(payload.message)
   }
 
   getDiagnostics(): Record<string, unknown> {
