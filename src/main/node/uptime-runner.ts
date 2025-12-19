@@ -123,7 +123,6 @@ export class UptimeRunner extends EventEmitter<UptimeRunnerEvents> {
         this.emit('cycle', cycle)
       } else {
         uptimeStore.increaseUptime(this.intervalMs)
-        log.info(`[uptime] Uptime increased by ${this.formatTime(this.intervalMs)}`)
 
         if (uptimeStore.isExpired()) {
           log.info(`[uptime] Cycle completed - reporting to server`)
