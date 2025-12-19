@@ -38,6 +38,35 @@ export class Crawl4AiService {
     this.config = { ...DEFAULT_CONFIG, ...config }
   }
 
+  private async recreateContainer(reason: string): Promise<void> {
+    const { containerName, imageName } = this.config
+
+    log.warn(`[crawl4ai] Recreating container=${containerName} reason=${reason}`)
+
+    try {
+      await dockerService.removeContainer(containerName, true)
+    } catch (error) {
+      log.debug(getErrorMessage(error, `[crawl4ai] Failed to remove container ${containerName}`))
+    }
+
+    this.containerPort = await getPort({ port: this.config.port })
+    this.baseUrl = `http://127.0.0.1:${this.containerPort}`
+    this.lastHealthProbe = null
+
+    await dockerService.pullImage(imageName, () => {})
+    await dockerService.runContainer({
+      name: containerName,
+      image: imageName,
+      port: {
+        host: this.containerPort,
+        container: 11235
+      },
+      restart: 'unless-stopped',
+      detached: true,
+      shmSize: '1g'
+    })
+  }
+
   private wrapHealthCheckFailure(error: unknown, stage: 'initialize' | 'restart'): unknown {
     const payload = toAppErrorPayload(error)
     if (payload.code !== ErrorCode.DOCKER_2005) {
@@ -119,12 +148,18 @@ export class Crawl4AiService {
           log.info(`[crawl4ai] Refreshed baseUrl=${this.baseUrl}`)
         }
 
-        await dockerService.waitForHealth(
-          this.config.containerName,
-          () => this.checkHealth(),
-          30,
-          2000
-        )
+        try {
+          await dockerService.waitForHealth(this.config.containerName, () => this.checkHealth(), 30, 2000)
+        } catch (error) {
+          const payload = toAppErrorPayload(error)
+          if (payload.code === ErrorCode.DOCKER_2005) {
+            await this.recreateContainer('health_check_failed_existing_container')
+            await sleep(3200)
+            await dockerService.waitForHealth(this.config.containerName, () => this.checkHealth(), 30, 2000)
+          } else {
+            throw error
+          }
+        }
 
         this.initialized = true
         return
@@ -138,12 +173,18 @@ export class Crawl4AiService {
       await dockerService.pullImage(this.config.imageName, () => {})
       await this.startContainer()
       await sleep(3200)
-      await dockerService.waitForHealth(
-        this.config.containerName,
-        () => this.checkHealth(),
-        30,
-        2000
-      )
+      try {
+        await dockerService.waitForHealth(this.config.containerName, () => this.checkHealth(), 30, 2000)
+      } catch (error) {
+        const payload = toAppErrorPayload(error)
+        if (payload.code === ErrorCode.DOCKER_2005) {
+          await this.recreateContainer('health_check_failed_new_container')
+          await sleep(3200)
+          await dockerService.waitForHealth(this.config.containerName, () => this.checkHealth(), 30, 2000)
+        } else {
+          throw error
+        }
+      }
 
       this.initialized = true
     } catch (error) {
@@ -328,7 +369,10 @@ export class Crawl4AiService {
 
       if (status) {
         const resolvedPort =
-          this.resolveHostPort(status.ports, 11235) ?? this.containerPort ?? this.config.port
+          (await dockerService.getPublishedPort(this.config.containerName, 11235)) ??
+          this.resolveHostPort(status.ports, 11235) ??
+          this.containerPort ??
+          this.config.port
         this.containerPort = resolvedPort
         this.baseUrl = `http://127.0.0.1:${resolvedPort}`
 
@@ -344,7 +388,9 @@ export class Crawl4AiService {
         }
 
         const refreshed = await dockerService.getContainerStatus(this.config.containerName)
-        const refreshedPort = this.resolveHostPort(refreshed?.ports, 11235)
+        const refreshedPort =
+          (await dockerService.getPublishedPort(this.config.containerName, 11235)) ??
+          this.resolveHostPort(refreshed?.ports, 11235)
         if (refreshedPort) {
           this.containerPort = refreshedPort
           this.baseUrl = `http://127.0.0.1:${refreshedPort}`
@@ -356,12 +402,18 @@ export class Crawl4AiService {
       }
 
       await sleep(3200)
-      await dockerService.waitForHealth(
-        this.config.containerName,
-        () => this.checkHealth(),
-        30,
-        2000
-      )
+      try {
+        await dockerService.waitForHealth(this.config.containerName, () => this.checkHealth(), 30, 2000)
+      } catch (error) {
+        const payload = toAppErrorPayload(error)
+        if (payload.code === ErrorCode.DOCKER_2005) {
+          await this.recreateContainer('health_check_failed_restart')
+          await sleep(3200)
+          await dockerService.waitForHealth(this.config.containerName, () => this.checkHealth(), 30, 2000)
+        } else {
+          throw error
+        }
+      }
 
       this.initialized = true
     } catch (error) {
