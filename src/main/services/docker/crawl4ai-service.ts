@@ -1,7 +1,7 @@
 import log from '../../configs/logger'
+import { ensureError } from '../../utils/ensure-error'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { getPort } from '../../utils/get-port'
-import { ensureError } from '../../utils/ensure-error'
 import { sleep } from '../../utils/sleep'
 import { dockerService } from '.././docker/docker-service'
 
@@ -25,9 +25,26 @@ export class Crawl4AiService {
   private containerPort: number | null = null
   private baseUrl: string | null = null
   private initialized: boolean = false
+  private lastHealthProbe: {
+    endpoint: string
+    status?: number
+    error?: string
+    timestamp: string
+  } | null = null
 
   constructor(config?: Crawl4AiConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+  }
+
+  getDiagnostics(): Record<string, unknown> {
+    return {
+      containerName: this.config.containerName,
+      imageName: this.config.imageName,
+      baseUrl: this.baseUrl,
+      containerPort: this.containerPort,
+      initialized: this.initialized,
+      lastHealthProbe: this.lastHealthProbe
+    }
   }
 
   /**
@@ -39,41 +56,75 @@ export class Crawl4AiService {
     }
 
     try {
+      log.info(
+        `[crawl4ai] Initializing container=${this.config.containerName} image=${this.config.imageName}`
+      )
+
       // Check Docker availability
       await dockerService.ensureAvailability()
 
-      // Check if container already exists and is running
       const existingContainer = await dockerService.getContainerStatus(this.config.containerName)
-      const isContainerRunning = existingContainer?.status === 'running'
 
-      if (isContainerRunning) {
+      if (existingContainer) {
         const resolvedPort =
-          this.resolveHostPort(existingContainer?.ports, 11235) ?? this.config.port
+          (await dockerService.getPublishedPort(this.config.containerName, 11235)) ??
+          this.resolveHostPort(existingContainer.ports, 11235) ??
+          this.config.port
+
         this.containerPort = resolvedPort
         this.baseUrl = `http://127.0.0.1:${resolvedPort}`
+        log.info(
+          `[crawl4ai] Found existing container status=${existingContainer.status} baseUrl=${this.baseUrl}`
+        )
 
-        // Verify it's accessible
-        const isHealthy = await this.checkHealth()
-        if (isHealthy) {
-          this.initialized = true
-          return
+        if (existingContainer.status === 'running') {
+          const isHealthy = await this.checkHealth()
+          if (isHealthy) {
+            this.initialized = true
+            return
+          }
+
+          log.warn(
+            `[crawl4ai] Container ${this.config.containerName} is running but not healthy; restarting`
+          )
+          await dockerService.restartContainer(this.config.containerName)
+        } else {
+          await dockerService.startContainer(this.config.containerName)
         }
+
+        await sleep(3200)
+
+        const refreshedPort =
+          (await dockerService.getPublishedPort(this.config.containerName, 11235)) ??
+          this.resolveHostPort(
+            (await dockerService.getContainerStatus(this.config.containerName))?.ports,
+            11235
+          )
+        if (refreshedPort) {
+          this.containerPort = refreshedPort
+          this.baseUrl = `http://127.0.0.1:${refreshedPort}`
+          log.info(`[crawl4ai] Refreshed baseUrl=${this.baseUrl}`)
+        }
+
+        await dockerService.waitForHealth(
+          this.config.containerName,
+          () => this.checkHealth(),
+          30,
+          2000
+        )
+
+        this.initialized = true
+        return
       }
 
-      // Get an available port
+      // No existing container: pick an available port and create a new one
       this.containerPort = await getPort({ port: this.config.port })
       this.baseUrl = `http://127.0.0.1:${this.containerPort}`
+      log.info(`[crawl4ai] Creating new container baseUrl=${this.baseUrl}`)
 
-      // Pull image if needed
       await dockerService.pullImage(this.config.imageName, () => {})
-
-      // Start or create container
       await this.startContainer()
-
-      // Wait for container to initialize before checking health
       await sleep(3200)
-
-      // Wait for container to be healthy
       await dockerService.waitForHealth(
         this.config.containerName,
         () => this.checkHealth(),
@@ -83,6 +134,30 @@ export class Crawl4AiService {
 
       this.initialized = true
     } catch (error) {
+      try {
+        const dockerInfo = await dockerService.getInfo()
+        const status = await dockerService.getContainerStatus(this.config.containerName)
+        const publishedPort = await dockerService.getPublishedPort(this.config.containerName, 11235)
+
+        log.error('[crawl4ai] Diagnostics:', {
+          dockerInfo,
+          status,
+          publishedPort,
+          config: {
+            containerName: this.config.containerName,
+            imageName: this.config.imageName,
+            port: this.config.port
+          },
+          runtime: {
+            baseUrl: this.baseUrl,
+            containerPort: this.containerPort,
+            lastHealthProbe: this.lastHealthProbe
+          }
+        })
+      } catch (diagnosticError) {
+        log.debug(getErrorMessage(diagnosticError, '[crawl4ai] Failed to collect diagnostics'))
+      }
+
       log.error(getErrorMessage(error, 'Failed to initialize Crawl4AI'))
       throw ensureError(error, 'Failed to initialize Crawl4AI')
     }
@@ -124,8 +199,14 @@ export class Crawl4AiService {
         await dockerService.startContainer(containerName)
       }
 
-      // Ensure we use the container's actual published port mapping
-      const resolvedPort = this.resolveHostPort(existingContainer.ports, 11235)
+      // Ensure we use the container's actual published port mapping (prefer inspect over ps parsing)
+      const resolvedPort =
+        (await dockerService.getPublishedPort(containerName, 11235)) ??
+        this.resolveHostPort(
+          (await dockerService.getContainerStatus(containerName))?.ports,
+          11235
+        ) ??
+        this.resolveHostPort(existingContainer.ports, 11235)
       if (resolvedPort) {
         this.containerPort = resolvedPort
         this.baseUrl = `http://127.0.0.1:${resolvedPort}`
@@ -166,10 +247,21 @@ export class Crawl4AiService {
             signal: AbortSignal.timeout(5000)
           })
 
+          this.lastHealthProbe = {
+            endpoint: path,
+            status: response.status,
+            timestamp: new Date().toISOString()
+          }
+
           if (response.status >= 200 && response.status < 400) {
             return true
           }
-        } catch {
+        } catch (error) {
+          this.lastHealthProbe = {
+            endpoint: path,
+            error: getErrorMessage(error, 'Health probe failed'),
+            timestamp: new Date().toISOString()
+          }
           // try next endpoint
         }
       }

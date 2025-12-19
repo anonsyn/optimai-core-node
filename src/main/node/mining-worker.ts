@@ -5,7 +5,7 @@ import { miningApi } from '../api/mining'
 import type { SubmitAssignmentRequest } from '../api/mining/types'
 import { MiningAssignmentFailureReason } from '../api/mining/types'
 import log from '../configs/logger'
-import { isAppError, toAppErrorPayload, type AppError } from '../errors/error-codes'
+import { ErrorCode, toAppErrorPayload, type AppError } from '../errors/error-codes'
 import {
   crawlerCrawlFailedError,
   miningCrawlerInitError,
@@ -14,6 +14,8 @@ import {
   miningSSEError
 } from '../errors/error-factory'
 import { crawlerService } from '../services/crawler-service'
+import { crawl4AiService } from '../services/docker/crawl4ai-service'
+import { dockerService } from '../services/docker/docker-service'
 import { eventsService } from '../services/events-service'
 import { deviceStore, tokenStore, userStore } from '../storage'
 import { encode } from '../utils/encoder'
@@ -125,15 +127,21 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       this.connectSse()
       this.schedulePoll(0)
     } catch (error) {
-      let appError: AppError
-      if (isAppError(error)) {
-        appError = toAppErrorPayload(error)
-      } else {
-        const message = getErrorMessage(error, 'Failed to initialize crawler service')
-        appError = miningCrawlerInitError(message)
-      }
+      const payload = toAppErrorPayload(error)
+      const appError: AppError =
+        payload.code === ErrorCode.UNKNOWN_ERROR
+          ? miningCrawlerInitError(getErrorMessage(error, 'Failed to initialize crawler service'))
+          : payload
 
       log.error('[mining] Failed to initialize crawler service:', appError.message)
+
+      let dockerInfo: unknown
+      try {
+        dockerInfo = await dockerService.getInfo()
+      } catch {
+        dockerInfo = undefined
+      }
+
       this.setStatus(MiningStatus.Error, appError)
       await eventsService.reportError({
         type: 'mining.crawler_init_failed',
@@ -142,7 +150,9 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         error,
         metadata: {
           stage: 'start',
-          errorCode: appError.code
+          errorCode: appError.code,
+          dockerInfo,
+          crawl4ai: crawl4AiService.getDiagnostics()
         }
       })
       this.running = false
@@ -384,13 +394,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
     }
 
     const handleError = (error: Error | AppError) => {
-      let appError: AppError
-      if (isAppError(error)) {
-        appError = toAppErrorPayload(error)
-      } else {
-        const message = error?.message ?? 'Crawler service error'
-        appError = crawlerCrawlFailedError(message)
-      }
+      const payload = toAppErrorPayload(error)
+      const appError: AppError =
+        payload.code === ErrorCode.UNKNOWN_ERROR
+          ? crawlerCrawlFailedError(error?.message ?? 'Crawler service error')
+          : payload
 
       log.error(`[mining] Crawler service error:`, appError.message)
 

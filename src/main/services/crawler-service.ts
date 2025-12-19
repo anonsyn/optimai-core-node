@@ -1,7 +1,7 @@
 import axios from 'axios'
 import EventEmitter from 'eventemitter3'
 import log from '../configs/logger'
-import { isAppError, type AppError } from '../errors/error-codes'
+import { ErrorCode, toAppErrorPayload, type AppError } from '../errors/error-codes'
 import {
   crawlerCrawlFailedError,
   crawlerEndpointResolveError,
@@ -10,8 +10,7 @@ import {
   crawlerNotInitializedError,
   crawlerRestartFailedError,
   crawlerServiceUrlError,
-  crawlerSessionDestroyError,
-  unknownError
+  crawlerSessionDestroyError
 } from '../errors/error-factory'
 import { getErrorMessage } from '../utils/get-error-message'
 import { ensureError } from '../utils/ensure-error'
@@ -280,7 +279,7 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
     } catch (error) {
       const message = getErrorMessage(error, 'Failed to initialize crawler service')
       log.error('[crawler] Failed to initialize crawler service:', message)
-      const lastError = isAppError(error) ? error : unknownError(message)
+      const lastError = toAppErrorPayload(error)
       this.emit('error', lastError)
       throw ensureError(lastError)
     }
@@ -684,13 +683,15 @@ class CrawlerService extends EventEmitter<CrawlerServiceEvents> {
       onRestartFailed(lastError)
     }
 
-    const error = isAppError(lastError)
-      ? lastError
-      : crawlerRestartFailedError(getErrorMessage(lastError, 'Failed to restart crawler service'))
-    this.emit('error', error)
+    const payload = toAppErrorPayload(lastError)
+    const errorPayload: AppError =
+      payload.code === ErrorCode.UNKNOWN_ERROR
+        ? crawlerRestartFailedError(getErrorMessage(lastError, 'Failed to restart crawler service'))
+        : payload
+    this.emit('error', errorPayload)
 
     if (throwOnFailure) {
-      throw ensureError(error)
+      throw ensureError(errorPayload)
     }
   }
 

@@ -3,7 +3,12 @@ import path from 'node:path'
 
 import execa from 'execa'
 import log from '../../configs/logger'
-import { dockerNotInstalledError, dockerNotRunningError } from '../../errors/error-factory'
+import {
+  dockerContainerNotRunningError,
+  dockerHealthCheckFailedError,
+  dockerNotInstalledError,
+  dockerNotRunningError
+} from '../../errors/error-factory'
 import { getErrorMessage } from '../../utils/get-error-message'
 import { ensureError } from '../../utils/ensure-error'
 
@@ -40,6 +45,36 @@ export interface ContainerInfo {
 export class DockerService {
   private dockerResolutionCache: { command: string; version: string } | null = null
   private dockerResolutionPromise: Promise<{ command: string; version: string }> | null = null
+
+  private async getContainerStateSummary(name: string): Promise<Record<string, unknown> | null> {
+    try {
+      const docker = await this.getDockerCommand()
+      const { stdout } = await execa(docker, ['inspect', name, '--format', '{{json .State}}'])
+      const trimmed = stdout.trim()
+      if (!trimmed || trimmed === 'null') {
+        return null
+      }
+
+      const state = JSON.parse(trimmed)
+      const health = state?.Health
+      return {
+        status: state?.Status,
+        healthStatus: health?.Status,
+        healthFailingStreak: health?.FailingStreak,
+        exitCode: state?.ExitCode,
+        oomKilled: state?.OOMKilled,
+        error: state?.Error,
+        startedAt: state?.StartedAt,
+        finishedAt: state?.FinishedAt
+      }
+    } catch (error) {
+      log.debug(
+        `[docker] Failed to inspect state for ${name}:`,
+        getErrorMessage(error, 'Failed to inspect container state')
+      )
+      return null
+    }
+  }
 
   /**
    * Check if Docker is installed
@@ -465,7 +500,7 @@ export class DockerService {
       const isRunning = await this.isContainerRunning(name)
       if (!isRunning) {
         log.warn(`[docker] Container ${name} is not running`)
-        throw new Error(`Container ${name} is not running`)
+        throw ensureError(dockerContainerNotRunningError(name))
       }
 
       // Then check health
@@ -483,8 +518,61 @@ export class DockerService {
       }
     }
 
-    log.error(`[docker] Container ${name} health check failed after ${maxRetries} attempts`)
-    throw new Error(`Container ${name} health check failed after ${maxRetries} attempts`)
+    const status = await this.getContainerStatus(name)
+    const ports = status?.ports?.join(', ') || '(none)'
+    const statusLabel = status?.status || 'unknown'
+    const stateSummary = await this.getContainerStateSummary(name)
+    log.error(
+      `[docker] Container ${name} health check failed after ${maxRetries} attempts (status=${statusLabel}, ports=${ports}, state=${JSON.stringify(stateSummary)})`
+    )
+
+    const tailLogs = await this.getLogs(name, { tail: 200 })
+    if (tailLogs.trim()) {
+      log.error(`[docker] Container ${name} last logs (tail=200):\n${tailLogs}`)
+    }
+
+    throw ensureError(dockerHealthCheckFailedError(name, maxRetries))
+  }
+
+  /**
+   * Get the published host port for a container port (via `docker inspect`).
+   * This is more reliable than parsing `docker ps` port strings.
+   */
+  async getPublishedPort(
+    name: string,
+    containerPort: number,
+    protocol: 'tcp' | 'udp' = 'tcp'
+  ): Promise<number | null> {
+    try {
+      const docker = await this.getDockerCommand()
+      const portKey = `${containerPort}/${protocol}`
+      const format = `{{json (index .NetworkSettings.Ports "${portKey}")}}`
+      const { stdout } = await execa(docker, ['inspect', name, '--format', format])
+
+      const trimmed = stdout.trim()
+      if (!trimmed || trimmed === 'null') {
+        return null
+      }
+
+      const bindings = JSON.parse(trimmed)
+      if (!Array.isArray(bindings) || bindings.length === 0) {
+        return null
+      }
+
+      const hostPort = bindings[0]?.HostPort
+      if (typeof hostPort !== 'string') {
+        return null
+      }
+
+      const parsed = Number(hostPort)
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+    } catch (error) {
+      log.debug(
+        `[docker] Failed to resolve published port for ${name}:${containerPort}/${protocol}:`,
+        getErrorMessage(error, 'Failed to resolve published port')
+      )
+      return null
+    }
   }
 
   /**
