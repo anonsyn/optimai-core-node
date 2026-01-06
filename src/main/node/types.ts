@@ -111,6 +111,11 @@ export interface MiningAssignmentsResponse {
   total: number
 }
 
+export interface MiningAssignmentsVersionResponse {
+  cacheVersion: string | null
+  paramsSignature: string
+}
+
 export interface WorkerPreferences {
   platforms: string[]
 }

@@ -1,10 +1,36 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import http from 'http'
+import https from 'https'
 import { tokenStore } from '../storage'
 import { getErrorMessage } from '../utils/get-error-message'
 
 // Get environment variables with defaults
-const BASE_API_URL = process.env.VITE_API_URL || 'https://api.optimai.network'
-const BASE_MINER_URL = process.env.VITE_MINER_URL || 'https://api-onchain.optimai.network/'
+const normalizeBaseUrl = (value: string): string => {
+  try {
+    const url = new URL(value)
+    // Prefer IPv4 loopback to avoid environments where ::1 is not bound.
+    if (url.hostname === 'localhost') {
+      url.hostname = '127.0.0.1'
+    }
+    return url.toString()
+  } catch {
+    return value
+  }
+}
+
+const isLoopbackBaseUrl = (value: string): boolean => {
+  try {
+    const url = new URL(value)
+    return url.hostname === '127.0.0.1' || url.hostname === 'localhost'
+  } catch {
+    return false
+  }
+}
+
+const BASE_API_URL = normalizeBaseUrl(process.env.VITE_API_URL || 'https://api.optimai.network')
+const BASE_MINER_URL = normalizeBaseUrl(
+  process.env.VITE_MINER_URL || 'https://api-onchain.optimai.network/'
+)
 
 // Types
 interface RefreshTokenResponse {
@@ -91,11 +117,19 @@ function createApiCLient(
     skipAuth?: boolean
     timeout?: number
     customHeaders?: Record<string, string>
+    httpAgent?: http.Agent
+    httpsAgent?: https.Agent
+    disableProxy?: boolean
   } = {}
 ): AxiosInstance {
+  const loopback = isLoopbackBaseUrl(baseURL)
   const client = axios.create({
     baseURL,
     timeout: options.timeout || 180000, // 3 minutes for main process
+    // Avoid env proxy settings for localhost; proxying loopback can cause intermittent hangs/timeouts.
+    ...(loopback || options.disableProxy ? { proxy: false } : {}),
+    ...(options.httpAgent ? { httpAgent: options.httpAgent } : {}),
+    ...(options.httpsAgent ? { httpsAgent: options.httpsAgent } : {}),
     headers: {
       'Content-Type': 'application/json',
       ...options.customHeaders
@@ -219,7 +253,22 @@ export const apiClient = createApiCLient(BASE_API_URL)
  * Miner/On-chain API client for blockchain and mining operations
  * Points to the on-chain service
  */
-export const minerClient = createApiCLient(BASE_MINER_URL)
+const minerHttpAgent = new http.Agent({
+  keepAlive: false,
+  family: 4
+})
+
+const minerHttpsAgent = new https.Agent({
+  keepAlive: false,
+  family: 4
+})
+
+export const minerClient = createApiCLient(BASE_MINER_URL, {
+  httpAgent: minerHttpAgent,
+  httpsAgent: minerHttpsAgent,
+  // Avoid proxying miner traffic; proxy CONNECTs can stall and cause client timeouts.
+  disableProxy: true
+})
 
 /**
  * Create an unauthenticated client for public endpoints (e.g., login, signup)

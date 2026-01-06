@@ -53,6 +53,7 @@ const POLL_INTERVAL_MS = 60_000 * 2
 const SSE_RETRY_BASE_MS = 2_000
 const SSE_RETRY_MAX_MS = 10_000
 const CRAWLER_CHECK_INTERVAL_MS = 15_000
+const ASSIGNMENTS_VERSION_DEBOUNCE_MS = 5_000
 
 export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private running = false
@@ -67,6 +68,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private status: MiningStatus = MiningStatus.Idle
   private lastError?: AppError
   private detachCrawlerListeners: (() => void) | null = null
+  private lastAssignmentsVersion: string | null = null
+  private lastAssignmentsParamsSignature: string | null = null
+  private lastAssignmentsVersionCheckAt: number | null = null
+  private lastVersionCacheVersion: string | null = null
+  private lastVersionParamsSignature: string | null = null
 
   private setStatus(status: MiningStatus, error?: AppError | Error) {
     const previousFullStatus = this.getStatus()
@@ -263,10 +269,11 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
 
     const attemptConnection = async () => {
       const token = tokenStore.getAccessToken()
-      const eventsUrl = miningApi.getEventsUrl()
+      const deviceId = deviceStore.getDeviceId()
+      const eventsUrl = deviceId ? miningApi.getEventsUrl(deviceId) : null
 
       if (!token || !eventsUrl) {
-        log.warn('[mining] Skipping SSE connection - missing token or events URL')
+        log.warn('[mining] Skipping SSE connection - missing token, device ID, or events URL')
         this.scheduleReconnect()
         return
       }
@@ -439,13 +446,61 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
         log.warn('[mining] No device ID found, fetching all user assignments')
       }
 
-      // Fetch assignments
-      const response = await miningApi.getAssignments({
+      const params = {
         statuses: ['not_started', 'in_progress'],
         limit: 30,
-        platforms: 'google', // Only fetch Google platform tasks
-        ...(deviceId && { device_id: deviceId }) // Only include device_id if set
-      })
+        platforms: 'google',
+        ...(deviceId && { device_id: deviceId })
+      }
+
+      let versionCacheVersion: string | null = null
+      let versionParamsSignature: string | null = null
+      const now = Date.now()
+      const lastCheckAt = this.lastAssignmentsVersionCheckAt ?? 0
+      const canReuseVersion =
+        now - lastCheckAt < ASSIGNMENTS_VERSION_DEBOUNCE_MS &&
+        !!this.lastVersionCacheVersion &&
+        !!this.lastVersionParamsSignature
+
+      if (canReuseVersion) {
+        versionCacheVersion = this.lastVersionCacheVersion
+        versionParamsSignature = this.lastVersionParamsSignature
+      } else {
+        try {
+          const versionResponse = await miningApi.getAssignmentsVersion(params)
+          this.lastAssignmentsVersionCheckAt = now
+          versionCacheVersion = versionResponse.data?.cacheVersion ?? null
+          versionParamsSignature = versionResponse.data?.paramsSignature ?? null
+          if (!versionCacheVersion) {
+            const headerValue =
+              (versionResponse as any)?.headers?.['x-assignment-cache-version'] ??
+              (versionResponse as any)?.headers?.['X-Assignment-Cache-Version']
+            if (typeof headerValue === 'string' && headerValue.length > 0) {
+              versionCacheVersion = headerValue
+            }
+          }
+          this.lastVersionCacheVersion = versionCacheVersion
+          this.lastVersionParamsSignature = versionParamsSignature
+        } catch (error) {
+          const errorMsg = getErrorMessage(error, 'Error fetching assignments version')
+          log.debug('[mining] Assignments version fetch failed:', errorMsg)
+        }
+      }
+
+      if (
+        versionCacheVersion &&
+        versionParamsSignature &&
+        versionCacheVersion === this.lastAssignmentsVersion &&
+        versionParamsSignature === this.lastAssignmentsParamsSignature
+      ) {
+        log.info(
+          `[mining] Assignments unchanged (cacheVersion=${versionCacheVersion}); skipping fetch`
+        )
+        return
+      }
+
+      // Fetch assignments
+      const response = await miningApi.getAssignments(params)
       const data = response?.data
       const cacheVersionHeader =
         (response as any)?.headers?.['x-assignment-cache-version'] ??
@@ -472,6 +527,15 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
       )
 
       log.info(`[mining] Fetched ${googleAssignments.length} Google assignments`)
+
+      if (versionParamsSignature) {
+        this.lastAssignmentsParamsSignature = versionParamsSignature
+      }
+      if (versionCacheVersion ?? cacheVersionHeader) {
+        this.lastAssignmentsVersion = String(
+          versionCacheVersion ?? cacheVersionHeader ?? null
+        )
+      }
 
       // Emit assignments event for UI consumers
       this.emit('assignments', googleAssignments)

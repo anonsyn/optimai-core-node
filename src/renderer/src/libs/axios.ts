@@ -5,6 +5,19 @@ import { getErrorMessage } from '@/utils/get-error-message'
 import { sessionManager } from '@/utils/session-manager'
 import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
+const normalizeBaseUrl = (value: string): string => {
+  try {
+    const url = new URL(value)
+    // Prefer IPv4 loopback to avoid environments where ::1 is not bound.
+    if (url.hostname === 'localhost') {
+      url.hostname = '127.0.0.1'
+    }
+    return url.toString()
+  } catch {
+    return value
+  }
+}
+
 // Types
 interface RefreshTokenResponse {
   access_token: string
@@ -97,7 +110,7 @@ function createApiClient(
   } = {}
 ): AxiosInstance {
   const client = axios.create({
-    baseURL,
+    baseURL: normalizeBaseUrl(baseURL),
     timeout: options.timeout || 10000,
     headers: {
       'Content-Type': 'application/json',
