@@ -9,7 +9,7 @@ interface Options extends GetMiningAssignmentsParams {
 
 export const useGetMiningAssignmentsQuery = (options?: Options) => {
   const params: GetMiningAssignmentsParams = {
-    limit: options?.limit ?? 20,
+    limit: options?.limit ?? 15,
     platforms: options?.platforms,
     statuses: options?.statuses,
     search_query_id: options?.search_query_id,
