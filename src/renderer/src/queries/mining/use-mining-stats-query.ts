@@ -14,8 +14,8 @@ export const useGetMiningStatsQuery = (options?: Options) => {
       const { data } = await miningApi.getStats()
       return data
     },
-    refetchInterval: 30000, // Refresh every 30 seconds
-    staleTime: 1000 * 20, // Consider data stale after 20 seconds
+    refetchInterval: 60_000 * 5, // Refresh every 5 minutes
+    staleTime: 1000 * 30, // Consider data stale after 30 seconds
     retry: options?.retry ?? false,
     enabled: options?.enabled ?? true
   })

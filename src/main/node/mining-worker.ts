@@ -1,4 +1,5 @@
 import EventEmitter from 'eventemitter3'
+import lodash from 'lodash'
 import type PQueue from 'p-queue'
 import pRetry from 'p-retry'
 import { miningApi } from '../api/mining'
@@ -48,7 +49,7 @@ type StartErrorDecision =
 
 // Heartbeat interval: report online status every 30 seconds
 const HEARTBEAT_INTERVAL_MS = 60_000
-const POLL_INTERVAL_MS = 30_000
+const POLL_INTERVAL_MS = 60_000 * 2
 const SSE_RETRY_BASE_MS = 2_000
 const SSE_RETRY_MAX_MS = 10_000
 const CRAWLER_CHECK_INTERVAL_MS = 15_000
@@ -68,17 +69,17 @@ export class MiningWorker extends EventEmitter<MiningWorkerEvents> {
   private detachCrawlerListeners: (() => void) | null = null
 
   private setStatus(status: MiningStatus, error?: AppError | Error) {
-    const prevStatus = this.status
+    const previousFullStatus = this.getStatus()
     this.status = status
     this.lastError = error ? toAppErrorPayload(error) : undefined
     const fullStatus = this.getStatus()
 
-    // Always log status changes for debugging
-    log.info(`[mining] Status update: ${prevStatus} → ${status}`, fullStatus)
+    if (!lodash.isEqual(previousFullStatus, fullStatus)) {
+      // Always log status changes for debugging
+      log.info(`[mining] Status update: ${previousFullStatus.status} → ${status}`, fullStatus)
 
-    // Always emit the status, even if it hasn't changed
-    // This ensures the UI gets updated
-    this.emit('statusChanged', fullStatus)
+      this.emit('statusChanged', fullStatus)
+    }
   }
 
   getStatus(): MiningWorkerStatus {
