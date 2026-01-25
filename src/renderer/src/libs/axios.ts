@@ -240,3 +240,10 @@ export const apiClient = createApiClient(BASE_API_URL)
  * Points to the on-chain service
  */
 export const minerClient = createApiClient(BASE_MINER_URL)
+
+/**
+ * Public on-chain API client for unauthenticated endpoints
+ */
+export const publicMinerClient = createApiClient(BASE_MINER_URL, {
+  skipAuth: true
+})

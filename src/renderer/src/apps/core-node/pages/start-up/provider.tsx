@@ -5,6 +5,7 @@ import { authActions } from '@/store/slices/auth'
 import { Modals } from '@/store/slices/modals'
 import { getErrorMessage } from '@/utils/get-error-message'
 import { getOS, OS } from '@/utils/os'
+import { shouldCheckForUpdates } from '@/utils/update-gate'
 import { sessionManager } from '@/utils/session-manager'
 import { sleep } from '@/utils/sleep'
 import { PATHS } from '@core-node/routers/paths'
@@ -78,10 +79,16 @@ export const StartupProvider = ({ children }: StartupProviderProps) => {
 
   // Check for updates
   const checkForUpdates = useCallback(async (): Promise<boolean> => {
+    setPhase(StartupPhase.CHECKING_UPDATES)
+    // Small delay to ensure phase transition is visible
+    // UI status feed removed; keep phase transitions only
+
+    const gate = await shouldCheckForUpdates()
+    if (!gate.shouldCheckUpdater) {
+      return false
+    }
+
     return new Promise<boolean>((resolve) => {
-      setPhase(StartupPhase.CHECKING_UPDATES)
-      // Small delay to ensure phase transition is visible
-      // UI status feed removed; keep phase transitions only
       let resolved = false
 
       const { unsubscribe } = window.updaterIPC.onStateChange((state) => {

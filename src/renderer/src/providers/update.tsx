@@ -1,6 +1,7 @@
 import { useOpenModal } from '@/hooks/modal'
 import { Modals } from '@/store/slices/modals'
 import { getOS, OS } from '@/utils/os'
+import { shouldCheckForUpdates } from '@/utils/update-gate'
 import type { UpdateInfo } from 'electron-updater'
 import { ReactNode, useEffect, useRef } from 'react'
 
@@ -80,9 +81,12 @@ export function UpdateProvider({ children }: UpdateProviderProps) {
     }
 
     // Setup periodic update checking
-    const checkForUpdates = () => {
+    const checkForUpdates = async () => {
       console.log('[UpdateProvider] Checking for updates...')
-      window.updaterIPC.checkForUpdateAndNotify()
+      const gate = await shouldCheckForUpdates()
+      if (gate.shouldCheckUpdater) {
+        window.updaterIPC.checkForUpdateAndNotify()
+      }
     }
 
     // Setup listener first
@@ -90,7 +94,7 @@ export function UpdateProvider({ children }: UpdateProviderProps) {
 
     // Initial check after a short delay (to let the app fully load)
     setTimeout(() => {
-      checkForUpdates()
+      void checkForUpdates()
     }, 10000) // Check after 10 seconds
 
     // Setup interval to check every minute
@@ -98,7 +102,7 @@ export function UpdateProvider({ children }: UpdateProviderProps) {
       // Only check if we haven't shown the modal yet
       // This prevents unnecessary checks after an update is ready
       if (!hasShownModalRef.current) {
-        checkForUpdates()
+        void checkForUpdates()
       }
     }, 60000) // Check every 60 seconds
 
