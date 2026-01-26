@@ -66,7 +66,8 @@ export const shouldCheckForUpdates = async (): Promise<GateResult> => {
     state.lastTriggeredVersion = gate.latestVersion
     state.lastTriggeredAt = now
     return { shouldCheckUpdater: true, latestVersion: gate.latestVersion }
-  } catch (error) {
+  } catch (error: any) {
+    console.error('Failed to check update gate:', error)
     state.consecutiveFailures += 1
     const now = Date.now()
     if (now < state.nextAllowedDirectCheckAt) {
