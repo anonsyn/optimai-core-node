@@ -5,7 +5,7 @@ const createHref = (url: string) => {
 }
 
 export const EXTERNAL_LINKS = {
-  HOME: 'https://optimai.network/',
+  HOME: 'https://optimai.network',
   SOCIALS: {
     X: 'https://x.com/OptimaiNetwork',
     TELEGRAM: 'https://t.me/optimainetwork',

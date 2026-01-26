@@ -1,6 +1,6 @@
 // URLS
 const BASE_API_URL = import.meta.env.VITE_API_URL || 'https://api.optimai.network'
-const BASE_MINER_URL = import.meta.env.VITE_MINER_URL || 'https://api-onchain.optimai.network/'
+const BASE_MINER_URL = import.meta.env.VITE_MINER_URL || 'https://api-onchain.optimai.network'
 const BASE_DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL || 'https://node.optimai.network'
 const BASE_LP_URL = import.meta.env.VITE_LP_URL || 'https://optimai.network'
 

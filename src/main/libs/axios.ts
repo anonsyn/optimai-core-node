@@ -27,7 +27,7 @@ const isLoopbackBaseUrl = (value: string): boolean => {
 
 const BASE_API_URL = normalizeBaseUrl(process.env.VITE_API_URL || 'https://api.optimai.network')
 const BASE_MINER_URL = normalizeBaseUrl(
-  process.env.VITE_MINER_URL || 'https://api-onchain.optimai.network/'
+  process.env.VITE_MINER_URL || 'https://api-onchain.optimai.network'
 )
 
 // Types
