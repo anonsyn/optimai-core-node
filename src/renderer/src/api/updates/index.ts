@@ -11,7 +11,7 @@ export interface UpdateGateResponse {
 }
 
 export const getCoreNodeUpdateGate = async (platform: UpdatePlatform) => {
-  const res = await publicMinerClient.get<UpdateGateResponse>('updates/core-node', {
+  const res = await publicMinerClient.get<UpdateGateResponse>('/updates/core-node', {
     params: { platform }
   })
   return res.data
