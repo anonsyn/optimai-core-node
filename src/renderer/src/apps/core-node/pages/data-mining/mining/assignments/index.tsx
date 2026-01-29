@@ -20,6 +20,7 @@ export const AssignmentsList = () => {
   } = useGetMiningAssignmentsQuery({
     platforms: ['google'],
     sort_by: 'updated_at',
+    statuses: ['not_started', 'in_progress', 'completed'],
     device_id: deviceId
   })
   const { refetch: refetchStats } = useGetMiningStatsQuery()

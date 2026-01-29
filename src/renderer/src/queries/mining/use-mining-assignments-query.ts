@@ -1,8 +1,8 @@
 import { GetMiningAssignmentsParams, miningApi } from '@/api/mining'
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
-import { miningKeys } from './keys'
-import { useEffect, useMemo, useRef } from 'react'
 import type { MiningAssignmentsResponse } from '@main/node/types'
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useRef } from 'react'
+import { miningKeys } from './keys'
 
 interface Options extends GetMiningAssignmentsParams {
   enabled?: boolean
