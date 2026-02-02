@@ -111,7 +111,7 @@ function createApiClient(
 ): AxiosInstance {
   const client = axios.create({
     baseURL: normalizeBaseUrl(baseURL),
-    timeout: options.timeout || 10000,
+    timeout: options.timeout || 60_000,
     headers: {
       'Content-Type': 'application/json',
       ...options.customHeaders
